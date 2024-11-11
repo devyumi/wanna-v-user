@@ -1,12 +1,25 @@
 <!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Title</title>
+  <link rel="stylesheet" href="/css/product/index.css">
+  <script defer src="/js/product/index.js"></script>
+  <title>Product List Page</title>
 </head>
 <body>
-*****************
-***    상품    ***
-*****************
+<main class="main-container">
+  <div class="category-list">
+    <ul class="category">
+      <li class="category-item selected">밀키트</li>
+      <li class="category-item">화장품</li>
+      <li class="category-item">간식</li>
+    </ul>
+  </div>
+
+  <div class="product-grid" id="product-grid"></div>
+</main>
 </body>
 </html>
