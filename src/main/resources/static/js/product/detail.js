@@ -21,5 +21,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
   productDetail(productId);
 
+  const decreaseBtn = document.getElementById("decrease-btn");
+  const quantityInput = document.getElementById("quantity-input");
+  const increaseBtn = document.getElementById("increase-btn");
+  const QUANTITY_MIN = 1;
+  const QUANTITY_MAX = 99;
 
+  // 장바구니 담기 수량 감소 버튼
+  decreaseBtn.addEventListener("click", () => {
+    let currentValue = parseInt(quantityInput.value);
+    if (currentValue > QUANTITY_MIN) {
+      quantityInput.value = currentValue - 1;
+    }
+  })
+
+  // 장바구니 담기 수량 증가 버튼
+  increaseBtn.addEventListener("click", () => {
+    let currentValue = parseInt(quantityInput.value);
+    if (currentValue < QUANTITY_MAX) {
+      quantityInput.value = currentValue + 1;
+    }
+  })
 });
