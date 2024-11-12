@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
 >
+<!--<html th:replace="~{fragment/layout_v1.html :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">-->
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <link rel="stylesheet" href="/css/product/index.css">
-  <script defer src="/js/product/index.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/product/products.css">
+  <script defer src="/js/product/products.js"></script>
   <title>Product List Page</title>
 </head>
 <body>
-<main class="main-container">
+<main layout:fragment="content" th:class="container">
   <div class="category-list">
     <ul class="category">
       <li class="category-item selected">밀키트</li>
@@ -21,18 +25,18 @@
 
   <div class="product-grid" id="product-grid">
     <div class="product-item" th:each="product : ${products}">
-        <a th:href="@{/products/${product.id}}">
-          <img th:src="@{${product.image[0]}}" alt="Product image" />
-          <div class="product-price-container">
-            <span class="product-discount-rate" th:text="${product.discountRate} + '%'"></span>
-            <div class="price-container">
-              <span class="selling-price price" th:data-price="${product.sellingPrice}"></span>
-              <span class="final-price price" th:data-price="${product.finalPrice}"></span>
-            </div>
+      <a th:href="@{/products/${product.id}}">
+        <img th:src="@{${product.image[0]}}" alt="Product image"/>
+        <div class="product-price-container">
+          <span class="product-discount-rate" th:text="${product.discountRate} + '%'"></span>
+          <div class="price-container">
+            <span class="selling-price price" th:data-price="${product.sellingPrice}"></span>
+            <span class="final-price price" th:data-price="${product.finalPrice}"></span>
           </div>
-          <p class="product-name name" th:data-name="${product.name}"></p>
-        </a>
-      </div>
+        </div>
+        <p class="product-name name" th:data-name="${product.name}"></p>
+      </a>
+    </div>
   </div>
 </main>
 </body>
