@@ -42,3 +42,4 @@ out/
 /gradle/
 /src/test/
 /src/main/generated/
+/src/main/resources/templates/restaurant/test.html
