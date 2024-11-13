@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/product/detail.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/product/detail.js"></script>
+  <script th:inline="javascript">
+    const productId = [[${id}]];
+  </script>
+  <title>Product Detail Page</title>
+</head>
+<body>
+<main class="main-container">
+    <div class="container">
+      <div class="product-container">
+        <img th:id="product-image" alt="Product image"/>
+        <div class="product-info-container">
+          <p class="product-name" th:id="product-name" th:text="${productName}"></p>
+          <div class="product-price-container">
+            <span class="product-discount-rate" th:id="discount-rate" th:text="${discountRate}"></span>
+            <div class="price-container">
+              <span class="selling-price" th:id="selling-price" th:text="${sellingPrice}"></span>
+              <span class="final-price" th:id="final-price" th:text="finalPrice"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="product-description-container">
+        <img th:id="product-description" alt="Product Description"/>
+      </div>
+    </div>
+    <footer class="action-buttons">
+      <button
+        class="btn btn-cart align-items-center"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasBottom"
+        aria-controls="offcanvasBottom"
+      >
+        장바구니
+      </button>
+      <button class="btn-payment">구매하기</button>
+    </footer>
+    <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom" aria-labelledby="offcanvasBottomLabel">
+      <div class="offcanvas-body small">
+        <div class="cart-container">
+          <p class="product-name" th:id="cart-product-name" th:text="${productName}"></p>
+          <div class="quantity-container">
+            <span class="product-stock" th:id="product-stock" th:text="${productStock}"></span>
+            <div class="input-group quantity-selector">
+              <button class="btn btn-outline-secondary" type="button" id="decrease-btn">-</button>
+              <input type="number" class="form-control text-center" value="1" id="quantity-input" />
+              <button class="btn btn-outline-secondary" type="button" id="increase-btn">+</button>
+            </div>
+          </div>
+        </div>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+      <div class="button-contain">
+        <button class="btn-cart">장바구니 담기</button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>
