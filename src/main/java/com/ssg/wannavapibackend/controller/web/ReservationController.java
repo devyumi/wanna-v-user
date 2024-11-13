@@ -11,6 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ReservationController {
     @GetMapping("/")
     public String test() {
-        return "promotion/event";
+        return "promotion/events";
     }
 }
