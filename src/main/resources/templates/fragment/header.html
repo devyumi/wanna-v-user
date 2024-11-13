@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="header">
+<div th:fragment="header" th:class="header-nav">
   <div class="border-bottom wrapper ">
   <div class="bg-light py-1">
     <div class="container">
@@ -197,7 +197,7 @@
         </li>
 
         <li class="nav-item desktop-header-nav-item">
-          <a class="nav-link" href="/goods" role="button">상점</a>
+          <a class="nav-link" href="/products" role="button">상점</a>
         </li>
 
         <li class="nav-item desktop-header-nav-item">
@@ -222,7 +222,7 @@
           </li>
 
           <li class="nav-item mobile-header-nav-item">
-            <a class="nav-link" href="/goods" role="button">상점</a>
+            <a class="nav-link" href="/products" role="button">상점</a>
           </li>
 
           <li class="nav-item mobile-header-nav-item">

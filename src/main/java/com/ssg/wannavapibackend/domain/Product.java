@@ -67,7 +67,7 @@ public class Product {
     private Admin createdById;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updated_by_id", nullable = true)
+    @JoinColumn(name = "updated_by_id")
     private Admin updatedById;
 
     @Column(name = "created_at", nullable = false)
