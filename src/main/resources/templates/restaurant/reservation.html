@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/css/reservation/reservation.css">
+  <title>Reservation Complete Page</title>
+</head>
+<body>
+<main layout:fragment="content" th:class="container">
+  <div class="content">
+    <img src="/assets/images/reservation/pngwing.com.png" class="check">
+    <p>예약이 완료되었습니다!</p>
+    <button type="button" class="button-myPage">내 예약 확인</button>
+  </div>
+</main>
+</body>
+</html>
