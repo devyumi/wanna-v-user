@@ -1,7 +1,10 @@
+import { formatPrice, truncateText } from "/js/common/format.js";
+
 document.addEventListener('DOMContentLoaded', function () {
+
   async function productList() {
 
-    const response = await fetch('/api/product/list');
+    const response = await fetch('/api/products');
     if (!response.ok) {
       throw new Error(`네트워크 오류: ${response.status} ${response.statusText}`);
     }
@@ -10,17 +13,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const dataList = jsonData.data || [];
 
     if (dataList.length > 0) {
-
-      const formattedProducts = dataList.map((product) => ({
-            ...product,
-            formattedSellingPrice: new Intl.NumberFormat("ko-KR").format(
-                product.sellingPrice) + "원",
-            formattedFinalPrice: new Intl.NumberFormat("ko-KR").format(
-                product.finalPrice) + "원",
-          })
-      );
-
-      // renderProducts(formattedProducts);
+      renderProducts(dataList);
     }
   }
 
@@ -28,32 +21,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /**
    * 가격을 한국 원화(KRW) 형식으로 포맷팅
-   * @param price - 포맷팅할 가격
-   *  @returns string - 원화 형식으로 포맷팅된 가격 (예: "1,000원")
    */
-  function formatPrice(price) {
-    return new Intl.NumberFormat("ko-KR").format(price) + "원";
-  }
-
   const priceElements = document.querySelectorAll(".price");
   priceElements.forEach(function (priceElement) {
     const price = parseInt(priceElement.getAttribute("data-price"));
     priceElement.textContent = formatPrice(price);
   })
 
-
   /**
    * 상품명 말줄임표 형식으로 포맷팅
-   * @type {number}
    */
-  const maxLength = 21;
-  function truncateText(text) {
-    if (text.length > maxLength) {
-      return text.substring(0, maxLength) + " ...";
-    }
-    return text;
-  }
-
   const nameElements = document.querySelectorAll(".name");
   nameElements.forEach(function (nameElement) {
     const name = nameElement.getAttribute("data-name");
@@ -87,11 +64,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
       const sellingPrice = document.createElement('span');
       sellingPrice.classList.add('selling-price');
-      sellingPrice.textContent = product.formattedSellingPrice;
+      sellingPrice.textContent = formatPrice(product.sellingPrice);
 
       const finalPrice = document.createElement('span');
       finalPrice.classList.add('final-price');
-      finalPrice.textContent = product.formattedFinalPrice;
+      finalPrice.textContent = formatPrice(product.finalPrice);
 
       const productName = document.createElement('p');
       productName.classList.add('product-name');
@@ -105,6 +82,5 @@ document.addEventListener('DOMContentLoaded', function () {
       productGrid.append(productItem);
     });
   }
-
 });
 

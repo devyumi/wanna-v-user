@@ -1,6 +1,8 @@
+import { formatPrice } from "/js/common/format.js";
+
 document.addEventListener('DOMContentLoaded', function () {
   async function productDetail(productId) {
-    const response = await fetch(`/api/product?id=${productId}`);
+    const response = await fetch(`/api/products?id=${productId}`);
     console.log("productId: " + productId)
     const jsonData = await response.json();
     const data = jsonData.data;
@@ -12,15 +14,25 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById("product-image").src = data.image;
     document.getElementById("discount-rate").textContent = data.discountRate + "%";
-    document.getElementById("selling-price").textContent = new Intl.NumberFormat("ko-KR").format(data.sellingPrice) + "원";
-    document.getElementById("final-price").textContent = new Intl.NumberFormat("ko-KR").format(data.finalPrice) + "원";
+    document.getElementById("selling-price").textContent = formatPrice(data.sellingPrice);
+    document.getElementById("final-price").textContent = formatPrice(data.finalPrice);
     document.getElementById("product-description").src = data.description.description;
     document.getElementById("product-stock").textContent = data.stock;
 
   }
 
-  productDetail(productId);
+  // productDetail(productId);
 
+  /**
+   * 가격을 한국 원화(KRW) 형식으로 포맷팅
+   */
+  const priceElement = document.querySelector('.price');
+  const price = parseInt(priceElement.getAttribute('data-price'), 10);
+  priceElement.textContent = formatPrice(price);
+
+  /**
+   * 장바구니 담기 상품 수량 증가/감소 버튼
+   */
   const decreaseBtn = document.getElementById("decrease-btn");
   const quantityInput = document.getElementById("quantity-input");
   const increaseBtn = document.getElementById("increase-btn");
