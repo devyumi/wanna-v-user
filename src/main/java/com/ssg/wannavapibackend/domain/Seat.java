@@ -27,8 +27,10 @@ public class Seat {
     private Integer seat;
 
     @Column(name="created_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 }

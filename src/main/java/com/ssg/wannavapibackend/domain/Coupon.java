@@ -46,8 +46,10 @@ public class Coupon {
     private Boolean active;
 
     @Column(name="created_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateAt;
 }

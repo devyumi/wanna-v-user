@@ -52,14 +52,15 @@ public class User {
     private Boolean unregistered;
 
     @Column(name="created_at", nullable = false)
-    @CreatedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")
-    @LastModifiedDate
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateAt;
 
     @Column(name="unresgisterd_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime unregisteredAt;
 
     @OneToMany(mappedBy = "user")

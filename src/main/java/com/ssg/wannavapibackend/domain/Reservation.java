@@ -36,11 +36,14 @@ public class Reservation {
     private Integer guest;
 
     @Column(name="scheduled_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime scheduled;
 
     @Column(name="created_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")
+    @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
 }

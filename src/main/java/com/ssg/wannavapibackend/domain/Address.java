@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Embeddable
 public class Address {
-    @Column(name = "zip_code", length = 6)
+    @Column(name = "zip_code")
     private String zipCode;
 
     @Column(name = "road_address")
