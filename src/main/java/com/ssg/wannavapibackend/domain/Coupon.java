@@ -3,6 +3,7 @@ package com.ssg.wannavapibackend.domain;
 import com.ssg.wannavapibackend.common.Type;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -40,10 +41,11 @@ public class Coupon {
     @Column(name = "percentage_discount")
     private Integer percentageDiscount;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false)
+    @ColumnDefault("0")
     private Boolean active;
 
-    @Column(name="created_at")
+    @Column(name="created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")

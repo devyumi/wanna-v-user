@@ -21,26 +21,29 @@ public class Event {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="created_by_id")
+    @JoinColumn(name="created_by_id", nullable = false)
     private Admin createdBy;
 
     @ManyToOne
     @JoinColumn(name="updated_by_id")
     private Admin updatedBy;
 
+    @Column(length = 20, nullable = false)
     private String title;
 
+    @Column(nullable = false)
     private String thumbnail;
 
+    @Column(nullable = false)
     private String detail;
 
-    @Column(name="start_date")
+    @Column(name="start_date", nullable = false)
     private LocalDate startDate;
 
-    @Column(name="end_date")
+    @Column(name="end_date", nullable = false)
     private LocalDate endDate;
 
-    @Column(name="created_at")
+    @Column(name="created_at", nullable = false)
     private LocalDateTime createdAt;
 
     @Column(name="updated_at")

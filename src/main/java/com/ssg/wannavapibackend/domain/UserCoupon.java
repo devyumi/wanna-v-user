@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
 @Getter
@@ -22,6 +23,7 @@ public class UserCoupon {
     @JoinColumn(name="coupon_id")
     private Coupon coupon;
 
-    @Column(name="is_used")
+    @Column(name="is_used", nullable = false)
+    @ColumnDefault("0")
     private Boolean used;
 }
