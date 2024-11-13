@@ -1,5 +1,9 @@
 package com.ssg.wannavapibackend.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -59,13 +63,13 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updateAt;
 
-    @Column(name="unresgisterd_at")
+    @Column(name="unregistered_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime unregisteredAt;
 
-    @OneToMany(mappedBy = "user")
-    private List<UserCoupon> userCoupons;
-
-    @OneToMany(mappedBy = "user")
-    private List<Reservation> reservations;
+//    @OneToMany(mappedBy = "user")
+//    private List<UserCoupon> userCoupons;
+//
+//    @OneToMany(mappedBy = "user")
+//    private List<Reservation> reservations;
 }

@@ -38,11 +38,9 @@ public class Event {
     private String detail;
 
     @Column(name="start_date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate startDate;
 
     @Column(name="end_date", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
     private LocalDate endDate;
 
     @Column(name="created_at", nullable = false)

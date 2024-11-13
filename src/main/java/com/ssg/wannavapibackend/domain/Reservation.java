@@ -2,7 +2,6 @@ package com.ssg.wannavapibackend.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDateTime;
 
@@ -21,18 +20,18 @@ public class Reservation {
     @JoinColumn(name="user_id")
     private User user;
 
-//    @ManyToOne
-//    @JoinColumn(name="restaurant_id")
-//    private Restaurant restaurant;
+    @ManyToOne
+    @JoinColumn(name="restaurant_id")
+    private Restaurant restaurant;
 
-//    @OneToOne
-//    @JoinColumn(name = "payment_id")
-//    private Payment payment;
+    @OneToOne
+    @JoinColumn(name = "payment_id")
+    private Payment payment;
 
     @Column(name="is_reservable", nullable = false)
     private Boolean reservable;
 
-    @Column(name="quest_count", nullable = false)
+    @Column(name="guest_count", nullable = false)
     private Integer guest;
 
     @Column(name="scheduled_at", nullable = false)

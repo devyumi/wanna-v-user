@@ -16,15 +16,15 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    @ManyToOne
-//    @JoinColumn(name="restaurant_id")
-//    private Restaurant restaurant;
+    @ManyToOne
+    @JoinColumn(name="restaurant_id")
+    private Restaurant restaurant;
 
     @Column(name="seat_capacity", nullable = false)
     private Integer seatCapacity;
 
     @Column(name="seat_count", nullable = false)
-    private Integer seat;
+    private Integer seatCount;
 
     @Column(name="created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
