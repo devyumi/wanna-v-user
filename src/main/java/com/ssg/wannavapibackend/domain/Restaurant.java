@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.domain;
 
+import com.ssg.wannavapibackend.common.BusinessStatus;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Embedded;
@@ -19,7 +20,6 @@ import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
-import please_do_it.yumi.constant.BusinessStatus;
 
 @Entity
 @Getter @Setter
