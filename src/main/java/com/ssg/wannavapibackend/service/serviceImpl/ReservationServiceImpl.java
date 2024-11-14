@@ -1,45 +1,70 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
-import com.ssg.wannavapibackend.domain.Product;
-import com.ssg.wannavapibackend.dto.response.ProductResponseDTO;
-import com.ssg.wannavapibackend.repository.ProductRepository;
-import com.ssg.wannavapibackend.service.ProductService;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.ssg.wannavapibackend.domain.Reservation;
+import com.ssg.wannavapibackend.dto.response.ReservationDTO;
+import com.ssg.wannavapibackend.dto.response.ReservationResponese1DTO;
+import com.ssg.wannavapibackend.dto.response.ReservationResponeseDTO;
+import com.ssg.wannavapibackend.repository.ReservationRepository;
+import com.ssg.wannavapibackend.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
 @RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService {
+public class ReservationServiceImpl implements ReservationService {
 
-    private final ProductRepository productRepository;
+    private final ReservationRepository reservationRepository;
 
     /**
-     * 상품 전체 조회
+     * 한 유저의 예약 전체 조회(마이페이지)
      */
-    @Transactional(readOnly = true)
-    public List<ProductResponseDTO> getProductList() {
-        List<Product> products = productRepository.findAll(Sort.by(Direction.DESC, "id"));
+    @Override
+    public List<ReservationDTO> getReservationList(Long userId) {
+        List<Reservation> reservations = reservationRepository.findAllByUserId(userId);
 
-        return products.stream()
-            .map(product -> new ProductResponseDTO(product.getId(), product.getName(),
-                product.getImage(), product.getSellingPrice(), product.getDiscountRate(),
-                product.getFinalPrice()))
-            .collect(Collectors.toList());
+        for(Reservation reservation : reservations)
+            log.info(reservation);
+
+        return reservations.stream()
+                .map(reservation -> new ReservationDTO(
+                        reservation.getId(),
+                        reservation.getUser(),
+                        reservation.getRestaurant(),
+                        reservation.getPayment(),
+                        reservation.getGuest(),
+                        reservation.getScheduled()
+                )).collect(Collectors.toList());
     }
 
     /**
-     * 상품 상세 조회
-     * @param productId → 상품 ID
+     * 예약 상세 조회
      */
-    @Transactional(readOnly = true)
-    public Product getProduct(Long productId) {
-        return productRepository.findById(productId).orElseThrow(() -> new IllegalArgumentException("Invalid ID value: " + productId));
+    @Override
+    public ReservationDTO getReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(() -> new IllegalArgumentException("Invalid ID value: " + reservationId));
+
+        return new ReservationDTO(
+                reservation.getId(),
+                reservation.getUser(),
+                reservation.getRestaurant(),
+                reservation.getPayment(),
+                reservation.getGuest(),
+                reservation.getScheduled()
+        );
+    }
+
+    @Override
+    public Reservation saveReservation(Reservation reservation) {
+        return reservationRepository.save(reservation);
+    }
+
+    @Override
+    public List<ReservationResponese1DTO> getAll(Long restaurantId) {
+        return null;
     }
 }
