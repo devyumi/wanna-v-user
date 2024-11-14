@@ -1,6 +1,6 @@
 package com.ssg.wannavapibackend.dto.response;
 
-import com.ssg.wannavapibackend.common.Grade;
+import com.ssg.wannavapibackend.domain.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,11 +10,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MyPageResponseDTO {
+public class MyLikesResponseDTO {
 
-    private String username;
-    private Integer point;
-    private Grade grade;
+    private Restaurant restaurant;
+    private Double ratingAvg;
     private Integer reviewCount;
-    private Integer couponCount;
+    private Integer likesCount;
 }
