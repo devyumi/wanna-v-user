@@ -1,17 +1,8 @@
 package com.ssg.wannavapibackend.domain;
 
 import com.ssg.wannavapibackend.common.BusinessStatus;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -19,7 +10,6 @@ import java.util.List;
 import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.amqp.RabbitConnectionDetails.Address;
 
 @Entity
 @Getter @Setter
@@ -40,6 +30,7 @@ public class Restaurant {
   @Enumerated(EnumType.STRING)
   private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
 
+  @Column(name = "isPark")
   private boolean canPark; //주차 가능 여부
 
 
@@ -90,9 +81,9 @@ public class Restaurant {
    * DDD로 하면 단위 테스트에서 객체 생성만으로 테스트도 가능한 유라함도 가져갈 수 있음
    */
 
-  public double averageRate(){
-    return reviews.stream().mapToInt(Review::getRate).average().getAsDouble(); //평균 계산
-  }
+//  public double averageRate(){
+//    return reviews.stream().mapToInt(Review::getRate).average().getAsDouble(); //평균 계산
+//  }
 
   public int totalReviewCount(){
     return reviews.size();
@@ -100,41 +91,41 @@ public class Restaurant {
 
 
   //상태 설정 메서드로 가자
-  public void changeBusinessStatus(BusinessStatus businessStatus){
-    this.businessStatus = businessStatus;
-  }
+//  public void changeBusinessStatus(BusinessStatus businessStatus){
+//    this.businessStatus = businessStatus;
+//  }
+//
+//
+//  //이건 서비스 단에서 처리해주는 게 맞는 거 같은데 ..
+//  public void calculateBusinessStatus(){
+//    LocalDateTime now = LocalDateTime.now();
+//    String nowDayOfWeek = now.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN); //요일 정보(월요일 , ... , 일요일 ) 담김
+//    BusinessDay businessDay = businessDays.stream()
+//        .filter(bd -> bd.getDayOfWeek().equals(nowDayOfWeek)).findFirst()
+//        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 요일입니다."));
+//    if (businessDay.getIsClose()){
+//      this.businessStatus = BusinessStatus.TODAY_BREAK;
+//    }
+//
+//    LocalDateTime openTime = businessDay.getOpenTime();
+//    LocalDateTime closeTime = businessDay.getCloseTime();
+//    if (now.isAfter(openTime) && now.isBefore(closeTime)) {
+//      LocalDateTime breakStartTime = businessDay.getBreakStartTime();
+//      LocalDateTime breakEndTime = businessDay.getBreakEndTime();
+//      if (now.isAfter(breakStartTime) && now.isBefore(breakEndTime)) {
+//        this.businessStatus = BusinessStatus.BREAK_TIME;
+//      }
+//      this.businessStatus = BusinessStatus.OPEN;
+//    }
+//    else {
+//      this.businessStatus = BusinessStatus.CLOSE;
+//    }
 
 
-  //이건 서비스 단에서 처리해주는 게 맞는 거 같은데 ..
-  public void calculateBusinessStatus(){
-    LocalDateTime now = LocalDateTime.now();
-    String nowDayOfWeek = now.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN); //요일 정보(월요일 , ... , 일요일 ) 담김
-    BusinessDay businessDay = businessDays.stream()
-        .filter(bd -> bd.getDayOfWeek().equals(nowDayOfWeek)).findFirst()
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 요일입니다."));
-    if (businessDay.getIsClose()){
-      this.businessStatus = BusinessStatus.TODAY_BREAK;
-    }
-
-    LocalDateTime openTime = businessDay.getOpenTime();
-    LocalDateTime closeTime = businessDay.getCloseTime();
-    if (now.isAfter(openTime) && now.isBefore(closeTime)) {
-      LocalDateTime breakStartTime = businessDay.getBreakStartTime();
-      LocalDateTime breakEndTime = businessDay.getBreakEndTime();
-      if (now.isAfter(breakStartTime) && now.isBefore(breakEndTime)) {
-        this.businessStatus = BusinessStatus.BREAK_TIME;
-      }
-      this.businessStatus = BusinessStatus.OPEN;
-    }
-    else {
-      this.businessStatus = BusinessStatus.CLOSE;
-    }
 
 
 
-
-
-  }
+//  }
 
 
 

@@ -1,29 +1,22 @@
 package com.ssg.wannavapibackend.dto.response;
 
+import com.ssg.wannavapibackend.domain.Restaurant;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ReservationResponeseDTO {
+public class SeatResponeseDTO {
     /**
-     * 마이페이지 예약 조회 데이터
+     * 예약할 식당의 좌석 데이터
      */
     private Long id;
-
-    private Long userId;
-
-    private Long restaurantId;
-
-    private Long paymentId;
-
+    private Restaurant restaurant;
+    private Boolean reservable;
     private Integer guestCount;
-
-    private LocalDateTime scheduledAt;
+    private Integer seatCount;
 }

@@ -35,11 +35,11 @@ public class Coupon {
     @Enumerated(EnumType.STRING)
     private Type type;
 
-    @Column(name = "fixed_discount")
-    private Integer fixedDiscount;
+    @Column(name = "discount_amount")
+    private Integer discountAmount;
 
-    @Column(name = "percentage_discount")
-    private Integer percentageDiscount;
+    @Column(name = "discount_rate")
+    private Integer discountRate;
 
     @Column(name = "is_active", nullable = false)
     @ColumnDefault("0")
@@ -51,5 +51,5 @@ public class Coupon {
 
     @Column(name="updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 }

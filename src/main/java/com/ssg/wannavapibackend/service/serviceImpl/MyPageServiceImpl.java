@@ -1,12 +1,12 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
-import com.ssg.wannavapibackend.dto.MyPageUpdateDTO;
+import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
 import com.ssg.wannavapibackend.dto.response.MyPageResponseDTO;
+import com.ssg.wannavapibackend.repository.UserRepository;
+import com.ssg.wannavapibackend.repository.mypage.query.MyPageDTORepository;
 import com.ssg.wannavapibackend.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
 
 @RequiredArgsConstructor
 public class MyPageServiceImpl implements MyPageService {
@@ -22,7 +22,8 @@ public class MyPageServiceImpl implements MyPageService {
      */
     @Transactional(readOnly = true)
     public MyPageResponseDTO findMyPage(Long userId) {
-        return myPageDTORepository.findMyPageById(userId);
+        //return myPageDTORepository.findMyPageById(userId);
+        return null;
     }
 
     /**
@@ -33,26 +34,26 @@ public class MyPageServiceImpl implements MyPageService {
      */
     @Transactional
     public void updateMyPage(Long userId, MyPageUpdateDTO myPageUpdateDTO) {
-        User user = userRepository.findById(userId).get();
-
-        userRepository.save(User.builder()
-                .id(user.getId())
-                .username(user.getUsername())
-                .profile(user.getProfile())
-                .email(user.getEmail())
-                .name(myPageUpdateDTO.getName())
-                .phone(user.getPhone())
-                .zipCode(myPageUpdateDTO.getZipCode())
-                .roadAddress(myPageUpdateDTO.getRoadAddress())
-                .landLotAddress(myPageUpdateDTO.getLandLotAddress())
-                .detailAddress(myPageUpdateDTO.getDetailAddress())
-                .referralCode(user.getReferralCode())
-                .point(user.getPoint())
-                .consent(user.getConsent())
-                .isUnregistered(user.getIsUnregistered())
-                .createdAt(user.getCreatedAt())
-                .updatedAt(LocalDateTime.now())
-                .unregisteredAt(user.getUnregisteredAt())
-                .build());
+//        User user = userRepository.findById(userId).get();
+//
+//        userRepository.save(User.builder()
+//                .id(user.getId())
+//                .username(user.getUsername())
+//                .profile(user.getProfile())
+//                .email(user.getEmail())
+//                .name(myPageUpdateDTO.getName())
+//                .phone(user.getPhone())
+//                .zipCode(myPageUpdateDTO.getZipCode())
+//                .roadAddress(myPageUpdateDTO.getRoadAddress())
+//                .landLotAddress(myPageUpdateDTO.getLandLotAddress())
+//                .detailAddress(myPageUpdateDTO.getDetailAddress())
+//                .referralCode(user.getReferralCode())
+//                .point(user.getPoint())
+//                .consent(user.getConsent())
+//                .isUnregistered(user.getIsUnregistered())
+//                .createdAt(user.getCreatedAt())
+//                .updatedAt(LocalDateTime.now())
+//                .unregisteredAt(user.getUnregisteredAt())
+//                .build());
     }
 }
