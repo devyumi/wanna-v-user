@@ -16,6 +16,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     @Override
     public RestaurantResponseDTO getRestaurant(Long restaurantId) {
         Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("Invalid ID value: " + restaurantId));
-        return new RestaurantResponseDTO(restaurant.getId());
+        return new RestaurantResponseDTO(restaurant.getId(), restaurant.isCanPark());
     }
 }
