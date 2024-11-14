@@ -1,9 +1,8 @@
-import { formatPrice } from "/js/common/format.js";
+import { formatPriceElements } from "/js/common/format.js";
 
 document.addEventListener('DOMContentLoaded', function () {
   async function productDetail(productId) {
     const response = await fetch(`/api/products?id=${productId}`);
-    console.log("productId: " + productId)
     const jsonData = await response.json();
     const data = jsonData.data;
 
@@ -23,14 +22,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // productDetail(productId);
 
-  /**
-   * 가격을 한국 원화(KRW) 형식으로 포맷팅
-   */
-  const priceElements = document.querySelectorAll(".price");
-  priceElements.forEach(function (priceElement) {
-    const price = parseInt(priceElement.getAttribute("data-price"));
-    priceElement.textContent = formatPrice(price);
-  })
+  formatPriceElements();
 
   /**
    * 장바구니 담기 상품 수량 증가/감소 버튼
