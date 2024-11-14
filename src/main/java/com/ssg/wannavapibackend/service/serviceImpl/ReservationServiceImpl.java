@@ -2,8 +2,6 @@ package com.ssg.wannavapibackend.service.serviceImpl;
 
 import com.ssg.wannavapibackend.domain.Reservation;
 import com.ssg.wannavapibackend.dto.response.ReservationDTO;
-import com.ssg.wannavapibackend.dto.response.ReservationResponese1DTO;
-import com.ssg.wannavapibackend.dto.response.ReservationResponeseDTO;
 import com.ssg.wannavapibackend.repository.ReservationRepository;
 import com.ssg.wannavapibackend.service.ReservationService;
 import lombok.RequiredArgsConstructor;
@@ -63,8 +61,4 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    @Override
-    public List<ReservationResponese1DTO> getAll(Long restaurantId) {
-        return null;
-    }
 }

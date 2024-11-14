@@ -61,7 +61,7 @@ public class User {
 
     @Column(name="updated_at")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
     @Column(name="unregistered_at")
     @Temporal(TemporalType.TIMESTAMP)
