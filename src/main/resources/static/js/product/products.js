@@ -1,4 +1,4 @@
-import { formatPrice, truncateText, formatPriceElements, formatNameElements } from "/js/common/format.js";
+import { formatPrice, truncateText } from "/js/common/format.js";
 
 document.addEventListener('DOMContentLoaded', function () {
 
@@ -18,8 +18,24 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   productList();
-  formatPriceElements();
-  formatNameElements();
+
+  /**
+   * 가격을 한국 원화(KRW) 형식으로 포맷팅
+   */
+  const priceElements = document.querySelectorAll(".price");
+  priceElements.forEach(function (priceElement) {
+    const price = parseInt(priceElement.getAttribute("data-price"));
+    priceElement.textContent = formatPrice(price);
+  })
+
+  /**
+   * 상품명 말줄임표 형식으로 포맷팅
+   */
+  const nameElements = document.querySelectorAll(".name");
+  nameElements.forEach(function (nameElement) {
+    const name = nameElement.getAttribute("data-name");
+    nameElement.textContent = truncateText(name);
+  })
 
   function renderProducts(products) {
     const productGrid = document.getElementById("product-grid");
