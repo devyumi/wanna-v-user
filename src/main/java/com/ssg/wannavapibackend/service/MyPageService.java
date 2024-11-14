@@ -1,6 +1,6 @@
 package com.ssg.wannavapibackend.service;
 
-import com.ssg.wannavapibackend.dto.MyPageUpdateDTO;
+import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
 import com.ssg.wannavapibackend.dto.response.MyPageResponseDTO;
 import org.springframework.stereotype.Service;
 

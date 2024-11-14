@@ -1,4 +1,4 @@
-package com.ssg.wannavapibackend.dto;
+package com.ssg.wannavapibackend.dto.request;
 
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
