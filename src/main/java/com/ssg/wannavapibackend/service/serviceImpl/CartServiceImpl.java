@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
+import com.ssg.wannavapibackend.common.CartConstraints;
 import com.ssg.wannavapibackend.common.ErrorCode;
 import com.ssg.wannavapibackend.domain.Cart;
 import com.ssg.wannavapibackend.domain.Product;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,9 +30,6 @@ public class CartServiceImpl implements CartService {
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
-
-    private static final int MIN_QUANTITY = 1;
-    private static final int MAX_QUANTITY = 99;
 
     /**
      * 장바구니에 상품 추가
@@ -47,41 +47,58 @@ public class CartServiceImpl implements CartService {
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
-        try {
-            cartRepository.save(Cart.builder()
-                .product(product)
-                .user(user)
-                .quantity(requestDTO.getQuantity())
-                .createdAt(requestDTO.getCreatedAt())
+        // 장바구니에 이미 존재하는 상품이 있는지 확인
+        Cart existingCart = cartRepository.findByUserIdAndProductId(userId, productId)
+            .orElse(null);
+
+        // 장바구니 최대 개수 제한 체크 (새로운 상품을 추가할 때만)
+        if (existingCart == null && cartRepository.countByUserId(userId) >= CartConstraints.CART_MAX_ITEMS.getValue()) {
+            throw new CustomException(ErrorCode.CART_ITEM_LIMIT_EXCEEDED);
+        }
+
+        // 기존 장바구니 상품이 있으면 수량 업데이트
+        if (existingCart != null) {
+            updateCartItemQuantity(CartItemQuantityUpdateDTO.builder()
+                .cartId(existingCart.getId())
+                .quantity(requestDTO.getQuantity() + existingCart.getQuantity())
                 .build());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ErrorCode.CART_ITEM_ADD_FAILED);
+        } else {
+            // 새로운 장바구니 상품 추가
+            try {
+                Cart newCartItem = Cart.builder()
+                    .product(product)
+                    .user(user)
+                    .quantity(requestDTO.getQuantity())
+                    .createdAt(requestDTO.getCreatedAt())
+                    .build();
+
+                cartRepository.save(newCartItem);
+            } catch (Exception e) {
+                log.error(e.getMessage());
+                throw new CustomException(ErrorCode.CART_ITEM_ADD_FAILED);
+            }
         }
     }
 
     /**
      * 장바구니 상품 리스트 조회
+     *
      * @param userId - 로그인한 유저 ID
      */
     @Transactional(readOnly = true)
     public List<CartResponseDTO> getCartItemList(Long userId) {
-        List<Cart> cartList = cartRepository.findAllByUserId(userId);
+        List<Cart> cartList = cartRepository.findAllByUserId(userId, Sort.by(Sort.Order.desc("id")));
 
-        for (Cart cart : cartList)  {
-            log.info(cart.toString());
+        if (cartList.isEmpty()) {
+            throw new CustomException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
 
         return cartList.stream()
-            .map(cart -> new CartResponseDTO(
-                cart.getId(),
-                cart.getQuantity(),
-                cart.getProduct().getName(),
-                cart.getProduct().getImage(),
-                cart.getProduct().getFinalPrice()
-            )).collect(Collectors.toList());
-    }
+            .map(cart -> new CartResponseDTO(cart.getId(), cart.getQuantity(),
+                cart.getProduct().getName(), cart.getProduct().getImage(),
+                cart.getProduct().getFinalPrice())).collect(Collectors.toList());
 
+    }
 
     /**
      * 장바구니 상품 수량 변경
@@ -95,7 +112,8 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartRepository.findById(cartId)
             .orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
 
-        if (MIN_QUANTITY > updateDTO.getQuantity() || updateDTO.getQuantity() > MAX_QUANTITY) {
+        if (CartConstraints.MIN_PRODUCT_QUANTITY.getValue() > updateDTO.getQuantity()
+            || updateDTO.getQuantity() > CartConstraints.MAX_PRODUCT_QUANTITY.getValue()) {
             throw new CustomException(ErrorCode.INVALID_PRODUCT_QUANTITY);
         }
 
