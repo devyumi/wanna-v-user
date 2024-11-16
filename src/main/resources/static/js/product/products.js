@@ -30,10 +30,10 @@ document.addEventListener('DOMContentLoaded', function () {
       productItem.classList.add('product-item');
 
       const productLink = document.createElement('a');
-      productLink.href = `/products?id=${product.id}`;
+      productLink.href = `/products/${product.id}`;
 
       const productImage = document.createElement('img');
-      productImage.src = product.image[0];
+      productImage.src = product.image;
       productImage.alt = 'Product image';
 
       const productPriceContainer = document.createElement('div');

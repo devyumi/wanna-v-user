@@ -2,7 +2,7 @@ import { formatPriceElements } from "/js/common/format.js";
 
 document.addEventListener('DOMContentLoaded', function () {
   async function productDetail(productId) {
-    const response = await fetch(`/api/v1/products?id=${productId}`);
+    const response = await fetch(`/api/v1/products/${productId}`);
     const jsonData = await response.json();
     const data = jsonData.data;
 
