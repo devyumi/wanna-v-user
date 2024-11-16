@@ -15,10 +15,9 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class CartRequestDTO {
+public class CartItemQuantityUpdateDTO {
 
-    private Integer productId;
-    private Integer userId;
+    private Integer cartId;
 
     @Positive(message = "Quantity must be a positive number.")
     @Min(value = 1, message = "Quantity must be at least 1.")
@@ -26,5 +25,5 @@ public class CartRequestDTO {
     private Integer quantity;
 
     @Builder.Default
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime updatedAt = LocalDateTime.now();
 }

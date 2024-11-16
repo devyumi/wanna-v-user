@@ -4,6 +4,7 @@ import com.ssg.wannavapibackend.common.ErrorCode;
 import com.ssg.wannavapibackend.domain.Cart;
 import com.ssg.wannavapibackend.domain.Product;
 import com.ssg.wannavapibackend.domain.User;
+import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
 import com.ssg.wannavapibackend.dto.response.ProductResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
@@ -28,6 +29,9 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+
+    private static final int MIN_QUANTITY = 1;
+    private static final int MAX_QUANTITY = 99;
 
     /**
      * 상품 전체 조회
@@ -63,26 +67,49 @@ public class ProductServiceImpl implements ProductService {
     public void addCartItem(CartRequestDTO requestDTO) {
         long userId = requestDTO.getUserId();
         long productId = requestDTO.getProductId();
-        log.info("!!!!!!\nuserId"+ userId + "\nproductId"  + productId);
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-        log.info("!!!!!!\nuser"+ user.toString());
 
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-        log.info("!!!!!!\nproduct"+ product.toString());
 
         try {
             cartRepository.save(Cart.builder()
-                    .product(product)
-                    .user(user)
-                    .quantity(requestDTO.getQuantity())
-                    .createdAt(requestDTO.getCreatedAt())
+                .product(product)
+                .user(user)
+                .quantity(requestDTO.getQuantity())
+                .createdAt(requestDTO.getCreatedAt())
                 .build());
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new CustomException(ErrorCode.CART_ADD_FAILED);
+            throw new CustomException(ErrorCode.CART_ITEM_ADD_FAILED);
         }
     }
+
+    /**
+     * 장바구니 상품 수량 변경
+     *
+     * @param updateDTO
+     */
+    @Transactional
+    public void updateCartItemQuantity(CartItemQuantityUpdateDTO updateDTO) {
+        long cartId = updateDTO.getCartId();
+
+        Cart cart = cartRepository.findById(cartId)
+            .orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+        if (MIN_QUANTITY > updateDTO.getQuantity() || updateDTO.getQuantity() > MAX_QUANTITY) {
+            throw new CustomException(ErrorCode.INVALID_PRODUCT_QUANTITY);
+        }
+        try {
+            cart.updateQuantity(updateDTO.getQuantity());
+            cartRepository.save(cart);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ErrorCode.CART_ITEM_UPDATE_FAILED);
+        }
+    }
+
+
 }

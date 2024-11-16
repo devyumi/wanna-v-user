@@ -40,4 +40,8 @@ public class Cart {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:MM:SS")
     private LocalDateTime updatedAt;
+
+    public void updateQuantity(int quantity) {
+        this.quantity = quantity;
+    }
 }
