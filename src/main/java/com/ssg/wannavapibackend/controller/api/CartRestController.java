@@ -2,10 +2,11 @@ package com.ssg.wannavapibackend.controller.api;
 
 import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
+import com.ssg.wannavapibackend.dto.response.CartResponseDTO;
 import com.ssg.wannavapibackend.service.CartService;
-import com.ssg.wannavapibackend.service.ProductService;
 import jakarta.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -38,6 +39,19 @@ public class CartRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @GetMapping("/list")
+    public ResponseEntity<Map<String, Object>> getCartItemList()  {
+        Long userId = 1L; // Security 적용 후 삭제 예정
+
+        List<CartResponseDTO> cartItems = cartService.getCartItemList(userId);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+        response.put("data", cartItems);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PatchMapping()
     public ResponseEntity<Map<String, String>> updateCartItemQuantity(@RequestBody @Valid
         CartItemQuantityUpdateDTO updateDTO) {
@@ -59,7 +73,7 @@ public class CartRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/list")
+    @GetMapping()
     public String getCartList() {
         return """
             {
