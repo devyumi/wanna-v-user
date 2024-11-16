@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.domain;
 
+import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -41,7 +42,8 @@ public class Cart {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:MM:SS")
     private LocalDateTime updatedAt;
 
-    public void updateQuantity(int quantity) {
-        this.quantity = quantity;
+    public void updateQuantity(CartItemQuantityUpdateDTO updateDTO) {
+        this.quantity = updateDTO.getQuantity();
+        this.updatedAt = updateDTO.getUpdatedAt();
     }
 }

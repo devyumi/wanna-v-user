@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.controller.api;
 
+import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
 import com.ssg.wannavapibackend.service.ProductService;
 import jakarta.validation.Valid;
@@ -10,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,6 +28,17 @@ public class CartRestController {
     @PostMapping()
     public ResponseEntity<Map<String, String>> addCartItem(@RequestBody @Valid CartRequestDTO requestDTO)  {
         productService.addCartItem(requestDTO);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", "success");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping()
+    public ResponseEntity<Map<String, String>> updateCartItemQuantity(@RequestBody @Valid
+        CartItemQuantityUpdateDTO updateDTO) {
+        productService.updateCartItemQuantity(updateDTO);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");

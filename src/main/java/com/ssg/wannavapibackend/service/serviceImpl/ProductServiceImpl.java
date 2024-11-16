@@ -103,7 +103,7 @@ public class ProductServiceImpl implements ProductService {
             throw new CustomException(ErrorCode.INVALID_PRODUCT_QUANTITY);
         }
         try {
-            cart.updateQuantity(updateDTO.getQuantity());
+            cart.updateQuantity(updateDTO);
             cartRepository.save(cart);
         } catch (Exception e) {
             log.error(e.getMessage());
