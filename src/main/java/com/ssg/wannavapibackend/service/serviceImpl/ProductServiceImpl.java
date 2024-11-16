@@ -59,16 +59,19 @@ public class ProductServiceImpl implements ProductService {
      *
      * @param requestDTO
      */
-    @Transactional(readOnly = true)
+    @Transactional
     public void addCartItem(CartRequestDTO requestDTO) {
         long userId = requestDTO.getUserId();
         long productId = requestDTO.getProductId();
+        log.info("!!!!!!\nuserId"+ userId + "\nproductId"  + productId);
 
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+        log.info("!!!!!!\nuser"+ user.toString());
 
         Product product = productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+        log.info("!!!!!!\nproduct"+ product.toString());
 
         try {
             cartRepository.save(Cart.builder()
