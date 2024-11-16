@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.controller.api;
 
 import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
+import com.ssg.wannavapibackend.service.CartService;
 import com.ssg.wannavapibackend.service.ProductService;
 import jakarta.validation.Valid;
 import java.util.HashMap;
@@ -25,11 +26,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/cart")
 public class CartRestController {
 
-    private final ProductService productService;
+    private final CartService cartService;
 
     @PostMapping()
     public ResponseEntity<Map<String, String>> addCartItem(@RequestBody @Valid CartRequestDTO requestDTO)  {
-        productService.addCartItem(requestDTO);
+        cartService.addCartItem(requestDTO);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -40,7 +41,7 @@ public class CartRestController {
     @PatchMapping()
     public ResponseEntity<Map<String, String>> updateCartItemQuantity(@RequestBody @Valid
         CartItemQuantityUpdateDTO updateDTO) {
-        productService.updateCartItemQuantity(updateDTO);
+        cartService.updateCartItemQuantity(updateDTO);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -50,7 +51,7 @@ public class CartRestController {
 
     @DeleteMapping("/{cartId}")
     public ResponseEntity<Map<String, String>> deleteCartItem(@PathVariable Long cartId) {
-        productService.deleteCartItem(cartId);
+        cartService.deleteCartItem(cartId);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
