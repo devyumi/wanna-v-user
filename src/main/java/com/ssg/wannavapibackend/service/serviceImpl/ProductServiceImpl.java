@@ -27,11 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
-    private final CartRepository cartRepository;
-    private final UserRepository userRepository;
-
-    private static final int MIN_QUANTITY = 1;
-    private static final int MAX_QUANTITY = 99;
 
     /**
      * 상품 전체 조회
@@ -57,73 +52,5 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findById(productId)
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
     }
-
-    /**
-     * 장바구니에 상품 추가
-     *
-     * @param requestDTO
-     */
-    @Transactional
-    public void addCartItem(CartRequestDTO requestDTO) {
-        long userId = requestDTO.getUserId();
-        long productId = requestDTO.getProductId();
-
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-
-        Product product = productRepository.findById(productId)
-            .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-
-        try {
-            cartRepository.save(Cart.builder()
-                .product(product)
-                .user(user)
-                .quantity(requestDTO.getQuantity())
-                .createdAt(requestDTO.getCreatedAt())
-                .build());
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ErrorCode.CART_ITEM_ADD_FAILED);
-        }
-    }
-
-    /**
-     * 장바구니 상품 수량 변경
-     *
-     * @param updateDTO
-     */
-    @Transactional
-    public void updateCartItemQuantity(CartItemQuantityUpdateDTO updateDTO) {
-        long cartId = updateDTO.getCartId();
-
-        Cart cart = cartRepository.findById(cartId)
-            .orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
-
-        if (MIN_QUANTITY > updateDTO.getQuantity() || updateDTO.getQuantity() > MAX_QUANTITY) {
-            throw new CustomException(ErrorCode.INVALID_PRODUCT_QUANTITY);
-        }
-
-        try {
-            cart.updateQuantity(updateDTO);
-            cartRepository.save(cart);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ErrorCode.CART_ITEM_UPDATE_FAILED);
-        }
-    }
-
-    @Transactional
-    public void deleteCartItem(Long cartId) {
-        cartRepository.findById(cartId)
-            .orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
-
-        try {
-            cartRepository.deleteById(cartId);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new CustomException(ErrorCode.CART_ITEM_DELETE_FAILED);
-        }
-    }
-
 
 }

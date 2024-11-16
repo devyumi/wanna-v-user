@@ -12,10 +12,4 @@ public interface ProductService {
 
     Product getProduct(Long productId);
 
-    void addCartItem(CartRequestDTO requestDTO);
-
-    void updateCartItemQuantity(CartItemQuantityUpdateDTO updateDTO);
-
-    void deleteCartItem(Long cartId);
-
 }

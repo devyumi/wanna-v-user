@@ -14,7 +14,7 @@
 <main layout:fragment="main-content" th:class="main-container">
     <div class="product-container">
       <div class="detail-container">
-        <img th:id="product-image" th:src="${product.image[0]}" alt="Product image"/>
+        <img th:id="product-image" th:src="${product.image}" alt="Product image"/>
         <div class="product-info-container">
           <p class="product-name" th:id="product-name" th:text="${product.name}"></p>
           <div class="product-price-container">
