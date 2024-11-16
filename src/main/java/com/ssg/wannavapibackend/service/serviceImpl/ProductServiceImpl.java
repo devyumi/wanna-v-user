@@ -102,12 +102,26 @@ public class ProductServiceImpl implements ProductService {
         if (MIN_QUANTITY > updateDTO.getQuantity() || updateDTO.getQuantity() > MAX_QUANTITY) {
             throw new CustomException(ErrorCode.INVALID_PRODUCT_QUANTITY);
         }
+
         try {
             cart.updateQuantity(updateDTO);
             cartRepository.save(cart);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new CustomException(ErrorCode.CART_ITEM_UPDATE_FAILED);
+        }
+    }
+
+    @Transactional
+    public void deleteCartItem(Long cartId) {
+        cartRepository.findById(cartId)
+            .orElseThrow(() -> new CustomException(ErrorCode.CART_ITEM_NOT_FOUND));
+
+        try {
+            cartRepository.deleteById(cartId);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ErrorCode.CART_ITEM_DELETE_FAILED);
         }
     }
 

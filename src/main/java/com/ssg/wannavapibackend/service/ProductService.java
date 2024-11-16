@@ -16,4 +16,6 @@ public interface ProductService {
 
     void updateCartItemQuantity(CartItemQuantityUpdateDTO updateDTO);
 
+    void deleteCartItem(Long cartId);
+
 }
