@@ -1,8 +1,9 @@
 package com.ssg.wannavapibackend.common;
 
 public enum ErrorCode {
-    EXAMPLE_ERROR(404, "index.css"),
-    INVALID_VALUE(400, "Invalid value index.css error message️");
+    USER_NOT_FOUND(404, "The user ID does not exist"),
+    PRODUCT_NOT_FOUND(404, "The product does not exist"),
+    CART_ADD_FAILED(400, "Failed to add product to cart");
 
     private int code;
     private String message;
@@ -18,5 +19,9 @@ public enum ErrorCode {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getError() {
+        return "[" + code + "]" + " " + message;
     }
 }
