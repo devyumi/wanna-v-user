@@ -9,16 +9,28 @@ const MAX_PRODUCT_QUANTITY = 99;
 
 formatPriceElements(); // 가격을 한국 원화(KRW) 형식으로 포맷팅
 formatNameElements(); // 상품명을 말줄임표 형식으로 포맷팅
-updateTotalPrice();
+updateTotalPrice(); // 총 결제 금액
 
 /**
  * 전체 체크박스
  * @param checkbox
  */
-document.getElementById('cart-item-check-all').addEventListener("click", function(event) {
-  const isChecked = event.target.checked;  // event.target을 통해 클릭된 체크박스를 참조
-  document.querySelectorAll('.cart-item-check').forEach(item => {
-    item.checked = isChecked;
+document.getElementById('cart-item-check-all').addEventListener("click",
+    function (event) {
+      const isChecked = event.target.checked;  // event.target을 통해 클릭된 체크박스를 참조
+      document.querySelectorAll('.cart-item-check').forEach(item => {
+        item.checked = isChecked;
+      });
+
+      updateTotalPrice();
+    });
+
+/**
+ * 상품별 체크박스 클릭 이벤트
+ */
+document.querySelectorAll('.cart-item-check').forEach(checkbox => {
+  checkbox.addEventListener('click', function () {
+    updateTotalPrice();
   });
 });
 
@@ -125,7 +137,7 @@ async function updateQuantity(inputElement) {
 }
 
 /**
- * 결제하는 최종 가격으로 갱신
+ * 결제하는 최종 가격으로 갱신 (선택된 상품만 반영)
  * @returns {Promise<void>}
  */
 function updateTotalPrice() {
@@ -136,11 +148,17 @@ function updateTotalPrice() {
   let total = 0;
 
   itemPrices.forEach(priceElement => {
-    const price = parseFloat(priceElement.getAttribute('data-price'));
-    if (!isNaN(price)) {
-      total += price;
-    } else {
-      console.warn('data-price가 올바르지 않음:', priceElement);
+    const checkbox = priceElement.closest('.product-item').querySelector(
+        '.cart-item-check');
+
+    // 체크박스가 선택된 경우에만 가격을 합산
+    if (checkbox && checkbox.checked) {
+      const price = parseFloat(priceElement.getAttribute('data-price'));
+      if (!isNaN(price)) {
+        total += price;
+      } else {
+        console.warn('data-price가 올바르지 않음:', priceElement);
+      }
     }
   });
 
