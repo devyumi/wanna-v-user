@@ -110,7 +110,6 @@ public class CartServiceImpl implements CartService {
      */
     @Transactional
     public void updateCartItemQuantity(CartItemQuantityUpdateDTO updateDTO) {
-        log.info("!!!!!" + updateDTO.toString());
         long cartId = updateDTO.getCartId();
 
         Cart cart = cartRepository.findById(cartId)

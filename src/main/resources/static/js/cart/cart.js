@@ -64,8 +64,6 @@ async function updateQuantity(inputElement) {
   const quantity = parseInt(inputElement.value);
   const cartId = inputElement.getAttribute('data-id');
 
-  console.log('수량 변경, item.id:', cartId, '변경된 수량:', quantity);
-
   // 수량이 1 이상 99 이하인지 확인
   if (quantity < MIN_PRODUCT_QUANTITY || quantity > MAX_PRODUCT_QUANTITY) {
     alert("수량은 1 이상 99 이하이어야 합니다.");
