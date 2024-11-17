@@ -10,6 +10,7 @@ import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CartResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
 import com.ssg.wannavapibackend.repository.CartRepository;
+import com.ssg.wannavapibackend.repository.CartRepositoryCustom;
 import com.ssg.wannavapibackend.repository.ProductRepository;
 import com.ssg.wannavapibackend.repository.UserRepository;
 import com.ssg.wannavapibackend.service.CartService;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +29,7 @@ public class CartServiceImpl implements CartService {
 
     private final ProductRepository productRepository;
     private final CartRepository cartRepository;
+    private final CartRepositoryCustom cartRepositoryCustom;
     private final UserRepository userRepository;
 
     /**
@@ -140,5 +141,10 @@ public class CartServiceImpl implements CartService {
             log.error(e.getMessage());
             throw new CustomException(ErrorCode.CART_ITEM_DELETE_FAILED);
         }
+    }
+
+    @Transactional
+    public void deleteCartItems(List<Long> cartIds) {
+        cartRepositoryCustom.deleteCartItems(cartIds);
     }
 }
