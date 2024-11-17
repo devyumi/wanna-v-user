@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+>
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/css/cart/cart.css">
+  <script defer type="module" src="/js/cart/cart.js"></script>
+  <title>Product Detail Page</title>
+</head>
+<body>
+<main layout:fragment="main-content" th:class="main-container">
+  <h3 class="page-title">장바구니</h3>
+  <div class="action-bar">
+    <div class="checkbox-container">
+      <input
+          class="cart-item-check"
+          id="cart-item-check-all"
+          type="checkbox"
+          onclick="selectAllItems(this)"
+      />
+      <label for="cart-item-check-all" class="checkbox-label"></label>
+    </div>
+    <div>
+      <button class="btn-delete" onclick="deleteSelectedItems()">선택 삭제</button>
+    </div>
+  </div>
+  <div class="cart-grid">
+    <div class="product-item" th:each="item : ${cartItems}">
+      <div class="cart-item-container">
+        <div class="checkbox-container">
+          <input
+              class="cart-item-check"
+              type="checkbox"
+              th:data-id="${item.id}"
+              onchange="updateItemSelection(this)"
+          />
+          <label th:for="'cart-item-check-' + ${item.id}" class="checkbox-label"></label>
+        </div>
+        <div class="product-container">
+          <a th:href="@{/products/{id}(id=${item.productId})}">
+            <div class="image-container">
+              <img th:src="@{${item.productImage}}" alt="Product image"/>
+            </div>
+          </a>
+          <div class="product-info">
+            <a th:href="@{/products/{id}(id=${item.productId})}">
+              <p class="product-name" th:text="${item.productName}"></p>
+            </a>
+            <div class="item-controls">
+              <span class="hidden-final-price" th:text="${item.productFinalPrice}" hidden="hidden"></span>
+              <div class="input-group quantity-selector">
+                <button
+                    class="btn btn-outline-secondary quantity-decrease"
+                    type="button"
+                >
+                  -
+                </button>
+                <input
+                    type="number"
+                    class="form-control text-center item-quantity"
+                    min="1"
+                    max="99"
+                    step="1"
+                    th:value="${item.quantity}"
+                    th:data-id="${item.id}"
+                />
+                <button
+                    class="btn btn-outline-secondary quantity-increase"
+                    type="button"
+                >
+                  +
+                </button>
+              </div>
+              <span class="product-total-price price" th:data-price="${item.productFinalPrice * item.quantity}"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="action-button">
+    <div class="total-price">
+      <div>총</div>
+      <div class="total-price-amount" th:text="totalPrice"></div>
+    </div>
+    <!--    <button class="btn-payment" onclick="proceedToPayment()">결제</button>-->
+    <button class="btn-payment">결제</button>
+  </footer>
+</main>
+</body>
+</html>

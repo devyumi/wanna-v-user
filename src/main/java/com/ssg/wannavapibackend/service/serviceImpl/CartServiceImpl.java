@@ -52,7 +52,8 @@ public class CartServiceImpl implements CartService {
             .orElse(null);
 
         // 장바구니 최대 개수 제한 체크 (새로운 상품을 추가할 때만)
-        if (existingCart == null && cartRepository.countByUserId(userId) >= CartConstraints.CART_MAX_ITEMS.getValue()) {
+        if (existingCart == null
+            && cartRepository.countByUserId(userId) >= CartConstraints.CART_MAX_ITEMS.getValue()) {
             throw new CustomException(ErrorCode.CART_ITEM_LIMIT_EXCEEDED);
         }
 
@@ -87,7 +88,8 @@ public class CartServiceImpl implements CartService {
      */
     @Transactional(readOnly = true)
     public List<CartResponseDTO> getCartItemList(Long userId) {
-        List<Cart> cartList = cartRepository.findAllByUserId(userId, Sort.by(Sort.Order.desc("id")));
+        List<Cart> cartList = cartRepository.findAllByUserId(userId,
+            Sort.by(Sort.Order.desc("id")));
 
         if (cartList.isEmpty()) {
             throw new CustomException(ErrorCode.CART_ITEM_NOT_FOUND);
@@ -95,8 +97,9 @@ public class CartServiceImpl implements CartService {
 
         return cartList.stream()
             .map(cart -> new CartResponseDTO(cart.getId(), cart.getQuantity(),
-                cart.getProduct().getName(), cart.getProduct().getImage(),
-                cart.getProduct().getFinalPrice())).collect(Collectors.toList());
+                cart.getProduct().getId(), cart.getProduct().getName(),
+                cart.getProduct().getImage(), cart.getProduct().getFinalPrice()))
+            .collect(Collectors.toList());
 
     }
 
@@ -107,6 +110,7 @@ public class CartServiceImpl implements CartService {
      */
     @Transactional
     public void updateCartItemQuantity(CartItemQuantityUpdateDTO updateDTO) {
+        log.info("!!!!!" + updateDTO.toString());
         long cartId = updateDTO.getCartId();
 
         Cart cart = cartRepository.findById(cartId)
