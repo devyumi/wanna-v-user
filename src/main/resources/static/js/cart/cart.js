@@ -12,76 +12,49 @@ formatNameElements(); // 상품명을 말줄임표 형식으로 포맷팅
 updateTotalPrice(); // 총 결제 금액
 
 /**
- * 전체 체크박스
- * @param checkbox
+ * 전체 체크박스 클릭 이벤트 핸들러
+ * @param event
  */
-document.getElementById('cart-item-check-all').addEventListener("click",
-    function (event) {
-      const isChecked = event.target.checked;  // event.target을 통해 클릭된 체크박스를 참조
-      document.querySelectorAll('.cart-item-check').forEach(item => {
-        item.checked = isChecked;
-      });
+function toggleAllCheckboxes(event) {
+  const isChecked = event.target.checked;
+  document.querySelectorAll('.cart-item-check').forEach(item => {
+    item.checked = isChecked;
+  });
 
-      updateTotalPrice();
-    });
+  updateTotalPrice();  // 체크박스 변경 후 총 금액 갱신
+}
 
 /**
- * 상품별 체크박스 클릭 이벤트
+ * 수량 변경 함수
+ * @param quantityInput
+ * @param isIncrease
  */
-document.querySelectorAll('.cart-item-check').forEach(checkbox => {
-  checkbox.addEventListener('click', function () {
-    updateTotalPrice();
-  });
-});
+async function changeQuantity(quantityInput, isIncrease) {
+  let quantity = parseInt(quantityInput.value);
+  if (isIncrease && quantity < MAX_PRODUCT_QUANTITY) {
+    quantity++;
+  } else if (!isIncrease && quantity > MIN_PRODUCT_QUANTITY) {
+    quantity--;
+  }
+
+  quantityInput.value = quantity;
+  await updateQuantity(quantityInput); // 수량 업데이트
+}
 
 /**
- * 수량 감소 버튼
- * @param button
+ * 수량 직접 입력 함수
+ * @param input
  */
-document.querySelectorAll('.quantity-decrease').forEach(button => {
-  button.addEventListener('click', async function () {
-    const quantityInput = this.closest('.quantity-selector').querySelector(
-        '.item-quantity');
-    let quantity = parseInt(quantityInput.value);
-    if (quantity > MIN_PRODUCT_QUANTITY) {
-      quantity--;
-      quantityInput.value = quantity;
-      await updateQuantity(quantityInput);  // 수량 업데이트
-    }
-  });
-});
-
-/**
- * 수량 증가 버튼
- * @param button
- */
-document.querySelectorAll('.quantity-increase').forEach(button => {
-  button.addEventListener('click', async function () {
-    const quantityInput = this.closest('.quantity-selector').querySelector(
-        '.item-quantity');
-    let quantity = parseInt(quantityInput.value);
-    if (quantity < MAX_PRODUCT_QUANTITY) {
-      quantity++;
-      quantityInput.value = quantity;
-      await updateQuantity(quantityInput);  // 수량 업데이트
-    }
-  });
-});
-
-/**
- * 상품 수량 직접 입력
- */
-document.querySelectorAll('.item-quantity').forEach(input => {
-  input.addEventListener('input', async function () {
-    const quantity = parseInt(this.value);
-    if (quantity >= MIN_PRODUCT_QUANTITY && quantity <= MAX_PRODUCT_QUANTITY) {
-      await updateQuantity(this);  // 수량 업데이트
-    } else {
-      alert('수량은 1 이상 99 이하로 입력해주세요.');
-      this.value = Math.min(Math.max(quantity, 1), MAX_PRODUCT_QUANTITY);  // 유효한 범위로 조정
-    }
-  });
-});
+async function handleQuantityInput(input) {
+  const quantity = parseInt(input.value);
+  if (quantity >= MIN_PRODUCT_QUANTITY && quantity <= MAX_PRODUCT_QUANTITY) {
+    await updateQuantity(input); // 수량 업데이트
+  } else {
+    alert('수량은 1 이상 99 이하로 입력해주세요.');
+    input.value = Math.min(Math.max(quantity, MIN_PRODUCT_QUANTITY),
+        MAX_PRODUCT_QUANTITY); // 유효한 범위로 조정
+  }
+}
 
 /**
  * 장바구니 상품 수량 변경
@@ -166,3 +139,32 @@ function updateTotalPrice() {
     totalPriceElement.textContent = formatPrice(total);
   }
 }
+
+document.getElementById('cart-item-check-all').addEventListener("click",
+    toggleAllCheckboxes);
+
+document.querySelectorAll('.cart-item-check').forEach(checkbox => {
+  checkbox.addEventListener('click', updateTotalPrice);  // 개별 체크박스 클릭 시 총 금액 갱신
+});
+
+document.querySelectorAll('.quantity-decrease').forEach(button => {
+  button.addEventListener('click', async function () {
+    const quantityInput = this.closest('.quantity-selector').querySelector(
+        '.item-quantity');
+    await changeQuantity(quantityInput, false); // 수량 감소
+  });
+});
+
+document.querySelectorAll('.quantity-increase').forEach(button => {
+  button.addEventListener('click', async function () {
+    const quantityInput = this.closest('.quantity-selector').querySelector(
+        '.item-quantity');
+    await changeQuantity(quantityInput, true); // 수량 증가
+  });
+});
+
+document.querySelectorAll('.item-quantity').forEach(input => {
+  input.addEventListener('input', async function () {
+    await handleQuantityInput(this); // 수량 직접 입력 처리
+  });
+});
