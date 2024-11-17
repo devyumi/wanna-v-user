@@ -19,7 +19,6 @@
           class="cart-item-check"
           id="cart-item-check-all"
           type="checkbox"
-          onclick="selectAllItems(this)"
       />
       <label for="cart-item-check-all" class="checkbox-label"></label>
     </div>
@@ -35,8 +34,9 @@
               class="cart-item-check"
               type="checkbox"
               th:data-id="${item.id}"
-              onchange="updateItemSelection(this)"
-          />
+              th:id="'cart-item-check-' + ${item.id}"/>
+<!--              onchange="updateItemSelection(this)"-->
+<!--          />-->
           <label th:for="'cart-item-check-' + ${item.id}" class="checkbox-label"></label>
         </div>
         <div class="product-container">
@@ -50,7 +50,8 @@
               <p class="product-name" th:text="${item.productName}"></p>
             </a>
             <div class="item-controls">
-              <span class="hidden-final-price" th:text="${item.productFinalPrice}" hidden="hidden"></span>
+              <span class="hidden-final-price" th:text="${item.productFinalPrice}"
+                    hidden="hidden"></span>
               <div class="input-group quantity-selector">
                 <button
                     class="btn btn-outline-secondary quantity-decrease"
@@ -74,7 +75,8 @@
                   +
                 </button>
               </div>
-              <span class="product-total-price price" th:data-price="${item.productFinalPrice * item.quantity}"></span>
+              <span class="product-total-price price"
+                    th:data-price="${item.productFinalPrice * item.quantity}"></span>
             </div>
           </div>
         </div>

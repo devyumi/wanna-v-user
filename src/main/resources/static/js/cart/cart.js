@@ -12,6 +12,17 @@ formatNameElements(); // 상품명을 말줄임표 형식으로 포맷팅
 updateTotalPrice();
 
 /**
+ * 전체 체크박스
+ * @param checkbox
+ */
+document.getElementById('cart-item-check-all').addEventListener("click", function(event) {
+  const isChecked = event.target.checked;  // event.target을 통해 클릭된 체크박스를 참조
+  document.querySelectorAll('.cart-item-check').forEach(item => {
+    item.checked = isChecked;
+  });
+});
+
+/**
  * 수량 감소 버튼
  * @param button
  */
@@ -125,11 +136,9 @@ function updateTotalPrice() {
   let total = 0;
 
   itemPrices.forEach(priceElement => {
-    console.log("itemPrices: " + itemPrices)
     const price = parseFloat(priceElement.getAttribute('data-price'));
     if (!isNaN(price)) {
       total += price;
-      console.log("total: " + total)
     } else {
       console.warn('data-price가 올바르지 않음:', priceElement);
     }
