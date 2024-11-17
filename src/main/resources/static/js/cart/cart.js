@@ -9,6 +9,7 @@ const MAX_PRODUCT_QUANTITY = 99;
 
 formatPriceElements(); // 가격을 한국 원화(KRW) 형식으로 포맷팅
 formatNameElements(); // 상품명을 말줄임표 형식으로 포맷팅
+updateTotalPrice();
 
 /**
  * 수량 감소 버튼
@@ -89,8 +90,52 @@ async function updateQuantity(inputElement) {
       }
     });
 
+    const productInfo = inputElement.closest('.product-info'); // 가격을 표시하는 엘리먼트 찾기
+    const priceElement = productInfo.querySelector('.product-total-price'); // 최종 가격을 보여줄 요소
+    const productFinalPriceElement = productInfo.querySelector(
+        '.hidden-final-price');  // 개별 제품 가격
+
+    // 제품 단가 가져오기 (hidden 상태로 보유된 값)
+    const productFinalPrice = parseFloat(productFinalPriceElement.textContent);  // 제품 가격
+
+    // 최종 가격 계산
+    const totalPrice = productFinalPrice * quantity;  // 최종 가격 = 단가 * 수량
+    priceElement.textContent = formatPrice(totalPrice);  // 최종 가격을 포맷하여 표시
+
+    // 최종 가격을 data-price 속성에도 업데이트
+    priceElement.setAttribute('data-price', totalPrice);
+
+    await updateTotalPrice();  // 최종 가격을 갱신하는 함수 호출
+
   } catch (error) {
     // 오류 발생 시
     console.error('수량 업데이트 실패:', error);
+  }
+}
+
+/**
+ * 결제하는 최종 가격으로 갱신
+ * @returns {Promise<void>}
+ */
+function updateTotalPrice() {
+  const totalPriceElement = document.querySelector(
+      '.total-price .total-price-amount');
+  const itemPrices = document.querySelectorAll('.product-total-price');
+
+  let total = 0;
+
+  itemPrices.forEach(priceElement => {
+    console.log("itemPrices: " + itemPrices)
+    const price = parseFloat(priceElement.getAttribute('data-price'));
+    if (!isNaN(price)) {
+      total += price;
+      console.log("total: " + total)
+    } else {
+      console.warn('data-price가 올바르지 않음:', priceElement);
+    }
+  });
+
+  if (totalPriceElement) {
+    totalPriceElement.textContent = formatPrice(total);
   }
 }
