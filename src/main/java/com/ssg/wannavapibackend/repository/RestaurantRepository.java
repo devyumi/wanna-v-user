@@ -144,4 +144,7 @@ public class RestaurantRepository {
 
 
 
+    Restaurant findByNameContaining(String name);
+
+    Restaurant findByNameContainingAndNameContaining(String name1, String name2);
 }

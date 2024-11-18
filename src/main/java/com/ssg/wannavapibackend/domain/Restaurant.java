@@ -1,6 +1,5 @@
-package com.ssg.wannavapibackend.domain;
+package please_do_it.yumi.domain;
 
-import com.ssg.wannavapibackend.common.BusinessStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.ElementCollection;
@@ -22,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
+import please_do_it.yumi.constant.BusinessStatus;
 
 @Entity
 @Getter @Setter

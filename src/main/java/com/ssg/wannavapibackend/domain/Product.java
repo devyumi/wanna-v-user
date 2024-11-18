@@ -30,9 +30,8 @@ public class Product {
     @Column(length = 50, nullable = false)
     private String name;
 
-    @Column(nullable = false, columnDefinition = "json")
-    @JdbcTypeCode(SqlTypes.JSON)
-    private List<String> image;
+    @Column(nullable = false)
+    private String image;
 
     @Column(name = "cost_price", nullable = false)
     private double costPrice;
@@ -67,7 +66,7 @@ public class Product {
     private Admin createdById;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "updated_by_id", nullable = true)
+    @JoinColumn(name = "updated_by_id")
     private Admin updatedById;
 
     @Column(name = "created_at", nullable = false)
