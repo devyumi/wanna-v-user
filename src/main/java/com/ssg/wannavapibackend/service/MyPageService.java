@@ -1,9 +1,6 @@
 package com.ssg.wannavapibackend.service;
 
-import com.ssg.wannavapibackend.domain.Payment;
-import com.ssg.wannavapibackend.domain.PointLog;
-import com.ssg.wannavapibackend.domain.Reservation;
-import com.ssg.wannavapibackend.domain.User;
+import com.ssg.wannavapibackend.domain.*;
 import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.MyReservationRequestDTO;
 import com.ssg.wannavapibackend.dto.response.MyLikesResponseDTO;
@@ -32,4 +29,6 @@ public interface MyPageService {
     Payment findMyOrdersDetails(Long paymentId);
 
     List<PointLog> findMyPoints(Long userId);
+
+    List<UserCoupon> findMyCoupons(Long userId);
 }

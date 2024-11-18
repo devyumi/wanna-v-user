@@ -5,10 +5,7 @@ import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.MyReservationRequestDTO;
 import com.ssg.wannavapibackend.dto.response.MyLikesResponseDTO;
 import com.ssg.wannavapibackend.dto.response.MyPageResponseDTO;
-import com.ssg.wannavapibackend.repository.PaymentRepository;
-import com.ssg.wannavapibackend.repository.PointLogRepository;
-import com.ssg.wannavapibackend.repository.ReservationRepository;
-import com.ssg.wannavapibackend.repository.UserRepository;
+import com.ssg.wannavapibackend.repository.*;
 import com.ssg.wannavapibackend.repository.mypage.query.MyLikesDTORepository;
 import com.ssg.wannavapibackend.repository.mypage.query.MyPageDTORepository;
 import com.ssg.wannavapibackend.service.MyPageService;
@@ -27,6 +24,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
     private final PointLogRepository pointLogRepository;
+    private final UserCouponRepository userCouponRepository;
 
     /**
      * 마이페이지 메인 조회
@@ -143,5 +141,16 @@ public class MyPageServiceImpl implements MyPageService {
     @Transactional(readOnly = true)
     public List<PointLog> findMyPoints(Long userId) {
         return pointLogRepository.findAllByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    /**
+     * 마이페이지 쿠폰 내역 조회
+     *
+     * @param userId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<UserCoupon> findMyCoupons(Long userId) {
+        return userCouponRepository.findAllByUserIdAndEndDate(userId);
     }
 }
