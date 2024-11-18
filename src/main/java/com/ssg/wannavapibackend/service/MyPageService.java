@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.service;
 
+import com.ssg.wannavapibackend.domain.Payment;
 import com.ssg.wannavapibackend.domain.Reservation;
 import com.ssg.wannavapibackend.domain.User;
 import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
@@ -24,4 +25,8 @@ public interface MyPageService {
     List<Reservation> findMyReservations(Long userId, MyReservationRequestDTO myReservationRequestDTO);
 
     Reservation findMyReservation(Long reservationId);
+
+    List<Payment> findMyOrders(Long userId);
+
+    Payment findMyOrdersDetails(Long paymentId);
 }
