@@ -2,8 +2,11 @@ package com.ssg.wannavapibackend.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Entity
 @Getter
@@ -20,7 +23,7 @@ public class Reservation {
     @JoinColumn(name="user_id")
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="restaurant_id")
     private Restaurant restaurant;
 
@@ -28,15 +31,16 @@ public class Reservation {
     @JoinColumn(name = "payment_id")
     private Payment payment;
 
-    @Column(name="is_reservable", nullable = false)
-    private Boolean reservable;
-
     @Column(name="guest_count", nullable = false)
     private Integer guest;
 
-    @Column(name="scheduled_at", nullable = false)
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime scheduled;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name="reservation_date", nullable = false)
+    private LocalDate reservationDate;
+
+    @DateTimeFormat(pattern = "HH:mm")
+    @Column(name="reservation_time", nullable = false)
+    private LocalTime reservationTime;
 
     @Column(name="created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

@@ -34,11 +34,11 @@ public class Payment {
     @Column(name = "points_used")
     private Integer pointsUsed;
 
-    @Column(name = "percentage_discount")
-    private Double percentageDiscount;
+    @Column(name = "final_discount_rate")
+    private Double finalDiscountRate;
 
-    @Column(name = "fixed_discount")
-    private Double fixedDiscount;
+    @Column(name = "final_discount_amount")
+    private Double finalDiscountAmount;
 
     @Column(name = "coupon_code")
     private Double couponCode;

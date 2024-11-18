@@ -5,7 +5,9 @@ import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.domain.User;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Setter
@@ -21,5 +23,6 @@ public class ReservationDTO {
     private Restaurant restaurant;
     private Payment payment;
     private Integer guestCount;
-    private LocalDateTime scheduledAt;
+    private LocalDate reservationDate;
+    private LocalTime reservationTime;
 }
