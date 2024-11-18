@@ -171,3 +171,31 @@ couponButtons.forEach(button => {
     chooseCoupon(couponId);
   });
 });
+
+/**
+ * 보유 포인트
+ */
+document.getElementById('points-balance').innerText = '보유 ' + formatPrice(
+    paymentItem.point);
+
+/**
+ * 사용 포인트 입력 시 최대 포인트 제한
+ */
+const pointInput = document.getElementById('used-points'); // 포인트 입력 값
+const maxPoint = paymentItem.point; // 보유 포인트 값
+
+pointInput.addEventListener('input', function () {
+  // 1. 숫자만 추출
+  let rawValue = pointInput.value.replace(/[^0-9]/g, "");
+
+  // 2. 포인트 값이 보유 포인트를 초과하지 않도록 처리
+  if (parseInt(rawValue) > maxPoint) {
+    rawValue = maxPoint.toString(); // 최대값으로 제한
+  }
+
+  // 3. 쉼표 포맷팅
+  const formattedValue = new Intl.NumberFormat("ko-KR").format(rawValue);
+
+  // 4. 포맷팅된 값을 input 필드에 다시 적용
+  pointInput.value = formattedValue;
+});
