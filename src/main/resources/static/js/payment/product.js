@@ -129,8 +129,6 @@ couponList.forEach(item => {
  * 쿠폰 선택 시 실행될 함수
  */
 function chooseCoupon(couponId) {
-  console.log("선택한 쿠폰 ID:", couponId);
-  // 여기서 선택된 쿠폰 ID로 추가 작업을 할 수 있습니다.
 
   // Offcanvas 닫기
   const offcanvasElement = document.getElementById('offcanvasCart');
@@ -140,10 +138,15 @@ function chooseCoupon(couponId) {
   }
 
   const selectedCoupon = paymentItem.couponList.find(
-      coupon => coupon.couponId === couponId);
+      coupon => {
+        return coupon.couponId === parseInt(couponId);
+      });
+
+  console.log("selectedCoupon: " + selectedCoupon)
 
   /**
    * 쿠폰 할인 금액 계산
+   * 정률 쿠폰 - 10의 자리에서 올림
    * @type {number}
    */
   let discountAmount = 0;
@@ -157,7 +160,7 @@ function chooseCoupon(couponId) {
   }
 
   document.getElementById(
-      "applied-coupon-amount").innerText = discountAmount.toLocaleString();
+      "applied-coupon-amount").innerText = formatPrice(discountAmount);
 
 }
 
