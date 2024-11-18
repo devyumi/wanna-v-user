@@ -1,7 +1,7 @@
 package com.ssg.wannavapibackend.domain;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,13 +12,13 @@ import lombok.Setter;
 @Getter @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode // 값 타입 비교 ==비교 가능하게끔
+@EqualsAndHashCode
 public class Address {
-    
+
+  private String zipCode;
   private String roadAddress;
   private String landLotAddress;
   private String detailsAddress;
-  private String zipCode;
 
     
 }

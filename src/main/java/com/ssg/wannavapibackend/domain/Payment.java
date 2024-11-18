@@ -22,8 +22,11 @@ public class Payment {
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
-    @Column(name = "payment_number", nullable = false)
-    private Long paymentNumber;
+    @Column(name = "payment_key", nullable = false)
+    private String paymentKey;
+
+    @Column(name = "order_id", nullable = false)
+    private String orderId;
 
     @Column(name = "actual_price", nullable = false)
     private Double actualPrice;
@@ -46,6 +49,8 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "address_type")
+    private String addressType;
     @Embedded
     private Address address;
 
