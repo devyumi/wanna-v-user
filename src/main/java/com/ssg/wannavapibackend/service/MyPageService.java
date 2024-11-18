@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.service;
 
+import com.ssg.wannavapibackend.domain.User;
 import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
 import com.ssg.wannavapibackend.dto.response.MyLikesResponseDTO;
 import com.ssg.wannavapibackend.dto.response.MyPageResponseDTO;
@@ -11,6 +12,8 @@ import java.util.List;
 public interface MyPageService {
 
     MyPageResponseDTO findMyPage(Long userId);
+
+    User findUserInfo(Long userId);
 
     void updateMyPage(Long userId, MyPageUpdateDTO myPageUpdateDTO);
 

@@ -34,6 +34,17 @@ public class MyPageServiceImpl implements MyPageService {
     }
 
     /**
+     * 마이페이지 수정 폼 - 사용자 정보 조회
+     *
+     * @param userId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public User findUserInfo(Long userId) {
+        return userRepository.findById(userId).get();
+    }
+
+    /**
      * 마이페이지 수정
      *
      * @param userId
