@@ -50,6 +50,25 @@ const paymentItem = {
   ],
 };
 
+const totalPrice = paymentItem.productList.reduce((total, item) => {
+  return total + (item.productFinalPrice * item.quantity);
+}, 0);
+
+formatPriceElements();
+
+/**
+ * 주소 찾기 API
+ */
+document.getElementById('find-address-btn').addEventListener("click",
+    function execDaumPostcode() {
+      console.log("다음 주소 찾기 연결");
+      new daum.Postcode({
+        oncomplete: function (data) {
+          document.getElementById('address').value = data.address + " ("
+              + data.zonecode + ")";
+        }
+      }).open();
+    });
 
 /**
  * 결제 상품 데이터
