@@ -162,6 +162,12 @@ function chooseCoupon(couponId) {
   document.getElementById(
       "applied-coupon-amount").innerText = formatPrice(discountAmount);
 
+  // 최종 결제 금액 업데이트
+  const pointValue = parseInt(pointInput.value.replace(/[^0-9]/g, "")) || 0;
+
+  document.getElementById('final-payment-amount').innerText =
+      calculateFinalPaymentAmount(discountAmount, pointValue);
+
 }
 
 /**
@@ -201,4 +207,22 @@ pointInput.addEventListener('input', function () {
 
   // 4. 포맷팅된 값을 input 필드에 다시 적용
   pointInput.value = formattedValue;
+
+  // 5. 최종 결제 금액 업데이트
+  const pointValue = parseInt(rawValue) || 0;
+  const couponAmount = parseInt(document.getElementById("applied-coupon-amount").innerText.replace(/[^0-9]/g, "")) || 0;
+
+  document.getElementById('final-payment-amount').innerText =
+      calculateFinalPaymentAmount(couponAmount, pointValue);
 });
+
+/**
+ * 최종 결제 금액 계산
+ * {상품별 합계} - {적용된 쿠폰 할인액} - {적용된 포인트 사용액}
+ */
+function calculateFinalPaymentAmount(couponAmount = 0, point = 0) {
+  const finalAmount = totalPrice - couponAmount - point;
+  return formatPrice(finalAmount > 0 ? finalAmount : 0); // 0보다 작은 값 방지
+}
+
+document.getElementById('final-payment-amount').innerText = calculateFinalPaymentAmount();
