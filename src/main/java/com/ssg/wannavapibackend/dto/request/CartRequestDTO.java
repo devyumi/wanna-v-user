@@ -18,7 +18,6 @@ import lombok.ToString;
 public class CartRequestDTO {
 
     private Integer productId;
-    private Integer userId;
 
     @Positive(message = "Quantity must be a positive number.")
     @Min(value = 1, message = "Quantity must be at least 1.")

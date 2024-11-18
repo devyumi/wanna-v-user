@@ -38,8 +38,7 @@ public class CartServiceImpl implements CartService {
      * @param requestDTO
      */
     @Transactional
-    public void addCartItem(CartRequestDTO requestDTO) {
-        long userId = requestDTO.getUserId();
+    public void addCartItem(Long userId, CartRequestDTO requestDTO) {
         long productId = requestDTO.getProductId();
 
         User user = userRepository.findById(userId)

@@ -28,10 +28,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartRestController {
 
     private final CartService cartService;
+    final Long userId = 1L; // Security 적용 후 삭제 예정
 
     @PostMapping()
-    public ResponseEntity<Map<String, String>> addCartItem(@RequestBody @Valid CartRequestDTO requestDTO)  {
-        cartService.addCartItem(requestDTO);
+    public ResponseEntity<Map<String, String>> addCartItem(
+        @RequestBody @Valid CartRequestDTO requestDTO) {
+        cartService.addCartItem(userId, requestDTO);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -40,8 +42,7 @@ public class CartRestController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Map<String, Object>> getCartItemList()  {
-        Long userId = 1L; // Security 적용 후 삭제 예정
+    public ResponseEntity<Map<String, Object>> getCartItemList() {
 
         List<CartResponseDTO> cartItems = cartService.getCartItemList(userId);
 
@@ -54,7 +55,7 @@ public class CartRestController {
 
     @PatchMapping()
     public ResponseEntity<Map<String, String>> updateCartItemQuantity(@RequestBody @Valid
-        CartItemQuantityUpdateDTO updateDTO) {
+    CartItemQuantityUpdateDTO updateDTO) {
         cartService.updateCartItemQuantity(updateDTO);
 
         Map<String, String> response = new HashMap<>();
@@ -73,7 +74,7 @@ public class CartRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-   @DeleteMapping()
+    @DeleteMapping()
     public ResponseEntity<Map<String, String>> deleteCartItems(@RequestBody List<Long> cartIds) {
         cartService.deleteCartItems(cartIds);
 
@@ -81,5 +82,5 @@ public class CartRestController {
         response.put("status", "success");
 
         return new ResponseEntity<>(response, HttpStatus.OK);
-   }
+    }
 }

@@ -50,6 +50,8 @@
        aria-labelledby="offcanvasBottomLabel">
     <div class="offcanvas-body small">
       <div class="cart-container">
+        <span id="hiddenProductId" th:text="${product.id}"
+                    hidden="hidden"></span>
         <p class="product-name" th:id="cart-product-name" th:text="${product.name}"></p>
         <div class="quantity-container">
           <span class="product-stock" th:id="product-stock" th:text="${product.stock}">개 남음</span>
@@ -64,7 +66,7 @@
               aria-label="Close"></button>
     </div>
     <div class="button-contain">
-      <button class="btn-cart">장바구니 담기</button>
+      <button class="btn-cart" id="add-cart-item">장바구니 담기</button>
     </div>
   </div>
 </main>

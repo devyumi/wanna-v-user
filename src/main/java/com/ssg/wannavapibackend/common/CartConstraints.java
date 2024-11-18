@@ -1,7 +1,7 @@
 package com.ssg.wannavapibackend.common;
 
 public enum CartConstraints {
-    CART_MAX_ITEMS(3, "Maximum items allowed in the cart"),
+    CART_MAX_ITEMS(15, "Maximum items allowed in the cart"),
     MIN_PRODUCT_QUANTITY(1, "Minimum quantity allowed per product"),
     MAX_PRODUCT_QUANTITY(99, "Maximum quantity allowed per product");
 
