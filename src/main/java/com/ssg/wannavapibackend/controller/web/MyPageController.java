@@ -12,6 +12,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
@@ -51,6 +52,16 @@ public class MyPageController {
     public String getMyReservations(MyReservationRequestDTO myReservationRequestDTO, Model model) {
         model.addAttribute("myReservation", myPageService.findMyReservations(1L, myReservationRequestDTO));
         return "user/my-reservation";
+    }
+
+    @PostMapping("reservations/{id}")
+    public String getMyReservationsDetails(@PathVariable Long id, Model model) {
+        if (id == null) {
+            log.info("예약 정보를 찾을 수 없습니다.");
+            return "redirect:/reservations";
+        }
+        model.addAttribute("myReservation", myPageService.findMyReservation(id));
+        return "user/my-reservation-details";
     }
 
     private static void printErrorLog(BindingResult result) {

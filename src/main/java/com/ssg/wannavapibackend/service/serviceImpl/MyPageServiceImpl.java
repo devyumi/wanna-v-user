@@ -98,4 +98,15 @@ public class MyPageServiceImpl implements MyPageService {
     public List<Reservation> findMyReservations(Long userId, MyReservationRequestDTO myReservationRequestDTO) {
         return reservationRepository.findAllById(userId, myReservationRequestDTO);
     }
+
+    /**
+     * 마이페이지 예약 상세 조회
+     *
+     * @param reservationId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public Reservation findMyReservation(Long reservationId) {
+        return reservationRepository.findById(reservationId).get();
+    }
 }

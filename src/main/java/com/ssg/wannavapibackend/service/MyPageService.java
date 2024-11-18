@@ -22,4 +22,6 @@ public interface MyPageService {
     List<MyLikesResponseDTO> findMyLikes(Long userId);
 
     List<Reservation> findMyReservations(Long userId, MyReservationRequestDTO myReservationRequestDTO);
+
+    Reservation findMyReservation(Long reservationId);
 }
