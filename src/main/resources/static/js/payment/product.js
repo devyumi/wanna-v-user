@@ -124,3 +124,50 @@ couponList.forEach(item => {
 
   couponContainer.appendChild(couponItem);
 });
+
+/**
+ * 쿠폰 선택 시 실행될 함수
+ */
+function chooseCoupon(couponId) {
+  console.log("선택한 쿠폰 ID:", couponId);
+  // 여기서 선택된 쿠폰 ID로 추가 작업을 할 수 있습니다.
+
+  // Offcanvas 닫기
+  const offcanvasElement = document.getElementById('offcanvasCart');
+  const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
+  if (offcanvas) {
+    offcanvas.hide();
+  }
+
+  const selectedCoupon = paymentItem.couponList.find(
+      coupon => coupon.couponId === couponId);
+
+  /**
+   * 쿠폰 할인 금액 계산
+   * @type {number}
+   */
+  let discountAmount = 0;
+  if (selectedCoupon) {
+    if (selectedCoupon.couponType === 'F') {
+      discountAmount = selectedCoupon.discountAmount;
+    } else if (selectedCoupon.couponType === 'P') {
+      discountAmount = Math.ceil(
+          (totalPrice * (selectedCoupon.discountRate / 100)) / 10) * 10;  // 10의 자리에서 올림
+    }
+  }
+
+  document.getElementById(
+      "applied-coupon-amount").innerText = discountAmount.toLocaleString();
+
+}
+
+/**
+ * 쿠폰 선택 버튼에 이벤트 리스너 추가
+ */
+const couponButtons = document.querySelectorAll('.btn-select');
+couponButtons.forEach(button => {
+  button.addEventListener('click', function () {
+    const couponId = this.getAttribute('data-coupon-id');
+    chooseCoupon(couponId);
+  });
+});
