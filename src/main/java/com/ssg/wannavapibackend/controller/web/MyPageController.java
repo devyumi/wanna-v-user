@@ -1,6 +1,7 @@
 package com.ssg.wannavapibackend.controller.web;
 
 import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
+import com.ssg.wannavapibackend.dto.request.MyReservationRequestDTO;
 import com.ssg.wannavapibackend.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,12 @@ public class MyPageController {
         myPageService.updateMyPage(1L, myPageUpdateDTO);
         log.info("마이페이지 수정 완료");
         return "redirect:/my";
+    }
+
+    @GetMapping("reservations")
+    public String getMyReservations(MyReservationRequestDTO myReservationRequestDTO, Model model) {
+        model.addAttribute("myReservation", myPageService.findMyReservations(1L, myReservationRequestDTO));
+        return "user/my-reservation";
     }
 
     private static void printErrorLog(BindingResult result) {
