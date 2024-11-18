@@ -1,5 +1,5 @@
 .main-container {
-  padding: 0 0 55px 0;
+  padding: 0;
 }
 
 a,
@@ -204,4 +204,8 @@ input.cart-item-check:not(:checked) + label::after {
   background-color: #ffffff;
   color: #5aab6f;
   z-index: 2;
+}
+
+.footer {
+  padding: 0 0 55px 0;
 }
