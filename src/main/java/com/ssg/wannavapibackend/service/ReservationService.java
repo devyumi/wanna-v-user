@@ -1,9 +1,10 @@
 package com.ssg.wannavapibackend.service;
 
-import com.ssg.wannavapibackend.domain.Reservation;
+import com.ssg.wannavapibackend.dto.request.ReservationRequestDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationDTO;
-import com.ssg.wannavapibackend.dto.response.ReservationResponese1DTO;
-import com.ssg.wannavapibackend.dto.response.ReservationResponeseDTO;
+import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
+import com.ssg.wannavapibackend.dto.response.ReservationSaveResponseDTO;
+import com.ssg.wannavapibackend.dto.response.ReservationDateResponseDTO;
 
 import java.util.List;
 
@@ -12,7 +13,9 @@ public interface ReservationService {
 
     ReservationDTO getReservation(Long ReservationId);
 
-    Reservation saveReservation(Reservation reservation);
+    ReservationPaymentResponseDTO getReservationPayment(Long ReservationId);
 
-    List<ReservationResponese1DTO> getAll(Long restaurantId);
+    ReservationSaveResponseDTO saveReservation(ReservationRequestDTO reservationRequestDTO);
+
+    ReservationDateResponseDTO getReservationTime(ReservationRequestDTO reservationRequestDTO);
 }

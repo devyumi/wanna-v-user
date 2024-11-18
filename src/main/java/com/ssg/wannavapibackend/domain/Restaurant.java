@@ -1,15 +1,11 @@
 package com.ssg.wannavapibackend.domain;
 
-import com.ssg.wannavapibackend.common.BusinessStatus;
 import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-import java.time.format.TextStyle;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -19,19 +15,30 @@ public class Restaurant {
   private Long id;
 
   private String name;
-  private String contact;
+  //private String contact;
+
+    @Column(name = "reservation_time_gap")
+    private Integer reservationTimeGap;
 
   @Embedded
   private Address address;
   private String image;
   private String description;
 
+    @Column(name = "is_panelty")
+    private Boolean isPanelty;
 
-  @Enumerated(EnumType.STRING)
-  private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY)
+    private List<Seat> seats;
 
-  @Column(name = "isPark")
-  private boolean canPark; //주차 가능 여부
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY)
+    private List<Reservation> reservations;
+
+//  @Enumerated(EnumType.STRING)
+//  private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
+
+//  @Column(name = "isPark")
+//  private boolean canPark; //주차 가능 여부
 
 
   @OneToMany(mappedBy = "restaurant")
@@ -39,7 +46,7 @@ public class Restaurant {
 
 
   @OneToMany(mappedBy = "restaurant")
-  private List<BusinessDay> businessDays = new ArrayList<>();
+  private List<BusinessDay> businessDays;
 
 
   @OneToMany(mappedBy = "restaurant")
