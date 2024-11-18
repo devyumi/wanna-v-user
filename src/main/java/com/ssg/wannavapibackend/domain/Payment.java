@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -55,4 +56,7 @@ public class Payment {
     @Column(name = "canceled_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime canceledAt;
+
+    @OneToMany(mappedBy = "payment")
+    private List<PaymentItem> paymentItems;
 }
