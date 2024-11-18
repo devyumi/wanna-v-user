@@ -23,63 +23,11 @@
       <label for="cart-item-check-all" class="checkbox-label"></label>
     </div>
     <div>
-      <button class="btn-delete" onclick="deleteSelectedItems()">선택 삭제</button>
+      <button class="btn-delete" id="delete-selected-items">선택 삭제</button>
     </div>
   </div>
   <div class="cart-grid">
-    <div class="product-item" th:each="item : ${cartItems}">
-      <div class="cart-item-container">
-        <div class="checkbox-container">
-          <input
-              class="cart-item-check"
-              type="checkbox"
-              th:data-id="${item.id}"
-              th:id="'cart-item-check-' + ${item.id}"/>
-          <label th:for="'cart-item-check-' + ${item.id}" class="checkbox-label"></label>
-        </div>
-        <div class="product-container">
-          <a th:href="@{/products/{id}(id=${item.productId})}">
-            <div class="image-container">
-              <img th:src="@{${item.productImage}}" alt="Product image"/>
-            </div>
-          </a>
-          <div class="product-info">
-            <a th:href="@{/products/{id}(id=${item.productId})}">
-              <p class="product-name" th:text="${item.productName}"></p>
-            </a>
-            <div class="item-controls">
-              <span class="hidden-final-price" th:text="${item.productFinalPrice}"
-                    hidden="hidden"></span>
-              <div class="input-group quantity-selector">
-                <button
-                    class="btn btn-outline-secondary quantity-decrease"
-                    type="button"
-                >
-                  -
-                </button>
-                <input
-                    type="number"
-                    class="form-control text-center item-quantity"
-                    min="1"
-                    max="99"
-                    step="1"
-                    th:value="${item.quantity}"
-                    th:data-id="${item.id}"
-                />
-                <button
-                    class="btn btn-outline-secondary quantity-increase"
-                    type="button"
-                >
-                  +
-                </button>
-              </div>
-              <span class="product-total-price price"
-                    th:data-price="${item.productFinalPrice * item.quantity}"></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+<!--    cart product list -->
   </div>
   <div class="action-button">
     <div class="total-price">
