@@ -14,8 +14,8 @@
 <body>
 <main layout:fragment="main-content" th:class="main-container">
   <h3 class="page-title">주문 결제</h3>
-  <p class="container-title">배송지</p>
   <div class="info-container">
+    <p class="container-title">배송지</p>
     <div class="delivery-container">
       <div class="address-type-container detail-container">
         <div class="input-container">
@@ -50,13 +50,14 @@
     </div>
   </div>
 
-  <p class="container-title">주문 상품</p>
-  <div class="info-container product-container" id="product-container">
-    <!-- product list -->
+  <div class="info-container">
+    <p class="container-title">주문 상품</p>
+    <div class="product-container" id="product-container">
+      <!-- product list -->
+    </div>
   </div>
-
-  <p class="container-title">할인 혜택</p>
   <div class="info-container promotion-container">
+    <p class="container-title">할인 혜택</p>
     <div class="coupon-container">
       <div class="detail-container-header">
         <div class="detail-container-title">쿠폰</div>
@@ -86,22 +87,22 @@
       <div>총</div>
       <span id="final-payment-amount"></span>
     </div>
-    <button class="btn-payment">결제</button>
+    <button class="btn-payment" id="payment-button">결제</button>
   </div>
 
-<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart"
-     aria-labelledby="offcanvasCouponRightLabel">
-  <div class="offcanvas-header">
-    <h5 id="offcanvasCouponRightLabel">쿠폰</h5>
-    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-            aria-label="Close"></button>
-  </div>
-  <div class="offcanvas-body">
-    <div class="info-container offcanvas-coupon-container" id="coupon-container">
-      <!-- coupon list -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart"
+       aria-labelledby="offcanvasCouponRightLabel">
+    <div class="offcanvas-header">
+      <h5 id="offcanvasCouponRightLabel">쿠폰</h5>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+              aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+      <div class="info-container offcanvas-coupon-container" id="coupon-container">
+        <!-- coupon list -->
+      </div>
     </div>
   </div>
-</div>
 </main>
 </body>
 </html>
