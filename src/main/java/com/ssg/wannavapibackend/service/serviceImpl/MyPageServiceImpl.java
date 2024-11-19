@@ -10,11 +10,13 @@ import com.ssg.wannavapibackend.repository.mypage.query.MyLikesDTORepository;
 import com.ssg.wannavapibackend.repository.mypage.query.MyPageDTORepository;
 import com.ssg.wannavapibackend.service.MyPageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 @RequiredArgsConstructor
 public class MyPageServiceImpl implements MyPageService {
 
@@ -25,6 +27,7 @@ public class MyPageServiceImpl implements MyPageService {
     private final PaymentRepository paymentRepository;
     private final PointLogRepository pointLogRepository;
     private final UserCouponRepository userCouponRepository;
+    private final ReviewRepository reviewRepository;
 
     /**
      * 마이페이지 메인 조회
@@ -152,5 +155,16 @@ public class MyPageServiceImpl implements MyPageService {
     @Transactional(readOnly = true)
     public List<UserCoupon> findMyCoupons(Long userId) {
         return userCouponRepository.findAllByUserIdAndEndDate(userId);
+    }
+
+    /**
+     * 마이페이지 리뷰 내역 조회
+     *
+     * @param userId
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public List<Review> findMyReviews(Long userId) {
+        return reviewRepository.findAllByUserIdDesc(userId);
     }
 }
