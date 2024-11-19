@@ -15,7 +15,7 @@ public class TossPaymentConfig {
     private String tossClientKey;
 
     @Value("${toss.api-secret-key}")
-    private String tossSecretKey;
+    private String apiSecretKey;
 
      @Value("${toss.success-url}")
     private String successUrl;
@@ -24,5 +24,5 @@ public class TossPaymentConfig {
     private String failUrl;
 
     @Value("${toss.url}")
-    private String paymentUrl;
+    private String url;
 }
