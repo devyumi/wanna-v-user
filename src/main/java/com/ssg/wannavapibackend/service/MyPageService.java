@@ -31,4 +31,6 @@ public interface MyPageService {
     List<PointLog> findMyPoints(Long userId);
 
     List<UserCoupon> findMyCoupons(Long userId);
+
+    List<Review> findMyReviews(Long userId);
 }
