@@ -1,10 +1,8 @@
 package com.ssg.wannavapibackend.controller.web;
 
-import com.ssg.wannavapibackend.dto.response.ProductResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
-import com.ssg.wannavapibackend.service.ProductService;
 import com.ssg.wannavapibackend.service.ReservationService;
-import java.math.BigDecimal;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -13,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Log4j2
 @Controller
@@ -42,16 +38,14 @@ public class PaymentController {
     }
 
     @GetMapping("/toss-success")
-    public String paymentSuccess(@RequestParam("orderId") String orderId,
-        @RequestParam("amount") BigDecimal amount,
-        @RequestParam("paymentKey") String paymentKey) {
+    public String paymentSuccess() {
         return "/payment/toss-success";
     }
 
     @GetMapping("/toss-fail")
-    public String paymentFail(@RequestParam("message") String message,
-        @RequestParam("code") String code
-    ) {
+    public String failPayment(HttpServletRequest request, Model model) {
+        model.addAttribute("code", request.getParameter("code"));
+        model.addAttribute("message", request.getParameter("message"));
         return "/payment/toss-fail";
     }
 
