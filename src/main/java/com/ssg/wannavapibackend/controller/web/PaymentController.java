@@ -4,6 +4,7 @@ import com.ssg.wannavapibackend.dto.response.ProductResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.service.ProductService;
 import com.ssg.wannavapibackend.service.ReservationService;
+import java.math.BigDecimal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -23,15 +24,35 @@ public class PaymentController {
 
     private final ReservationService reservationService;
 
+    @GetMapping("/product")
+    public String productPayment() {
+        return "payment/product";
+    }
+
     @GetMapping("/reservation/{reservationId}")
     public String reservationPayment(@PathVariable Long reservationId, Model model) {
         log.info("결제로왔다!");
 
-        ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(reservationId);
+        ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(
+            reservationId);
 
         model.addAttribute("reservationPaymentResponseDTO", reservationPaymentResponseDTO);
 
         return "/payment/reservation";
+    }
+
+    @GetMapping("/toss-success")
+    public String paymentSuccess(@RequestParam("orderId") String orderId,
+        @RequestParam("amount") BigDecimal amount,
+        @RequestParam("paymentKey") String paymentKey) {
+        return "/payment/toss-success";
+    }
+
+    @GetMapping("/toss-fail")
+    public String paymentFail(@RequestParam("message") String message,
+        @RequestParam("code") String code
+    ) {
+        return "/payment/toss-fail";
     }
 
     @GetMapping("/success")
