@@ -237,6 +237,10 @@
   outline: none;
 }
 
+.payment-container {
+  padding: 0;
+}
+
 .btn-payment {
   width: 45%;
   height: 70%;

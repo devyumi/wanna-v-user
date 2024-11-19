@@ -7,7 +7,8 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/css/payment/product.css">
-  <script type="module" src="/js/payment/product.js"></script>
+  <script src="https://js.tosspayments.com/v2/standard"></script>
+  <script type="module" defer src="/js/payment/product.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <title>Product Detail Page</title>
 </head>
@@ -82,24 +83,34 @@
     </div>
   </div>
 
-  <div class="action-button">
-    <div class="total-price">
-      <div>총</div>
-      <span id="final-payment-amount"></span>
+  <!-- toss 결제 영역 -->
+  <div class="info-container payment-container">
+    <div class="box_section">
+      <!-- 결제 UI -->
+      <div id="payment-method"></div>
+      <!-- 이용약관 UI -->
+      <div id="agreement"></div>
     </div>
-    <button class="btn-payment" id="payment-button">결제</button>
-  </div>
+    <div class="action-button">
+      <div class="total-price">
+        <div>총</div>
+        <span id="final-payment-amount"></span>
+      </div>
+      <!-- 결제하기 버튼 -->
+      <button class="btn-payment" id="payment-button">결제</button>
+    </div>
 
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart"
-       aria-labelledby="offcanvasCouponRightLabel">
-    <div class="offcanvas-header">
-      <h5 id="offcanvasCouponRightLabel">쿠폰</h5>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-              aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <div class="info-container offcanvas-coupon-container" id="coupon-container">
-        <!-- coupon list -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart"
+         aria-labelledby="offcanvasCouponRightLabel">
+      <div class="offcanvas-header">
+        <h5 id="offcanvasCouponRightLabel">쿠폰</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="info-container offcanvas-coupon-container" id="coupon-container">
+          <!-- coupon list -->
+        </div>
       </div>
     </div>
   </div>

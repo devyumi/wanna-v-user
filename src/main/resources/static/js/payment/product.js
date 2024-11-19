@@ -210,7 +210,9 @@ pointInput.addEventListener('input', function () {
 
   // 5. 최종 결제 금액 업데이트
   const pointValue = parseInt(rawValue) || 0;
-  const couponAmount = parseInt(document.getElementById("applied-coupon-amount").innerText.replace(/[^0-9]/g, "")) || 0;
+  const couponAmount = parseInt(
+      document.getElementById("applied-coupon-amount").innerText.replace(
+          /[^0-9]/g, "")) || 0;
 
   document.getElementById('final-payment-amount').innerText =
       calculateFinalPaymentAmount(couponAmount, pointValue);
@@ -225,4 +227,166 @@ function calculateFinalPaymentAmount(couponAmount = 0, point = 0) {
   return formatPrice(finalAmount > 0 ? finalAmount : 0); // 0보다 작은 값 방지
 }
 
-document.getElementById('final-payment-amount').innerText = calculateFinalPaymentAmount();
+document.getElementById(
+    'final-payment-amount').innerText = calculateFinalPaymentAmount();
+
+/**
+ * toss 결제를 위한 orderId 생성
+ */
+// document.getElementById('payment-button').addEventListener("click",
+//     async function () {
+//       try {
+//         const response = await axios.post(
+//             '/api/v1/payment/generate-order-id');
+//         const data = response.data.data;
+//
+//         console.log("data: " + data);
+//
+//         // orderId를 이용해 Toss 결제 준비 API로 요청 보내기
+//         const paymentUrl = await requestTossPayment(data);
+//
+//         // 결제 URL로 리디렉션
+//         window.location.href = paymentUrl;
+//
+//         // ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+//         // @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
+//         // 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+//         // 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+//         await widgets.requestPayment({
+//           orderId: data.orderId,
+//           orderName: "토스 테스트1",
+//           successUrl: data.successUrl,
+//           failUrl: data.failUrl,
+//           customerEmail: "toss1@gmail.com",
+//           customerName: "김토스",
+//           // 가상계좌 안내, 퀵계좌이체 휴대폰 번호 자동 완성에 사용되는 값입니다. 필요하다면 주석을 해제해 주세요.
+//           customerMobilePhone: "01012341234",
+//         });
+//
+//       } catch (error) {
+//         console.error('주문 번호 생성에 실패했습니다:', error);
+//       }
+//     })
+
+/**
+ * toss 결제
+ */
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    // 서버에서 클라이언트 키와 기본 데이터를 받아옴
+    const response = await axios.post('/api/v1/payment/generate-order-id');
+    const data = response.data.data;
+
+    /**
+     * ------  결제위젯 초기화 ------
+     * TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
+     * TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
+     * @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
+     */
+    const clientKey = data.clientKey;
+    const tossPayments = TossPayments(clientKey);
+    const customerKey = generateRandomString();
+
+    /**
+     * 회원 결제
+     * @docs https://docs.tosspayments.com/sdk/v2/js#tosspaymentswidgets
+     */
+    const widgets = tossPayments.widgets({customerKey});
+
+    /**
+     * 비회원 결제
+     */
+    // const widgets = tossPayments.widgets({customerKey: TossPayments.ANONYMOUS});
+
+    /**
+     * 기본 결제 금액 설정
+     */
+    const amount = getCurrentAmount();
+    await widgets.setAmount(amount);
+
+    /**
+     * 결제 및 이용약관 UI 렌더링
+     */
+    await Promise.all([
+      /**
+       *  ------  결제 UI 렌더링 ------
+       *  @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderpaymentmethods
+       */
+      widgets.renderPaymentMethods({
+        selector: "#payment-method",
+
+        /**
+         * 렌더링하고 싶은 결제 UI의 variantKey
+         * 결제 수단 및 스타일이 다른 멀티 UI를 직접 만들고 싶다면 계약이 필요해요.
+         * @docs https://docs.tosspayments.com/guides/v2/payment-widget/admin#새로운-결제-ui-추가하기
+         */
+        variantKey: "DEFAULT"
+      }),
+
+      /**
+       * ------  이용약관 UI 렌더링 ------
+       * @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrenderagreement
+       */
+      widgets.renderAgreement({
+        selector: "#agreement",
+        variantKey: "AGREEMENT",
+      }),
+    ]);
+
+    /**
+     * ------ '결제하기' 버튼 누르면 결제창 띄우기 ------
+     * @docs https://docs.tosspayments.com/sdk/v2/js#widgetsrequestpayment
+     */
+    document.getElementById("payment-button").addEventListener("click",
+        async () => {
+          const orderIdResponse = await axios.post(
+              '/api/v1/payment/generate-order-id');
+          const orderData = orderIdResponse.data.data;
+
+          /**
+           * ------  주문서의 결제 금액 설정 ------
+           * TODO: 위젯의 결제금액을 결제하려는 금액으로 초기화하세요.
+           * TODO: renderPaymentMethods, renderAgreement, requestPayment 보다 반드시 선행되어야 합니다.
+           * @docs https://docs.tosspayments.com/sdk/v2/js#widgetssetamount
+           */
+          const updatedAmount = getCurrentAmount();
+          await widgets.setAmount(updatedAmount);
+          /**
+           * 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+           * 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+           */
+          await widgets.requestPayment({
+            orderId: orderData.orderId,
+            orderName: "토스 테스트1",
+            successUrl: orderData.successUrl,
+            failUrl: orderData.failUrl,
+            customerEmail: "toss1@gmail.com",
+            customerName: "김토스",
+            customerMobilePhone: "01012341234",
+          });
+        });
+  } catch (error) {
+    console.error("초기화 중 오류 발생:", error);
+  }
+});
+
+/**
+ * 현재 결제 금액 가져오기
+ */
+function getCurrentAmount() {
+  return {
+    currency: "KRW",
+    value: parseInt(
+        document.getElementById("final-payment-amount").textContent.replace(
+            /[^0-9]/g, ""),
+        10
+    ),
+  };
+}
+
+/**
+ * 랜덤 문자열 생성
+ */
+function generateRandomString() {
+  return window.btoa(Math.random()).slice(0, 20);
+}
