@@ -1,5 +1,7 @@
 package com.ssg.wannavapibackend.controller.api;
 
+import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
+import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.service.PaymentService;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/payment")
-public class TossRestController {
+public class PaymentRestController {
 
     private final PaymentService paymentService;
     final Long userId = 1L; // Security 적용 후 삭제 예정
@@ -32,17 +35,18 @@ public class TossRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping("/confirm/widget")
+    public ResponseEntity<Map<String, Object>> confirmPayment(
+        @RequestBody PaymentConfirmRequestDTO requestDTO) {
 
-//    @PostMapping("/product")
-//    public ResponseEntity<Map<String, Object>> processProductPayment(@RequestBody @Valid
-//        TossProductRequestDTO requestDTO) {
-//
-//        TossProductResponseDTO responseDTO = paymentService.processProductPayment(userId, requestDTO);
-//
-//        Map<String, Object> response = new HashMap<>();
-//        response.put("status", "success");
-//        response.put("data", responseDTO);
-//
-//        return new ResponseEntity<>(response, HttpStatus.OK);
-//    }
+        PaymentConfirmResponseDTO responseDTO = paymentService.sendRequest(requestDTO);
+        HttpStatus status = responseDTO.getStatus().equals("success") ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", status);
+        response.put("data", responseDTO);
+
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
