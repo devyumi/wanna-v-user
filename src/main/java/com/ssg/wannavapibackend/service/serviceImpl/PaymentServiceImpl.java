@@ -1,7 +1,7 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
-import com.ssg.wannavapibackend.dto.request.TossProductRequestDTO;
-import com.ssg.wannavapibackend.dto.response.TossProductResponseDTO;
+import com.ssg.wannavapibackend.config.TossPaymentConfig;
+import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.service.PaymentService;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,13 +15,14 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
+    private final TossPaymentConfig tossPaymentConfig;
     /**
      * 결제 번호 생성
      * 결제일(YYYYMMDD) + 랜덤 8자리 숫자
      * @return
      */
     @Override
-    public String generateOrderId() {
+    public PaymentResponseDTO generateOrderId() {
         // 결제일(YYYYMMDD) 가져오기
         String dateStr = new SimpleDateFormat("yyyyMMdd").format(new Date());
 
@@ -29,6 +30,13 @@ public class PaymentServiceImpl implements PaymentService {
         int randomNumber = 10000000 + new Random().nextInt(90000000);
 
         // 결제일과 랜덤 숫자를 결합하여 결제번호 생성
-        return dateStr + randomNumber;
+        String orderId = dateStr + randomNumber;
+
+        return PaymentResponseDTO.builder()
+            .orderId(orderId)
+            .clientKey(tossPaymentConfig.getTossClientKey())
+            .successUrl(tossPaymentConfig.getSuccessUrl())
+            .failUrl(tossPaymentConfig.getFailUrl())
+            .build();
     }
 }
