@@ -10,11 +10,13 @@ import com.ssg.wannavapibackend.repository.mypage.query.MyLikesDTORepository;
 import com.ssg.wannavapibackend.repository.mypage.query.MyPageDTORepository;
 import com.ssg.wannavapibackend.service.MyPageService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Service
 @RequiredArgsConstructor
 public class MyPageServiceImpl implements MyPageService {
 
