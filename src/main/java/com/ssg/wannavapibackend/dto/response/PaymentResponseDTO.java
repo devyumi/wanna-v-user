@@ -14,7 +14,6 @@ import lombok.ToString;
 public class PaymentResponseDTO {
 
     private String orderId;
-    private String clientKey;
     private String successUrl;
     private String failUrl;
 

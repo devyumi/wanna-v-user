@@ -11,6 +11,9 @@
   <script type="module" defer src="/js/payment/product.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <title>Product Detail Page</title>
+  <script th:inline="javascript">
+    const clientKey = [[${clientKey}]];
+  </script>
 </head>
 <body>
 <main layout:fragment="main-content" th:class="main-container">

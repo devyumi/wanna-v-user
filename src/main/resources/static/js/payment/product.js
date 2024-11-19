@@ -273,17 +273,14 @@ document.getElementById(
  */
 document.addEventListener("DOMContentLoaded", async () => {
   try {
-    // 서버에서 클라이언트 키와 기본 데이터를 받아옴
-    const response = await axios.post('/api/v1/payment/generate-order-id');
-    const data = response.data.data;
-
     /**
      * ------  결제위젯 초기화 ------
      * TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
      * TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
      * @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
      */
-    const clientKey = data.clientKey;
+    // 서버에서 클라이언트 키와 기본 데이터를 받아옴
+    console.log("clientKey: "+clientKey)
     const tossPayments = TossPayments(clientKey);
     const customerKey = generateRandomString();
 

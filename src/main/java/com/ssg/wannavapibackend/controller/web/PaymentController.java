@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.controller.web;
 
+import com.ssg.wannavapibackend.config.TossPaymentConfig;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.service.ReservationService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class PaymentController {
 
     private final ReservationService reservationService;
+    private final TossPaymentConfig tossPaymentConfig;
 
     @GetMapping("/product")
-    public String productPayment() {
+    public String productPayment(Model model) {
+        model.addAttribute("clientKey", tossPaymentConfig.getTossClientKey());
         return "payment/product";
     }
 

@@ -50,7 +50,6 @@ public class PaymentServiceImpl implements PaymentService {
 
         return PaymentResponseDTO.builder()
             .orderId(orderId)
-            .clientKey(tossPaymentConfig.getTossClientKey())
             .successUrl(tossPaymentConfig.getSuccessUrl())
             .failUrl(tossPaymentConfig.getFailUrl())
             .build();
