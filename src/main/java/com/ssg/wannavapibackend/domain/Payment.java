@@ -49,10 +49,11 @@ public class Payment {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @Column(name = "address_type")
-    private String addressType;
     @Embedded
     private Address address;
+
+    @Column(name = "note")
+    private String note;
 
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
