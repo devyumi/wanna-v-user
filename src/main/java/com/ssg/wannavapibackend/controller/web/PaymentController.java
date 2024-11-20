@@ -1,41 +1,52 @@
 package com.ssg.wannavapibackend.controller.web;
 
-import com.ssg.wannavapibackend.config.TossPaymentConfig;
-import com.ssg.wannavapibackend.dto.PaymentPageInitDTO;
+import com.ssg.wannavapibackend.dto.response.CartCheckoutResponseDTO;
+import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.service.PaymentService;
 import com.ssg.wannavapibackend.service.ReservationService;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/payment")
+@RequestMapping("/checkout")
 public class PaymentController {
 
     private final PaymentService paymentService;
     private final ReservationService reservationService;
-    private final TossPaymentConfig tossPaymentConfig;
     final Long userId = 1L; // Security 적용 후 삭제 예정
 
-    @GetMapping("/product")
-    public String productPayment(Model model) {
-        PaymentPageInitDTO paymentPageInitDTO = paymentService.getPaymentPageInitInfo(userId);
-        model.addAttribute("pageInitData", paymentPageInitDTO);
+    @PostMapping("/product")
+    public String redirectToProductPaymentPage(@RequestBody(required = false) List<Long> cartIds,
+        @RequestBody(required = false) DirectProductCheckoutRequestDTO productRequestDTO,
+        Model model) {
+
+         if (cartIds != null && !cartIds.isEmpty()) {
+             // 장바구니 -> 결제
+            CartCheckoutResponseDTO responseDTO = paymentService.getPaymentPageInitInfo(userId, cartIds);
+            model.addAttribute("pageInitData", responseDTO);
+        } else if (productRequestDTO != null) {
+             // 상품 페잊지 -> 결제
+         }
+
+
         return "payment/product";
     }
 
     @GetMapping("/reservation/{reservationId}")
     public String reservationPayment(@PathVariable Long reservationId, Model model) {
-        log.info("결제로왔다!");
 
         ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(
             reservationId);
@@ -59,26 +70,17 @@ public class PaymentController {
 
     @GetMapping("/success")
     public String reservationPaySuccess(
-
-            @RequestParam(value = "orderId") String orderId,
-            @RequestParam(value = "amount") Integer amount,
-            @RequestParam(value = "paymentKey") String paymentKey) {
-
-        log.info(orderId);
-        log.info(amount);
-        log.info(paymentKey);
-        log.info("성공~");
+        @RequestParam(value = "orderId") String orderId,
+        @RequestParam(value = "amount") Integer amount,
+        @RequestParam(value = "paymentKey") String paymentKey) {
         return "redirect:/success";
     }
 
     @GetMapping("/fail")
     public String reservationPayFail(
-
-            @RequestParam(value = "orderId") String orderId,
-            @RequestParam(value = "amount") Integer amount,
-            @RequestParam(value = "paymentKey") String paymentKey) {
-
-        log.info("실패~");
+        @RequestParam(value = "orderId") String orderId,
+        @RequestParam(value = "amount") Integer amount,
+        @RequestParam(value = "paymentKey") String paymentKey) {
         return "redirect:/success";
     }
 }

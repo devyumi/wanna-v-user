@@ -258,7 +258,7 @@ document.getElementById(
 //     async function () {
 //       try {
 //         const response = await axios.post(
-//             '/api/v1/payment/generate-order-id');
+//             '/api/v1/checkout/generate-order-id');
 //         const data = response.data.data;
 //
 //         console.log("data: " + data);
@@ -358,7 +358,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.getElementById("payment-button").addEventListener("click",
         async () => {
           const orderIdResponse = await axios.post(
-              '/api/v1/payment/generate-order-id');
+              '/api/v1/checkout/generate-order-id');
           const orderData = orderIdResponse.data.data;
 
           /**

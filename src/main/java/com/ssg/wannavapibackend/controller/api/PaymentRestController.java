@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/payment")
+@RequestMapping("/api/v1/checkout")
 public class PaymentRestController {
 
     private final PaymentService paymentService;
