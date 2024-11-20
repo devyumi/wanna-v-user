@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 public class CartResponseDTO {
 
     private Long id;
-    private Integer quantity;
+    private Integer availableStock;  // 실제 상품 재고 수량
+    private Integer cartQuantity;    // 장바구니에 담은 수량
     private Long productId;
     private String productName;
     private String productImage;
