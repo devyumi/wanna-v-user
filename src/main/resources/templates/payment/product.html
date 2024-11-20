@@ -12,7 +12,7 @@
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <title>Product Detail Page</title>
   <script th:inline="javascript">
-    const clientKey = [[${clientKey}]];
+    const pageInitData = [[${pageInitData}]];
   </script>
 </head>
 <body>
@@ -21,12 +21,6 @@
   <div class="info-container">
     <p class="container-title">배송지</p>
     <div class="delivery-container">
-      <div class="address-type-container detail-container">
-        <div class="input-container">
-          <input type="text" id="address-type" placeholder=""/>
-          <label for="address-type">배송지명 (선택)</label>
-        </div>
-      </div>
       <p class="delivery-detail-container-title">받는 사람</p>
       <div class="person-info-container detail-container">
         <div class="input-container">
@@ -49,6 +43,12 @@
         <div class="input-container">
           <input type="text" id="detail-address" placeholder="" required/>
           <label for="detail-address">상세주소 *</label>
+        </div>
+      </div>
+      <div class="address-type-container detail-container">
+        <div class="input-container">
+          <input type="text" id="note" placeholder=""/>
+          <label for="note">요청 사항(선택)</label>
         </div>
       </div>
     </div>

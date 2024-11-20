@@ -49,7 +49,28 @@ const paymentItem = {
     },
   ],
 };
+/**
+ * 결제 페이지 초기 배송지
+ * @type {number}
+ */
+const userName = pageInitData.name;
+const phone = pageInitData.phone.replace(/-/g, '');
+const zipCode = pageInitData.address.zipCode || '';
+const roadAddress = pageInitData.address.roadAddress || '';
+const detailAddress = pageInitData.address.detailAddress || '';
 
+
+document.getElementById('name-type').value = userName;
+document.getElementById('phone-type').value = phone;
+if (roadAddress !== '' && zipCode !== '') {
+  document.getElementById('address').value = roadAddress + " (" + zipCode + ")";
+}
+document.getElementById('detail-address').value = detailAddress;
+
+/**
+ * 상품별 결제 가격
+ * @type {number}
+ */
 const totalPrice = paymentItem.productList.reduce((total, item) => {
   return total + (item.productFinalPrice * item.quantity);
 }, 0);
@@ -273,15 +294,15 @@ document.getElementById(
  */
 document.addEventListener("DOMContentLoaded", async () => {
   try {
+
     /**
      * ------  결제위젯 초기화 ------
      * TODO: clientKey는 개발자센터의 결제위젯 연동 키 > 클라이언트 키로 바꾸세요.
      * TODO: 구매자의 고유 아이디를 불러와서 customerKey로 설정하세요. 이메일・전화번호와 같이 유추가 가능한 값은 안전하지 않습니다.
      * @docs https://docs.tosspayments.com/sdk/v2/js#토스페이먼츠-초기화
      */
-    // 서버에서 클라이언트 키와 기본 데이터를 받아옴
-    console.log("clientKey: "+clientKey)
-    const tossPayments = TossPayments(clientKey);
+        // 서버에서 클라이언트 키와 기본 데이터를 받아옴
+    const tossPayments = TossPayments(pageInitData.clientKey);
     const customerKey = generateRandomString();
 
     /**
