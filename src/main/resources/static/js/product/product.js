@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
   increaseBtn.addEventListener("click", () => {
     let currentValue = parseInt(quantityInput.value);
     if (currentValue >= stock) {
-      alert("최대 가능 재고는 " + stock + "개 입니다.");
+      alert("최대 가능 수량은 " + stock + "개 입니다.");
       return;
     } else if (currentValue >= MAX_PRODUCT_QUANTITY) {
       alert("장바구니 담을 수 있는 최대 수량은 99개 입니다.");

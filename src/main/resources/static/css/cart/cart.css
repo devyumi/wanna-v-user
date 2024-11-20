@@ -115,6 +115,13 @@ input.cart-item-check:not(:checked) + label::after {
   text-align: left;
 }
 
+.available-stock {
+  margin: 0;
+  padding-left: 5px;
+  font-size: 13px;
+  color: #868e96;
+}
+
 .item-controls {
   margin-top: 5px;
   padding: 5px;

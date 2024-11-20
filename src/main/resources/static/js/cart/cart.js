@@ -12,10 +12,12 @@ fetchCartItems();
 updateTotalPrice(); // 총 결제 금액
 
 // 이벤트 리스너 등록
-document.getElementById('cart-item-check-all').addEventListener("click", toggleAllCheckboxes);
-document.getElementById('delete-selected-items').addEventListener("click", deleteSelectedItems);
-document.querySelector('.cart-grid').addEventListener('click', handleCartItemClick);
-
+document.getElementById('cart-item-check-all').addEventListener("click",
+    toggleAllCheckboxes);
+document.getElementById('delete-selected-items').addEventListener("click",
+    deleteSelectedItems);
+document.querySelector('.cart-grid').addEventListener('click',
+    handleCartItemClick);
 
 /**
  * 장바구니 상품 후츌
@@ -42,7 +44,8 @@ function renderCartItems(cartItems) {
 
   // 카트 아이템 목록을 돌면서 HTML을 추가
   cartItems.forEach(item => {
-    let productFinalPrice = formatPrice(item.productFinalPrice * item.quantity);
+    let productFinalPrice = formatPrice(
+        item.productFinalPrice * item.cartQuantity);
     itemHTML += `
       <div class="product-item">
         <div class="cart-item-container">
@@ -60,11 +63,14 @@ function renderCartItems(cartItems) {
               <a href="/products/${item.productId}">
                 <p class="product-name">${truncateText(item.productName)}</p>
               </a>
+              <div class="stock-container">
+                <p class="available-stock">${item.availableStock}개 남음</p>
+              </div>
               <div class="item-controls">
                 <span class="hidden-final-price" hidden="hidden">${item.productFinalPrice}</span>
                 <div class="input-group quantity-selector">
                   <button class="btn btn-outline-secondary quantity-decrease" type="button">-</button>
-                  <input type="number" class="form-control text-center item-quantity" min="1" max="99" value="${item.quantity}" data-id="${item.id}" />
+                  <input type="number" class="form-control text-center item-quantity" min="1" max="99" value="${item.cartQuantity}" data-id="${item.id}" />
                   <button class="btn btn-outline-secondary quantity-increase" type="button">+</button>
                 </div>
                 <span class="product-total-price price">${productFinalPrice}</span>
@@ -97,9 +103,9 @@ function toggleAllCheckboxes(event) {
  * @param quantityInput
  * @param isIncrease
  */
-async function changeQuantity(quantityInput, isIncrease) {
+async function changeQuantity(stock, quantityInput, isIncrease) {
   let quantity = parseInt(quantityInput.value);
-  if (isIncrease && quantity < MAX_PRODUCT_QUANTITY) {
+  if (isIncrease && quantity < MAX_PRODUCT_QUANTITY && quantity < stock) {
     quantity++;
   } else if (!isIncrease && quantity > MIN_PRODUCT_QUANTITY) {
     quantity--;
@@ -113,9 +119,13 @@ async function changeQuantity(quantityInput, isIncrease) {
  * 수량 직접 입력 함수
  * @param input
  */
-async function handleQuantityInput(input) {
+async function handleQuantityInput(stock, input) {
   const quantity = parseInt(input.value);
-  if (quantity >= MIN_PRODUCT_QUANTITY && quantity <= MAX_PRODUCT_QUANTITY) {
+  if (quantity > stock) {
+    alert("최대 가능 수량은 " + stock + "개 입니다.");
+    input.value = stock; // 유효한 범위로 조정
+  } else if (quantity >= MIN_PRODUCT_QUANTITY && quantity
+      <= MAX_PRODUCT_QUANTITY) {
     await updateQuantity(input); // 수량 업데이트
   } else {
     alert('수량은 1 이상 99 이하로 입력해주세요.');
@@ -264,21 +274,36 @@ function handleCartItemClick(event) {
 
   // 수량 감소 버튼 클릭 시
   if (event.target.classList.contains('quantity-decrease')) {
-    const quantityInput = event.target.closest('.quantity-selector').querySelector('.item-quantity');
-    changeQuantity(quantityInput, false); // 수량 감소
+    const productItem = event.target.closest('.product-item'); // 상위 컨테이너
+    const stockText = productItem.querySelector('.available-stock').textContent;
+    const stock = parseInt(stockText.replace('개 남음', '').trim());
+
+    const quantityInput = event.target.closest(
+        '.quantity-selector').querySelector('.item-quantity');
+    changeQuantity(stock, quantityInput, false); // 수량 감소
   }
 
   // 수량 증가 버튼 클릭 시
   if (event.target.classList.contains('quantity-increase')) {
-    const quantityInput = event.target.closest('.quantity-selector').querySelector('.item-quantity');
-    changeQuantity(quantityInput, true); // 수량 증가
+    const productItem = event.target.closest('.product-item'); // 상위 컨테이너
+    const stockText = productItem.querySelector('.available-stock').textContent;
+    const stock = parseInt(stockText.replace('개 남음', '').trim()); // 숫자만 추출
+
+    const quantityInput = event.target.closest(
+        '.quantity-selector').querySelector('.item-quantity');
+    changeQuantity(stock, quantityInput, true); // 수량 증가
   }
 
   // 수량 입력 필드 직접 입력 시
   if (event.target.classList.contains('item-quantity')) {
-    handleQuantityInput(event.target); // 수량 직접 입력 처리
+    const productItem = event.target.closest('.product-item');
+    const stockText = productItem.querySelector('.available-stock').textContent;
+    const stock = parseInt(stockText.replace('개 남음', '').trim());
+
+    handleQuantityInput(stock, event.target); // 수량 직접 입력 처리
   }
 }
 
 // .cart-grid에 클릭 이벤트 리스너 추가
-document.querySelector('.cart-grid').addEventListener('click', handleCartItemClick);
+document.querySelector('.cart-grid').addEventListener('click',
+    handleCartItemClick);
