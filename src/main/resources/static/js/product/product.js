@@ -29,7 +29,8 @@ document.addEventListener('DOMContentLoaded', function () {
   formatPriceElements();
 
   const productId = document.getElementById('hiddenProductId').textContent;
-  const stock = document.getElementById('product-stock').textContent;
+  const stockText = document.getElementById('product-stock').textContent;
+  const stock = parseInt(stockText);  // 숫자 부분만 추출
   const decreaseBtn = document.getElementById("decrease-btn");
   const quantityInput = document.getElementById("quantity-input");
   const increaseBtn = document.getElementById("increase-btn");
