@@ -3,10 +3,13 @@ package com.ssg.wannavapibackend.service.serviceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssg.wannavapibackend.common.ErrorCode;
 import com.ssg.wannavapibackend.config.TossPaymentConfig;
+import com.ssg.wannavapibackend.domain.User;
+import com.ssg.wannavapibackend.dto.PaymentPageInitDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
+import com.ssg.wannavapibackend.repository.UserRepository;
 import com.ssg.wannavapibackend.service.PaymentService;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,6 +34,20 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final TossPaymentConfig tossPaymentConfig;
     private final ObjectMapper objectMapper;
+    private final UserRepository userRepository;
+
+    @Override
+    public PaymentPageInitDTO getPaymentPageInitInfo(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+
+        return PaymentPageInitDTO.builder()
+            .clientKey(tossPaymentConfig.getTossClientKey())
+            .name(user.getName())
+            .phone(user.getPhone())
+            .address(user.getAddress())
+            .build();
+    }
 
     /**
      * 결제 번호 생성 결제일(YYYYMMDD) + 랜덤 8자리 숫자

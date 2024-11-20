@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -15,10 +16,17 @@ import lombok.Setter;
 @EqualsAndHashCode
 public class Address {
 
+  @Column(name = "zip_code")
   private String zipCode;
+
+  @Column(name = "road_address")
   private String roadAddress;
+
+  @Column(name = "land_lot_address")
   private String landLotAddress;
-  private String detailsAddress;
+
+  @Column(name = "detail_address")
+  private String detailAddress;
 
     
 }

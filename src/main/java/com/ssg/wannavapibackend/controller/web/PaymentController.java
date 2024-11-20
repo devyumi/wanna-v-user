@@ -1,7 +1,9 @@
 package com.ssg.wannavapibackend.controller.web;
 
 import com.ssg.wannavapibackend.config.TossPaymentConfig;
+import com.ssg.wannavapibackend.dto.PaymentPageInitDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
+import com.ssg.wannavapibackend.service.PaymentService;
 import com.ssg.wannavapibackend.service.ReservationService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +21,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/payment")
 public class PaymentController {
 
+    private final PaymentService paymentService;
     private final ReservationService reservationService;
     private final TossPaymentConfig tossPaymentConfig;
+    final Long userId = 1L; // Security 적용 후 삭제 예정
 
     @GetMapping("/product")
     public String productPayment(Model model) {
-        model.addAttribute("clientKey", tossPaymentConfig.getTossClientKey());
+        PaymentPageInitDTO paymentPageInitDTO = paymentService.getPaymentPageInitInfo(userId);
+        model.addAttribute("pageInitData", paymentPageInitDTO);
         return "payment/product";
     }
 
