@@ -4,11 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssg.wannavapibackend.common.ErrorCode;
 import com.ssg.wannavapibackend.config.TossPaymentConfig;
 import com.ssg.wannavapibackend.domain.User;
-import com.ssg.wannavapibackend.dto.PaymentPageInitDTO;
+import com.ssg.wannavapibackend.dto.response.CartCheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
+import com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
+import com.ssg.wannavapibackend.repository.PaymentRepository;
+import com.ssg.wannavapibackend.repository.UserCouponRepository;
 import com.ssg.wannavapibackend.repository.UserRepository;
 import com.ssg.wannavapibackend.service.PaymentService;
 import java.io.IOException;
@@ -22,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.Random;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -34,18 +38,25 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final TossPaymentConfig tossPaymentConfig;
     private final ObjectMapper objectMapper;
+    private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
+    private final UserCouponRepository userCouponRepository;
 
     @Override
-    public PaymentPageInitDTO getPaymentPageInitInfo(Long userId) {
+    public CartCheckoutResponseDTO getPaymentPageInitInfo(Long userId, List<Long> cartIds) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
-        return PaymentPageInitDTO.builder()
+        List<PaymentItemResponseDTO> itemList = paymentRepository.findCartsForPayment(userId, cartIds);
+
+        return CartCheckoutResponseDTO.builder()
             .clientKey(tossPaymentConfig.getTossClientKey())
             .name(user.getName())
             .phone(user.getPhone())
             .address(user.getAddress())
+            .point(user.getPoint())
+            .coupons(userCouponRepository.findAllByUserIdAndEndDate(userId))
+            .products(itemList)
             .build();
     }
 

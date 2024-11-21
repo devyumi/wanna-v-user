@@ -1,7 +1,7 @@
 package com.ssg.wannavapibackend.dto.response;
 
 import com.ssg.wannavapibackend.domain.Address;
-import com.ssg.wannavapibackend.dto.CouponDTO;
+import com.ssg.wannavapibackend.domain.UserCoupon;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,10 +25,10 @@ public abstract class CheckoutResponseDTO {
     private Address address;
 
     // 유저 포인트
-    private Integer point;
+    private Long point;
 
     // 보유 쿠폰
-    private List<CouponDTO> coupons;
+    private List<UserCoupon> coupons;
 
     // 상품 정보 (추상 메서드로 선언)
     public abstract Object getProducts();

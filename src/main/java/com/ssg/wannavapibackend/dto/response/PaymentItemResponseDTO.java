@@ -14,8 +14,9 @@ import lombok.ToString;
 @AllArgsConstructor
 public class PaymentItemResponseDTO {
 
-    private String image;           // 상품 이미지
-    private String name;            // 상품 이름
-    private Integer quantity;       // 상품 구매 수량
-    private BigDecimal finalPrice;  // 상품별 가격
+    private Long cartId;              // 장바구니 ID
+    private String image;             // 상품 이미지
+    private String name;              // 상품 이름
+    private Integer cartQuantity;     // 상품 구매 수량
+    private Double paymentPrice;  // 상품별 최종 결제 가격
 }
