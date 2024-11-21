@@ -7,11 +7,10 @@ import com.ssg.wannavapibackend.domain.Product;
 import com.ssg.wannavapibackend.domain.User;
 import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
-import com.ssg.wannavapibackend.dto.response.CartCheckoutResponseDTO;
+import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
-import com.ssg.wannavapibackend.dto.response.ProductCheckoutResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
 import com.ssg.wannavapibackend.repository.PaymentRepository;
 import com.ssg.wannavapibackend.repository.ProductRepository;
@@ -48,14 +47,14 @@ public class PaymentServiceImpl implements PaymentService {
     private final ProductRepository productRepository;
 
     @Override
-    public CartCheckoutResponseDTO processCartCheckout(Long userId, List<Long> cartIds) {
+    public CheckoutResponseDTO processCartCheckout(Long userId, List<Long> cartIds) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         List<PaymentItemResponseDTO> itemList = paymentRepository.findCartsForPayment(userId,
             cartIds);
 
-        return CartCheckoutResponseDTO.builder()
+        return CheckoutResponseDTO.builder()
             .clientKey(tossPaymentConfig.getTossClientKey())
             .name(user.getName())
             .phone(user.getPhone())
@@ -67,23 +66,29 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ProductCheckoutResponseDTO processDirectProductCheckout(Long userId,
+    public CheckoutResponseDTO processDirectProductCheckout(Long userId,
         DirectProductCheckoutRequestDTO productRequestDTO) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
         Product product = productRepository.findById(productRequestDTO.getProductId())
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-        return ProductCheckoutResponseDTO.builder()
+
+        PaymentItemResponseDTO item = PaymentItemResponseDTO.builder()
+            .image(product.getImage())
+            .name(product.getName())
+            .quantity(productRequestDTO.getQuantity())
+            .paymentPrice(product.getFinalPrice() * productRequestDTO.getQuantity())
+            .build();
+
+        return CheckoutResponseDTO.builder()
             .clientKey(tossPaymentConfig.getTossClientKey())
             .name(user.getName())
             .phone(user.getPhone())
             .address(user.getAddress())
             .point(user.getPoint())
             .coupons(userCouponRepository.findAllByUserIdAndEndDate(userId))
-            .image(product.getName())
-            .name(product.getName())
-            .paymentPrice(product.getFinalPrice() * productRequestDTO.getQuantity())
+            .products((List<PaymentItemResponseDTO>) item)
             .build();
     }
 

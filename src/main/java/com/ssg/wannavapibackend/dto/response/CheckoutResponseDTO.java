@@ -4,17 +4,17 @@ import com.ssg.wannavapibackend.domain.Address;
 import com.ssg.wannavapibackend.domain.UserCoupon;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.experimental.SuperBuilder;
 
 @Getter
-@SuperBuilder
+@Builder
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public abstract class CheckoutResponseDTO {
+public class CheckoutResponseDTO {
 
     // toss 클라이언트 키
     private String clientKey;
@@ -29,4 +29,7 @@ public abstract class CheckoutResponseDTO {
 
     // 보유 쿠폰
     private List<UserCoupon> coupons;
+
+    // 상품 정보
+    public List<PaymentItemResponseDTO> products;
 }
