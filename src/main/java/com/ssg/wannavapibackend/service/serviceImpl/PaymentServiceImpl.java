@@ -5,8 +5,10 @@ import com.ssg.wannavapibackend.common.ErrorCode;
 import com.ssg.wannavapibackend.config.TossPaymentConfig;
 import com.ssg.wannavapibackend.domain.Product;
 import com.ssg.wannavapibackend.domain.User;
+import com.ssg.wannavapibackend.domain.UserCoupon;
 import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
+import com.ssg.wannavapibackend.dto.response.AvailableUserCouponResponseDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO;
@@ -31,6 +33,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -55,13 +58,26 @@ public class PaymentServiceImpl implements PaymentService {
         List<PaymentItemResponseDTO> itemList = paymentRepository.findCartsForPayment(userId,
             cartIds);
 
+        List<UserCoupon> userCoupons = userCouponRepository.findAllByUserIdAndEndDate(userId);
+        List<AvailableUserCouponResponseDTO> availableUserCoupons = userCoupons.stream()
+            .map(userCoupon -> AvailableUserCouponResponseDTO.builder()
+                .id(userCoupon.getCoupon().getId())
+                .code(userCoupon.getCoupon().getCode())
+                .name(userCoupon.getCoupon().getName())
+                .type(userCoupon.getCoupon().getType())
+                .discountAmount(userCoupon.getCoupon().getDiscountAmount())
+                .discountRate(userCoupon.getCoupon().getDiscountRate())
+                .endDate(userCoupon.getCoupon().getEndDate())
+                .build())
+            .collect(Collectors.toList());
+
         return CheckoutResponseDTO.builder()
             .clientKey(tossPaymentConfig.getTossClientKey())
             .name(user.getName())
             .phone(user.getPhone())
             .address(user.getAddress())
             .point(user.getPoint())
-            .coupons(userCouponRepository.findAllByUserIdAndEndDate(userId))
+            .coupons(availableUserCoupons)
             .products(itemList)
             .build();
     }
@@ -74,6 +90,19 @@ public class PaymentServiceImpl implements PaymentService {
 
         Product product = productRepository.findById(productRequestDTO.getProductId())
             .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+
+        List<UserCoupon> userCoupons = userCouponRepository.findAllByUserIdAndEndDate(userId);
+        List<AvailableUserCouponResponseDTO> availableUserCoupons = userCoupons.stream()
+            .map(userCoupon -> AvailableUserCouponResponseDTO.builder()
+                .id(userCoupon.getCoupon().getId())
+                .code(userCoupon.getCoupon().getCode())
+                .name(userCoupon.getCoupon().getName())
+                .type(userCoupon.getCoupon().getType())
+                .discountAmount(userCoupon.getCoupon().getDiscountAmount())
+                .discountRate(userCoupon.getCoupon().getDiscountRate())
+                .endDate(userCoupon.getCoupon().getEndDate())
+                .build())
+            .collect(Collectors.toList());
 
         PaymentItemResponseDTO item = PaymentItemResponseDTO.builder()
             .image(product.getImage())
@@ -88,7 +117,7 @@ public class PaymentServiceImpl implements PaymentService {
             .phone(user.getPhone())
             .address(user.getAddress())
             .point(user.getPoint())
-            .coupons(userCouponRepository.findAllByUserIdAndEndDate(userId))
+            .coupons(availableUserCoupons)
             .products(Collections.singletonList(item))
             .build();
     }

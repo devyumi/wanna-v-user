@@ -22,14 +22,7 @@ public class Coupon {
     @JoinColumn(name="event_id")
     private Event event;
 
-    @ManyToOne
-    @JoinColumn(name="created_by_id")
-    private Admin createdBy;
-
-    @ManyToOne
-    @JoinColumn(name="updated_by_id")
-    private Admin updatedBy;
-
+    private String name;
     private String code;
 
     @Enumerated(EnumType.STRING)
@@ -47,6 +40,14 @@ public class Coupon {
 
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
+
+    @ManyToOne
+    @JoinColumn(name="created_by_id")
+    private Admin createdBy;
+
+    @ManyToOne
+    @JoinColumn(name="updated_by_id")
+    private Admin updatedBy;
 
     @Column(name="created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)

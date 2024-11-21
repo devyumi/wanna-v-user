@@ -28,7 +28,7 @@ public class CheckoutResponseDTO {
     private Long point;
 
     // 보유 쿠폰
-    private List<UserCoupon> coupons;
+    private List<AvailableUserCouponResponseDTO> coupons;
 
     // 상품 정보
     public List<PaymentItemResponseDTO> products;
