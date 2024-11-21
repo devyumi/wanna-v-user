@@ -18,7 +18,7 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
@@ -63,6 +63,6 @@ public class Payment {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime canceledAt;
 
-    @OneToMany(mappedBy = "payment")
+    @OneToMany(mappedBy = "payment", fetch = FetchType.LAZY)
     private List<PaymentItem> paymentItems;
 }

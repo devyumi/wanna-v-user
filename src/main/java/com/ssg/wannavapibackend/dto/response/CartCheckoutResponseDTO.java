@@ -17,8 +17,4 @@ public class CartCheckoutResponseDTO extends CheckoutResponseDTO {
     // 상품 정보 (다수 상품)
     private List<PaymentItemResponseDTO> products;
 
-    @Override
-    public List<PaymentItemResponseDTO> getProducts() {
-        return products;
-    }
 }

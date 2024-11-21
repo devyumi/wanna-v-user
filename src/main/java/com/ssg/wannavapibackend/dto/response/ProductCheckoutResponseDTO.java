@@ -14,10 +14,8 @@ import lombok.experimental.SuperBuilder;
 public class ProductCheckoutResponseDTO extends CheckoutResponseDTO {
 
     // 상품 정보 (단일 상품)
-    private PaymentItemResponseDTO product;
+    private String image;             // 상품 이미지
+    private String name;              // 상품 이름
+    private Double paymentPrice;      // 상품 결제 가격
 
-    @Override
-    public PaymentItemResponseDTO getProducts() {
-        return product;
-    }
 }

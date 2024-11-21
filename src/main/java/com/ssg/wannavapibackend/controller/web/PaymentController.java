@@ -1,7 +1,9 @@
 package com.ssg.wannavapibackend.controller.web;
 
+import com.ssg.wannavapibackend.dto.request.ProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CartCheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
+import com.ssg.wannavapibackend.dto.response.ProductCheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.service.PaymentService;
 import com.ssg.wannavapibackend.service.ReservationService;
@@ -29,18 +31,20 @@ public class PaymentController {
     final Long userId = 1L; // Security 적용 후 삭제 예정
 
     @PostMapping("/product")
-    public String redirectToProductPaymentPage(@RequestBody(required = false) List<Long> cartIds,
-        @RequestBody(required = false) DirectProductCheckoutRequestDTO productRequestDTO,
+    public String redirectToProductPaymentPage(@RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
         Model model) {
+
+        List<Long> cartIds = checkoutRequestDTO.getCartIds();
+        DirectProductCheckoutRequestDTO productRequestDTO = checkoutRequestDTO.getProductRequestDTO();
 
          if (cartIds != null && !cartIds.isEmpty()) {
              // 장바구니 -> 결제
-            CartCheckoutResponseDTO responseDTO = paymentService.getPaymentPageInitInfo(userId, cartIds);
+            CartCheckoutResponseDTO responseDTO = paymentService.processCartCheckout(userId, cartIds);
             model.addAttribute("pageInitData", responseDTO);
         } else if (productRequestDTO != null) {
-             // 상품 페잊지 -> 결제
+             // 상품 페이지 -> 결제
+             ProductCheckoutResponseDTO responseDTO = paymentService.processDirectProductCheckout(userId, productRequestDTO);
          }
-
 
         return "payment/product";
     }

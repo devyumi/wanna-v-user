@@ -29,7 +29,4 @@ public abstract class CheckoutResponseDTO {
 
     // 보유 쿠폰
     private List<UserCoupon> coupons;
-
-    // 상품 정보 (추상 메서드로 선언)
-    public abstract Object getProducts();
 }

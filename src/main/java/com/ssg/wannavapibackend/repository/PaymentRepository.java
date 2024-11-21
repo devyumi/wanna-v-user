@@ -14,7 +14,7 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     List<Payment> findAllByUserIdOrderByCreatedAtDesc(Long userId);
 
-   @Query("SELECT new com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO(c.id, p.image, p.name, c.quantity, " +
+   @Query("SELECT new com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO(p.image, p.name, c.quantity, " +
        "CAST(COALESCE(p.finalPrice, 0.0) * c.quantity AS double) ) " +
        "FROM User u " +
        "JOIN Cart c ON u.id = c.user.id " +
