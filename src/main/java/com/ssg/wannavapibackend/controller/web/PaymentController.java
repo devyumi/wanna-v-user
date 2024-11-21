@@ -7,6 +7,7 @@ import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.service.PaymentService;
 import com.ssg.wannavapibackend.service.ReservationService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,25 +33,34 @@ public class PaymentController {
     @PostMapping("/product")
     public String redirectToProductPaymentPage(
         @RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
-        Model model) {
-
+        HttpSession session) {
         List<Long> cartIds = checkoutRequestDTO.getCartIds();
         DirectProductCheckoutRequestDTO productRequestDTO = checkoutRequestDTO.getProductRequestDTO();
+        CheckoutResponseDTO responseDTO = null;
 
         if (cartIds != null && !cartIds.isEmpty()) {
             // 장바구니 -> 결제
-            CheckoutResponseDTO responseDTO = paymentService.processCartCheckout(userId,
-                cartIds);
-            model.addAttribute("pageInitData", responseDTO);
+            responseDTO = paymentService.processCartCheckout(userId, cartIds);
         } else if (productRequestDTO != null) {
             // 상품 페이지 -> 결제
-            CheckoutResponseDTO responseDTO = paymentService.processDirectProductCheckout(
-                userId, productRequestDTO);
-            model.addAttribute("pageInitData", responseDTO);
+            responseDTO = paymentService.processDirectProductCheckout(userId, productRequestDTO);
         }
+
+        session.setAttribute("pageInitData", responseDTO);
+
+        return "redirect:/checkout/product";
+    }
+
+    @GetMapping("/product")
+    public String showProductPaymentPage(HttpSession session, Model model) {
+        CheckoutResponseDTO responseDTO = (CheckoutResponseDTO) session.getAttribute(
+            "pageInitData");
+
+        model.addAttribute("pageInitData", responseDTO);
 
         return "payment/product";
     }
+
 
     @GetMapping("/reservation/{reservationId}")
     public String reservationPayment(@PathVariable Long reservationId, Model model) {

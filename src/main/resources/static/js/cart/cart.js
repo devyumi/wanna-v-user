@@ -307,3 +307,32 @@ function handleCartItemClick(event) {
 // .cart-grid에 클릭 이벤트 리스너 추가
 document.querySelector('.cart-grid').addEventListener('click',
     handleCartItemClick);
+
+/**
+ * 결제 페이지 랜더링
+ */
+document.querySelector('.btn-payment').addEventListener('click', async () => {
+  const selectedCartIds = getSelectedCartIds(); // 선택된 cartId 배열 가져오기
+  console.log('selectedCartIds' + selectedCartIds)
+  if (selectedCartIds.length === 0) {
+    alert('선택된 상품이 없습니다.');
+    return;
+  }
+
+  try {
+    const response = await axios.post(`/checkout/product`, {
+      cartIds: selectedCartIds // 요청 본문에 cartIds를 포함
+    }, {
+      headers: {
+        'Content-Type': 'application/json', // JSON 형식으로 보내기
+      }
+    });
+
+    if (response.status === 200) {
+      window.location.href = '/checkout/product';
+    }
+  } catch (error) {
+    console.error('결제 요청 중 오류 발생:', error);
+    alert('결제 요청에 실패했습니다. 다시 시도해 주세요.');
+  }
+});

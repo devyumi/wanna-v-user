@@ -22,11 +22,11 @@ public class Coupon {
     @JoinColumn(name="event_id")
     private Event event;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="created_by_id")
     private Admin createdBy;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name="updated_by_id")
     private Admin updatedBy;
 
