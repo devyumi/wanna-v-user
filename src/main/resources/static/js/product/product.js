@@ -29,21 +29,29 @@ document.addEventListener('DOMContentLoaded', function () {
   formatPriceElements();
 
   const productId = document.getElementById('hiddenProductId').textContent;
-  const stockText = document.getElementById('product-stock').textContent;
-  const stock = parseInt(stockText);  // 숫자 부분만 추출
-  const decreaseBtn = document.getElementById("decrease-btn");
-  const quantityInput = document.getElementById("quantity-input");
-  const increaseBtn = document.getElementById("increase-btn");
+
+  const stockTextCart = document.getElementById('cart-product-stock').textContent;
+  const stockCart = parseInt(stockTextCart);  // 숫자 부분만 추출
+  const decreaseBtnCart = document.getElementById("cart-decrease-btn");
+  const increaseBtnCart = document.getElementById("cart-increase-btn");
+  const quantityInputCart = document.getElementById("cart-quantity-input");
+
+  const stockTextOrder = document.getElementById('order-product-stock').textContent;
+  const stockOrder = parseInt(stockTextOrder);  // 숫자 부분만 추출
+  const decreaseBtnOrder = document.getElementById("order-decrease-btn");
+  const increaseBtnOrder = document.getElementById("order-increase-btn");
+  const quantityInputOrder = document.getElementById("order-quantity-input");
+
   const MIN_PRODUCT_QUANTITY = 1;
   const MAX_PRODUCT_QUANTITY = 99;
 
   /**
    * 장바구니 담기 수량 감소 버튼
    */
-  decreaseBtn.addEventListener("click", () => {
-    let currentValue = parseInt(quantityInput.value);
+  decreaseBtnCart.addEventListener("click", () => {
+    let currentValue = parseInt(quantityInputCart.value);
     if (currentValue > MIN_PRODUCT_QUANTITY) {
-      quantityInput.value = currentValue - 1;
+      quantityInputCart.value = currentValue - 1;
     } else {
       alert("장바구니 담을 수 있는 최소 수량은 1개 입니다.");
       return;
@@ -53,16 +61,44 @@ document.addEventListener('DOMContentLoaded', function () {
   /**
    * 장바구니 담기 수량 증가 버튼
    */
-  increaseBtn.addEventListener("click", () => {
-    let currentValue = parseInt(quantityInput.value);
-    if (currentValue >= stock) {
-      alert("최대 가능 수량은 " + stock + "개 입니다.");
+  increaseBtnCart.addEventListener("click", () => {
+    let currentValue = parseInt(quantityInputCart.value);
+    if (currentValue >= stockCart) {
+      alert("최대 가능 수량은 " + stockCart + "개 입니다.");
       return;
     } else if (currentValue >= MAX_PRODUCT_QUANTITY) {
       alert("장바구니 담을 수 있는 최대 수량은 99개 입니다.");
       return;
     }
-    quantityInput.value = currentValue + 1;
+    quantityInputCart.value = currentValue + 1;
+  })
+
+  /**
+   * 구매하기 상품 수량 감소 버튼
+   */
+  decreaseBtnOrder.addEventListener("click", () => {
+    let currentValue = parseInt(quantityInputOrder.value);
+    if (currentValue > MIN_PRODUCT_QUANTITY) {
+      quantityInputOrder.value = currentValue - 1;
+    } else {
+      alert("구매할 수 있는 최소 수량은 1개 입니다.");
+      return;
+    }
+  })
+
+  /**
+   * 구매하기 상품 수량 증가 버튼
+   */
+  increaseBtnOrder.addEventListener("click", () => {
+    let currentValue = parseInt(quantityInputOrder.value);
+    if (currentValue >= stockOrder) {
+      alert("최대 가능 수량은 " + stockOrder + "개 입니다.");
+      return;
+    } else if (currentValue >= MAX_PRODUCT_QUANTITY) {
+      alert("구매할 수 있는 최대 수량은 99개 입니다.");
+      return;
+    }
+    quantityInputOrder.value = currentValue + 1;
   })
 
   /**
@@ -70,11 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
    */
   document.getElementById('add-cart-item').addEventListener("click",
       async function () {
-        const currentQuantity = parseInt(quantityInput.value);
-        console.log(
-            "productId: " + productId + ", quantity: " + currentQuantity
-            + ", stock: "
-            + stock);
+        const currentQuantity = parseInt(quantityInputCart.value);
 
         // 수량이 1 이상 99 이하인지 확인
         if (currentQuantity < MIN_PRODUCT_QUANTITY || currentQuantity
@@ -83,8 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
           return;
         }
 
-        if (currentQuantity > stock) {
-          alert("최대 가능 재고는 " + stock + "개 입니다.");
+        if (currentQuantity > stockCart) {
+          alert("최대 가능 재고는 " + stockCart + "개 입니다.");
           return;
         }
 
@@ -103,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function () {
           alert('상품이 장바구니에 추가되었습니다.');
 
           // Offcanvas 닫기
-          const offcanvasElement = document.getElementById('offcanvasBottom');
+          const offcanvasElement = document.getElementById('offcanvasCart');
           const bsOffcanvas = bootstrap.Offcanvas.getInstance(offcanvasElement);
           if (bsOffcanvas) {
             bsOffcanvas.hide(); // Offcanvas 닫기
