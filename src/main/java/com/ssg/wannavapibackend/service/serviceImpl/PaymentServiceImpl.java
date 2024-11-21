@@ -27,6 +27,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -88,7 +89,7 @@ public class PaymentServiceImpl implements PaymentService {
             .address(user.getAddress())
             .point(user.getPoint())
             .coupons(userCouponRepository.findAllByUserIdAndEndDate(userId))
-            .products((List<PaymentItemResponseDTO>) item)
+            .products(Collections.singletonList(item))
             .build();
     }
 

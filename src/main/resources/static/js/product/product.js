@@ -30,13 +30,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
   const productId = document.getElementById('hiddenProductId').textContent;
 
-  const stockTextCart = document.getElementById('cart-product-stock').textContent;
+  const stockTextCart = document.getElementById(
+      'cart-product-stock').textContent;
   const stockCart = parseInt(stockTextCart);  // 숫자 부분만 추출
   const decreaseBtnCart = document.getElementById("cart-decrease-btn");
   const increaseBtnCart = document.getElementById("cart-increase-btn");
   const quantityInputCart = document.getElementById("cart-quantity-input");
 
-  const stockTextOrder = document.getElementById('order-product-stock').textContent;
+  const stockTextOrder = document.getElementById(
+      'order-product-stock').textContent;
   const stockOrder = parseInt(stockTextOrder);  // 숫자 부분만 추출
   const decreaseBtnOrder = document.getElementById("order-decrease-btn");
   const increaseBtnOrder = document.getElementById("order-increase-btn");
@@ -143,6 +145,49 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
           console.error('장바구니 추가 실패:', error);
           alert('장바구니에 추가에 실패했습니다.');
+        }
+      });
+
+  /**
+   * 상품 구매하기
+   */
+  document.getElementById('order-item').addEventListener("click",
+      async function () {
+        const currentQuantity = parseInt(quantityInputOrder.value);
+
+        // 수량이 1 이상 99 이하인지 확인
+        if (currentQuantity < MIN_PRODUCT_QUANTITY || currentQuantity
+            > MAX_PRODUCT_QUANTITY) {
+          alert("수량은 1 이상 99 이하이어야 합니다.");
+          return;
+        }
+
+        if (currentQuantity > stockCart) {
+          alert("최대 가능 재고는 " + stockCart + "개 입니다.");
+          return;
+        }
+
+        const data = {
+          productRequestDTO: {
+            productId: productId,
+            quantity: currentQuantity
+          }
+        };
+
+        try {
+          const response = await axios.post(`/checkout/product`,
+              data, {
+                headers: {
+                  'Content-Type': 'application/json'
+                }
+              });
+
+          if (response.status === 200) {
+            window.location.href = '/checkout/product';
+          }
+        } catch (error) {
+          console.error('결제 요청 중 오류 발생:', error);
+          alert('결제 요청에 실패했습니다. 다시 시도해 주세요.');
         }
       });
 });
