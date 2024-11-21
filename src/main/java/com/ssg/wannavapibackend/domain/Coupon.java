@@ -45,6 +45,9 @@ public class Coupon {
     @ColumnDefault("0")
     private Boolean active;
 
+    @Column(name = "end_date", nullable = false)
+    private LocalDateTime endDate;
+
     @Column(name="created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
