@@ -3,17 +3,23 @@ package com.ssg.wannavapibackend.service.serviceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssg.wannavapibackend.common.ErrorCode;
 import com.ssg.wannavapibackend.config.TossPaymentConfig;
+import com.ssg.wannavapibackend.domain.Payment;
+import com.ssg.wannavapibackend.domain.PaymentItem;
 import com.ssg.wannavapibackend.domain.Product;
 import com.ssg.wannavapibackend.domain.User;
 import com.ssg.wannavapibackend.domain.UserCoupon;
+import com.ssg.wannavapibackend.dto.PaymentProductDTO;
 import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
+import com.ssg.wannavapibackend.dto.request.ProductPaymentRequestDTO;
 import com.ssg.wannavapibackend.dto.response.AvailableUserCouponResponseDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
+import com.ssg.wannavapibackend.facade.RedissonLockStockFacade;
+import com.ssg.wannavapibackend.repository.PaymentItemRepository;
 import com.ssg.wannavapibackend.repository.PaymentRepository;
 import com.ssg.wannavapibackend.repository.ProductRepository;
 import com.ssg.wannavapibackend.repository.UserCouponRepository;
@@ -32,11 +38,13 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @Service
@@ -46,9 +54,12 @@ public class PaymentServiceImpl implements PaymentService {
     private final TossPaymentConfig tossPaymentConfig;
     private final ObjectMapper objectMapper;
     private final PaymentRepository paymentRepository;
+    private final PaymentItemRepository paymentItemRepository;
     private final UserRepository userRepository;
     private final UserCouponRepository userCouponRepository;
     private final ProductRepository productRepository;
+    private final RedissonLockStockFacade redissonLockStockFacade;
+
 
     @Override
     public CheckoutResponseDTO processCartCheckout(Long userId, List<Long> cartIds) {
@@ -147,6 +158,66 @@ public class PaymentServiceImpl implements PaymentService {
             .build();
     }
 
+    @Transactional
+    public void saveProductPayment(Long userId, ProductPaymentRequestDTO requestDTO) {
+        try {
+            Payment payment = Payment.builder()
+                .orderId(requestDTO.getOrederId())
+                .actualPrice(requestDTO.getActualPrice())
+                .finalPrice(requestDTO.getFinalPrice())
+                .pointsUsed(requestDTO.getPointsUsed())
+                .finalDiscountRate(requestDTO.getFinalDiscountRate())
+                .finalDiscountAmount(requestDTO.getFinalDiscountAmount())
+                .couponCode(requestDTO.getCouponCode())
+                .status(requestDTO.getStatus())
+                .address(requestDTO.getAddress())
+                .note(requestDTO.getNote())
+                .createdAt(requestDTO.getCreatedAt())
+                .build();
+
+            paymentRepository.save(payment);
+
+            Map<Long, Product> productCache = productRepository
+                .findAllById(requestDTO.getProducts().stream()
+                    .map(PaymentProductDTO::getProductId)
+                    .toList())
+                .stream()
+                .collect(Collectors.toMap(Product::getId, product -> product));
+
+            List<PaymentItem> paymentItems = requestDTO.getProducts().stream()
+                .map(productDTO -> {
+                    Product product = productCache.get(productDTO.getProductId());
+                    if (product == null) {
+                        throw new CustomException(ErrorCode.PRODUCT_NOT_FOUND);
+                    }
+                    return PaymentItem.builder()
+                        .payment(payment)
+                        .product(product)
+                        .quantity(productDTO.getQuantity())
+                        .build();
+                })
+                .toList();
+
+            paymentItemRepository.saveAll(paymentItems);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ErrorCode.PAYMENT_SAVE_FAILED);
+        }
+    }
+
+
+    @Override
+    public PaymentConfirmResponseDTO sendRequest(PaymentConfirmRequestDTO requestDTO) {
+        PaymentConfirmResponseDTO confirmResponseDTO = processPaymentConfirmation(requestDTO);
+
+        // 결제 확인 요청이 성공일 경우 재고 감소 로직 실행
+        if ("success".equals(confirmResponseDTO.getStatus())) {
+            redissonLockStockFacade.decreaseProductStock();
+        }
+
+        return confirmResponseDTO;
+    }
+
     /**
      * 결제 확인 요청을 처리하는 메서드.
      *
@@ -154,8 +225,8 @@ public class PaymentServiceImpl implements PaymentService {
      * @return 결제 확인 응답을 담은 DTO 객체.
      * @throws IOException IO 예외가 발생할 수 있음.
      */
-    @Override
-    public PaymentConfirmResponseDTO sendRequest(PaymentConfirmRequestDTO requestDTO) {
+    private PaymentConfirmResponseDTO processPaymentConfirmation(
+        PaymentConfirmRequestDTO requestDTO) {
         try {
             // 결제 확인 요청을 위한 HTTP 연결 설정
             HttpURLConnection connection = createConnection();
@@ -187,6 +258,19 @@ public class PaymentServiceImpl implements PaymentService {
             log.error("Unexpected error", e);
             throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
         }
+    }
+
+
+    //    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Override
+    public void decrease(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+        log.info("product Before: " + product);
+        product.decrease(quantity);
+        log.info("product After: " + product);
+
+        productRepository.saveAndFlush(product);
     }
 
     /**
