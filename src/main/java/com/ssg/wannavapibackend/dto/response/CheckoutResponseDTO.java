@@ -24,6 +24,8 @@ public class CheckoutResponseDTO {
     private String phone;
     private Address address;
 
+    private String email;
+
     // 유저 포인트
     private Long point;
 

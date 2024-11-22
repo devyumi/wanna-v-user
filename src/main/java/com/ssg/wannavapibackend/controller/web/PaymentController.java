@@ -1,14 +1,12 @@
 package com.ssg.wannavapibackend.controller.web;
 
-import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.request.ProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
-import com.ssg.wannavapibackend.service.PaymentService;
+import com.ssg.wannavapibackend.facade.CheckoutFacade;
 import com.ssg.wannavapibackend.service.ReservationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
@@ -26,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/checkout")
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    private final CheckoutFacade checkoutFacade;
     private final ReservationService reservationService;
     final Long userId = 1L; // Security 적용 후 삭제 예정
 
@@ -34,18 +32,9 @@ public class PaymentController {
     public String redirectToProductPaymentPage(
         @RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
         HttpSession session) {
-        List<Long> cartIds = checkoutRequestDTO.getCartIds();
-        DirectProductCheckoutRequestDTO productRequestDTO = checkoutRequestDTO.getProductRequestDTO();
-        CheckoutResponseDTO responseDTO = null;
 
-        if (cartIds != null && !cartIds.isEmpty()) {
-            // 장바구니 -> 결제
-            responseDTO = paymentService.processCartCheckout(userId, cartIds);
-        } else if (productRequestDTO != null) {
-            // 상품 페이지 -> 결제
-            responseDTO = paymentService.processDirectProductCheckout(userId, productRequestDTO);
-        }
-
+        CheckoutResponseDTO responseDTO = checkoutFacade.processCheckout(userId,
+            checkoutRequestDTO);
         session.setAttribute("pageInitData", responseDTO);
 
         return "redirect:/checkout/product";
