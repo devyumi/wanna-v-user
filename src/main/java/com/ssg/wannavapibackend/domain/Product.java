@@ -1,6 +1,8 @@
 package com.ssg.wannavapibackend.domain;
 
 import com.ssg.wannavapibackend.common.Category;
+import com.ssg.wannavapibackend.common.ErrorCode;
+import com.ssg.wannavapibackend.exception.CustomException;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -78,4 +80,13 @@ public class Product {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:MM:SS")
     private LocalDateTime updatedAt;
+
+    public void decrease(int quantity) {
+        if (this.stock - quantity < 0) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_STOCK);
+        }
+
+        this.stock -= quantity;
+    }
+
 }

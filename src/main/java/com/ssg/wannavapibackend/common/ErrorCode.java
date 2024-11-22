@@ -14,7 +14,10 @@ public enum ErrorCode {
     PAYMENT_CONNECTION_FAILED(500, "Payment connection failed"), // 결제 연결 실패
     PAYMENT_RESPONSE_READ_FAILED(500, "Failed to read payment response"), // 응답 읽기 실패
     PAYMENT_INVALID_RESPONSE_CODE(400, "Invalid payment response code"), // 잘못된 응답 코드
-    PAYMENT_UNKNOWN_ERROR(500, "Unknown error during payment process"); // 예기치 못한 결제 오류;
+    PAYMENT_UNKNOWN_ERROR(500, "Unknown error during payment process"), // 예기치 못한 결제 오류
+    PAYMENT_SAVE_FAILED(500, "Failed to save product payment"), // 결제 정보 저장 실패
+
+    INSUFFICIENT_STOCK(400, "Insufficient stock"); // 재고 부족
 
 
     private int code;

@@ -22,7 +22,7 @@ public class Payment {
     @JoinColumn(name="user_id", nullable = false)
     private User user;
 
-    @Column(name = "payment_key", nullable = false)
+    @Column(name = "payment_key")
     private String paymentKey;
 
     @Column(name = "order_id", nullable = false)
@@ -44,7 +44,7 @@ public class Payment {
     private Double finalDiscountAmount;
 
     @Column(name = "coupon_code")
-    private Double couponCode;
+    private Long couponCode;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -58,6 +58,10 @@ public class Payment {
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
+
+    @Column(name = "approved_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime approvedAt;
 
     @Column(name = "canceled_at")
     @Temporal(TemporalType.TIMESTAMP)
