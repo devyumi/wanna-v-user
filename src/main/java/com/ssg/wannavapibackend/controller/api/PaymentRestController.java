@@ -1,6 +1,7 @@
 package com.ssg.wannavapibackend.controller.api;
 
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
+import com.ssg.wannavapibackend.dto.request.ProductPaymentRequestDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.service.PaymentService;
@@ -35,17 +36,28 @@ public class PaymentRestController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    @PostMapping()
+    public ResponseEntity<Map<String, Object>> saveProductPayment(
+        @RequestBody ProductPaymentRequestDTO requestDTO) {
+        paymentService.saveProductPayment(userId, requestDTO);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("status", "success");
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @PostMapping("/confirm/widget")
     public ResponseEntity<Map<String, Object>> confirmPayment(
         @RequestBody PaymentConfirmRequestDTO requestDTO) {
 
         PaymentConfirmResponseDTO responseDTO = paymentService.sendRequest(requestDTO);
-        HttpStatus status = responseDTO.getStatus().equals("success") ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        HttpStatus status =
+            responseDTO.getStatus().equals("success") ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", status);
         response.put("data", responseDTO);
-
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
