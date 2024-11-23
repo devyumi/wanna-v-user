@@ -9,10 +9,10 @@ import com.ssg.wannavapibackend.domain.PaymentItem;
 import com.ssg.wannavapibackend.domain.Product;
 import com.ssg.wannavapibackend.domain.User;
 import com.ssg.wannavapibackend.domain.UserCoupon;
-import com.ssg.wannavapibackend.dto.PaymentProductDTO;
-import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
+import com.ssg.wannavapibackend.dto.request.ProductPurchaseRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
-import com.ssg.wannavapibackend.dto.request.ProductPaymentRequestDTO;
+import com.ssg.wannavapibackend.dto.request.PaymentItemRequestDTO;
+import com.ssg.wannavapibackend.dto.request.TossPaymentRequestDTO;
 import com.ssg.wannavapibackend.dto.response.AvailableUserCouponResponseDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
@@ -39,7 +39,6 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -97,7 +96,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public CheckoutResponseDTO processDirectProductCheckout(Long userId,
-        DirectProductCheckoutRequestDTO productRequestDTO) {
+        ProductPurchaseRequestDTO productRequestDTO) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
@@ -139,8 +138,6 @@ public class PaymentServiceImpl implements PaymentService {
 
     /**
      * 결제 번호 생성 결제일(YYYYMMDD) + 랜덤 8자리 숫자
-     *
-     * @return
      */
     @Override
     public PaymentResponseDTO generateOrderId() {
@@ -161,7 +158,146 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Transactional
-    public void saveProductPayment(Long userId, ProductPaymentRequestDTO requestDTO) {
+    public PaymentConfirmResponseDTO sendRequest(Long userId, PaymentConfirmRequestDTO requestDTO) {
+        PaymentConfirmResponseDTO confirmResponseDTO = processPaymentConfirmation(
+            requestDTO.getTossPaymentRequestDTO());
+
+        // 결제 확인 요청이 성공일 경우 재고 감소 로직 실행
+        if ("SUCCESS".equalsIgnoreCase(confirmResponseDTO.getStatus()) || "DONE".equalsIgnoreCase(confirmResponseDTO.getStatus())) {
+            /**
+             * 결제 상품 수량 감소
+             */
+            List<ProductPurchaseRequestDTO> productRequestDTOList = requestDTO.getPaymentItemRequestDTO()
+                .getProducts().stream()
+                .map(item -> ProductPurchaseRequestDTO.builder()
+                    .productId(item.getProductId())
+                    .quantity(item.getQuantity())
+                    .build())
+                .collect(Collectors.toList());
+
+            try {
+                redissonLockStockFacade.decreaseProductStock(productRequestDTOList);
+
+                saveProductPayment(userId, requestDTO.getPaymentItemRequestDTO());
+
+                //사용한 쿠폰 사용 여부 변경
+                userCouponRepository.updateCouponStatus(true, userId,
+                    requestDTO.getPaymentItemRequestDTO()
+                        .getCouponId());
+
+                // 사용한 포인트 로그
+
+            } catch (Exception e) {
+                // 예외 발생 시 처리 (재고 감소 실패 시 결제 정보를 저장하지 않음)
+                throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
+            }
+        }
+
+        return confirmResponseDTO;
+    }
+
+    /**
+     * 결제 확인 요청을 처리하는 메서드.
+     *
+     * @param requestDTO 결제 확인에 필요한 데이터가 담긴 요청 DTO.
+     * @return 결제 확인 응답을 담은 DTO 객체.
+     * @throws IOException IO 예외가 발생할 수 있음.
+     */
+    private PaymentConfirmResponseDTO processPaymentConfirmation(
+        TossPaymentRequestDTO requestDTO) {
+        try {
+            // 결제 확인 요청을 위한 HTTP 연결 설정
+            HttpURLConnection connection = createConnection();
+
+            // 요청 데이터(requestDTO)를 JSON 문자열로 변환하여 HTTP 요청 본문에 포함시켜 전송
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(requestDTO.toJson().getBytes(StandardCharsets.UTF_8));
+            }
+
+            // 응답을 받아와서 JSON 스트림을 읽고, 그 데이터를 PaymentConfirmResponseDTO로 변환
+            try (InputStream responseStream = connection.getResponseCode() == 200
+                ? connection.getInputStream()  // 응답 코드가 200이면 정상 응답 스트림 사용
+                : connection.getErrorStream(); // 아니면 오류 응답 스트림 사용
+                Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8)) {
+                // JSON 응답을 PaymentConfirmResponseDTO 객체로 변환
+                return objectMapper.readValue(reader, PaymentConfirmResponseDTO.class);
+            } catch (Exception e) { // 응답 읽기 오류가 발생
+                log.error("Error reading response", e);// 예외 발생 시, 오류 상태를 반환하는 DTO 객체 생성
+
+                return PaymentConfirmResponseDTO.builder()
+                    .status("error")
+                    .message("Error reading response: " + e)
+                    .build();
+            }
+        } catch (IOException e) { // 연결 생성 중 오류 발생
+            log.error("IOException in sendRequest", e);
+            throw new CustomException(ErrorCode.PAYMENT_CONNECTION_FAILED);
+        } catch (Exception e) { // 예기치 못한 오류
+            log.error("Unexpected error", e);
+            throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
+        }
+    }
+
+    /**
+     * HTTP 연결을 생성하는 메서드.
+     *
+     * @return 생성된 HttpURLConnection 객체.
+     * @throws IOException 연결을 설정하는 과정에서 IO 예외가 발생할 수 있음.
+     */
+    private HttpURLConnection createConnection() {
+        try {
+            // Toss 결제 API URL을 가져와 URL 객체 생성
+            URL url = new URL(tossPaymentConfig.getUrl());
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+            // 인증 헤더 설정: Widget Secret Key를 Base64 인코딩하여 요청 헤더에 추가
+            connection.setRequestProperty("Authorization", "Basic " + Base64.getEncoder()
+                .encodeToString((tossPaymentConfig.getWidgetSecretKey() + ":").getBytes(
+                    StandardCharsets.UTF_8)));
+
+            // 요청 본문의 데이터 타입을 JSON으로 설정
+            connection.setRequestProperty("Content-Type", "application/json");
+
+            // HTTP 요청 방식 설정: POST 방식
+            connection.setRequestMethod("POST");
+
+            // 요청 본문을 전송할 수 있도록 설정
+            connection.setDoOutput(true);
+
+            // 설정된 connection 객체를 반환
+            return connection;
+        } catch (IOException e) { // 연결 생성 실패
+            log.error("Error creating connection", e);
+            throw new CustomException(ErrorCode.PAYMENT_CONNECTION_FAILED);
+        } catch (Exception e) { // 예기치 못한 오류
+            log.error("Unexpected error in connection creation", e);
+            throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
+        }
+    }
+
+    /**
+     * 결제 상품 수량 감소
+     *
+     * @param productId - 상품
+     * @param quantity  - 수량
+     */
+    @Transactional
+    public void decrease(Long productId, int quantity) {
+        Product product = productRepository.findById(productId)
+            .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+        product.decrease(quantity);
+
+        productRepository.save(product);
+    }
+
+    /**
+     * 결제 정보(Payment) & 결제 상품(PaymentItem) 데이터 저장
+     *
+     * @param userId     - 유저
+     * @param requestDTO - 결제 및 결제 상품 정보
+     */
+    @Transactional
+    protected void saveProductPayment(Long userId, PaymentItemRequestDTO requestDTO) {
         try {
             User user = userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
@@ -197,119 +333,11 @@ public class PaymentServiceImpl implements PaymentService {
                     .build();
             }).collect(Collectors.toList());
 
-
             paymentItemRepository.saveAll(paymentItems);
-    } catch(
-    Exception e)
-
-    {
-        log.error(e.getMessage());
-        throw new CustomException(ErrorCode.PAYMENT_SAVE_FAILED);
-    }
-}
-
-
-@Override
-public PaymentConfirmResponseDTO sendRequest(PaymentConfirmRequestDTO requestDTO) {
-    PaymentConfirmResponseDTO confirmResponseDTO = processPaymentConfirmation(requestDTO);
-
-    // 결제 확인 요청이 성공일 경우 재고 감소 로직 실행
-    if ("success".equals(confirmResponseDTO.getStatus())) {
-//            redissonLockStockFacade.decreaseProductStock();
-    }
-
-    return confirmResponseDTO;
-}
-
-/**
- * 결제 확인 요청을 처리하는 메서드.
- *
- * @param requestDTO 결제 확인에 필요한 데이터가 담긴 요청 DTO.
- * @return 결제 확인 응답을 담은 DTO 객체.
- * @throws IOException IO 예외가 발생할 수 있음.
- */
-private PaymentConfirmResponseDTO processPaymentConfirmation(
-    PaymentConfirmRequestDTO requestDTO) {
-    try {
-        // 결제 확인 요청을 위한 HTTP 연결 설정
-        HttpURLConnection connection = createConnection();
-
-        // 요청 데이터(requestDTO)를 JSON 문자열로 변환하여 HTTP 요청 본문에 포함시켜 전송
-        try (OutputStream os = connection.getOutputStream()) {
-            os.write(requestDTO.toJson().getBytes(StandardCharsets.UTF_8));
+        } catch (
+            Exception e) {
+            log.error(e.getMessage());
+            throw new CustomException(ErrorCode.PAYMENT_SAVE_FAILED);
         }
-
-        // 응답을 받아와서 JSON 스트림을 읽고, 그 데이터를 PaymentConfirmResponseDTO로 변환
-        try (InputStream responseStream = connection.getResponseCode() == 200
-            ? connection.getInputStream()  // 응답 코드가 200이면 정상 응답 스트림 사용
-            : connection.getErrorStream(); // 아니면 오류 응답 스트림 사용
-            Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8)) {
-            // JSON 응답을 PaymentConfirmResponseDTO 객체로 변환
-            return objectMapper.readValue(reader, PaymentConfirmResponseDTO.class);
-        } catch (Exception e) { // 응답 읽기 오류가 발생
-            log.error("Error reading response", e);// 예외 발생 시, 오류 상태를 반환하는 DTO 객체 생성
-
-            return PaymentConfirmResponseDTO.builder()
-                .status("error")
-                .message("Error reading response: " + e)
-                .build();
-        }
-    } catch (IOException e) { // 연결 생성 중 오류 발생
-        log.error("IOException in sendRequest", e);
-        throw new CustomException(ErrorCode.PAYMENT_CONNECTION_FAILED);
-    } catch (Exception e) { // 예기치 못한 오류
-        log.error("Unexpected error", e);
-        throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
     }
-}
-
-
-//    @Transactional(propagation = Propagation.REQUIRES_NEW)
-@Override
-public void decrease(Long productId, int quantity) {
-    Product product = productRepository.findById(productId)
-        .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-    log.info("product Before: " + product);
-    product.decrease(quantity);
-    log.info("product After: " + product);
-
-    productRepository.saveAndFlush(product);
-}
-
-/**
- * HTTP 연결을 생성하는 메서드.
- *
- * @return 생성된 HttpURLConnection 객체.
- * @throws IOException 연결을 설정하는 과정에서 IO 예외가 발생할 수 있음.
- */
-private HttpURLConnection createConnection() {
-    try {
-        // Toss 결제 API URL을 가져와 URL 객체 생성
-        URL url = new URL(tossPaymentConfig.getUrl());
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-
-        // 인증 헤더 설정: Widget Secret Key를 Base64 인코딩하여 요청 헤더에 추가
-        connection.setRequestProperty("Authorization", "Basic " + Base64.getEncoder()
-            .encodeToString((tossPaymentConfig.getWidgetSecretKey() + ":").getBytes(
-                StandardCharsets.UTF_8)));
-
-        // 요청 본문의 데이터 타입을 JSON으로 설정
-        connection.setRequestProperty("Content-Type", "application/json");
-
-        // HTTP 요청 방식 설정: POST 방식
-        connection.setRequestMethod("POST");
-
-        // 요청 본문을 전송할 수 있도록 설정
-        connection.setDoOutput(true);
-
-        // 설정된 connection 객체를 반환
-        return connection;
-    } catch (IOException e) { // 연결 생성 실패
-        log.error("Error creating connection", e);
-        throw new CustomException(ErrorCode.PAYMENT_CONNECTION_FAILED);
-    } catch (Exception e) { // 예기치 못한 오류
-        log.error("Unexpected error in connection creation", e);
-        throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
-    }
-}
 }
