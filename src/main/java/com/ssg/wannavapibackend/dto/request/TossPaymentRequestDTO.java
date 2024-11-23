@@ -21,7 +21,7 @@ public class TossPaymentRequestDTO {
      */
     private String paymentKey;  // 고유 결제 키
     private String orderId;     // 주문 번호
-    private BigDecimal amount;  // 결제 금액
+    private Double amount;  // 결제 금액
 
     public String toJson() throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();

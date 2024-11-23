@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.controller.api;
 
+import com.ssg.wannavapibackend.common.Status;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
@@ -42,7 +43,7 @@ public class PaymentRestController {
 
         PaymentConfirmResponseDTO responseDTO = paymentService.sendRequest(userId, requestDTO);
         HttpStatus status =
-            responseDTO.getStatus().equals("success") ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+            responseDTO.getStatus().equals(Status.DONE) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", status);

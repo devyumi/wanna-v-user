@@ -167,8 +167,7 @@ public class PaymentServiceImpl implements PaymentService {
             requestDTO.getTossPaymentRequestDTO());
 
         // 결제 확인 요청이 성공일 경우 재고 감소 로직 실행
-        if ("SUCCESS".equalsIgnoreCase(confirmResponseDTO.getStatus()) || "DONE".equalsIgnoreCase(
-            confirmResponseDTO.getStatus())) {
+        if (Status.DONE.toString().equalsIgnoreCase(confirmResponseDTO.getStatus().toString())) {
             /**
              * 결제 상품 수량 감소
              */
@@ -185,7 +184,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 redissonLockStockFacade.decreaseProductStock(productRequestDTOList);
 
-                saveProductPayment(user, requestDTO.getPaymentItemRequestDTO());
+                saveProductPayment(user, requestDTO, confirmResponseDTO);
 
                 //사용한 쿠폰 사용 여부 변경
                 userCouponRepository.updateCouponStatus(true, userId,
@@ -235,7 +234,7 @@ public class PaymentServiceImpl implements PaymentService {
                 log.error("Error reading response", e);// 예외 발생 시, 오류 상태를 반환하는 DTO 객체 생성
 
                 return PaymentConfirmResponseDTO.builder()
-                    .status("error")
+                    .status(Status.ABORTED)
                     .message("Error reading response: " + e)
                     .build();
             }
@@ -304,33 +303,36 @@ public class PaymentServiceImpl implements PaymentService {
      * 결제 정보(Payment) & 결제 상품(PaymentItem) 데이터 저장
      *
      * @param user       - 유저
-     * @param requestDTO - 결제 및 결제 상품 정보
+     * @param confirmRequestDTO - 결제 및 결제 상품 정보
+     * @param confirmResponseDTO - 결제 승인 정보
      */
     @Transactional
-    protected void saveProductPayment(User user, PaymentItemRequestDTO requestDTO) {
+    protected void saveProductPayment(User user, PaymentConfirmRequestDTO confirmRequestDTO, PaymentConfirmResponseDTO confirmResponseDTO) {
         try {
 
             Payment savePayment = Payment.builder()
                 .user(user)
-                .orderId(requestDTO.getOrderId())
-                .actualPrice(requestDTO.getActualPrice())
-                .finalPrice(requestDTO.getFinalPrice())
-                .pointsUsed(requestDTO.getPointsUsed())
-                .finalDiscountRate(requestDTO.getFinalDiscountRate())
-                .finalDiscountAmount(requestDTO.getFinalDiscountAmount())
-                .couponCode(requestDTO.getCouponCode())
-                .status(requestDTO.getStatus() != null ? requestDTO.getStatus() : Status.PENDING)
-                .address(requestDTO.getAddress())
-                .note(requestDTO.getNote())
-                .createdAt(requestDTO.getCreatedAt())
+                .paymentKey(confirmRequestDTO.getTossPaymentRequestDTO().getPaymentKey())
+                .orderId(confirmRequestDTO.getTossPaymentRequestDTO().getOrderId())
+                .actualPrice(confirmRequestDTO.getPaymentItemRequestDTO().getActualPrice())
+                .finalPrice(confirmRequestDTO.getTossPaymentRequestDTO().getAmount())
+                .pointsUsed(confirmRequestDTO.getPaymentItemRequestDTO().getPointsUsed())
+                .finalDiscountRate(confirmRequestDTO.getPaymentItemRequestDTO().getFinalDiscountRate())
+                .finalDiscountAmount(confirmRequestDTO.getPaymentItemRequestDTO().getFinalDiscountAmount())
+                .couponCode(confirmRequestDTO.getPaymentItemRequestDTO().getCouponCode())
+                .status(confirmResponseDTO.getStatus())
+                .address(confirmRequestDTO.getPaymentItemRequestDTO().getAddress())
+                .note(confirmRequestDTO.getPaymentItemRequestDTO().getNote())
+                .createdAt(confirmRequestDTO.getPaymentItemRequestDTO().getCreatedAt())
+                .approvedAt(confirmResponseDTO.getApprovedAt())
                 .build();
 
             paymentRepository.save(savePayment);
 
-            Payment payment = paymentRepository.findByOrderId(requestDTO.getOrderId())
+            Payment payment = paymentRepository.findByOrderId(confirmRequestDTO.getTossPaymentRequestDTO().getOrderId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
 
-            List<PaymentItem> paymentItems = requestDTO.getProducts().stream().map(item -> {
+            List<PaymentItem> paymentItems = confirmRequestDTO.getPaymentItemRequestDTO().getProducts().stream().map(item -> {
                 Product product = productRepository.findById(item.getProductId())
                     .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 

@@ -60,8 +60,7 @@ public class Payment {
     private LocalDateTime createdAt;
 
     @Column(name = "approved_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime approvedAt;
+    private String approvedAt;
 
     @Column(name = "canceled_at")
     @Temporal(TemporalType.TIMESTAMP)
