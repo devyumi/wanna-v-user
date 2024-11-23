@@ -51,13 +51,12 @@
             }
           });
 
-      const json = await response.json();
-
-      if (!response.ok) {
-        throw {message: json.message, code: json.code};
+      if (response.status !== 200) {
+        throw {message: response.data.data.message, code: response.data.data.errorCode};
+      } else {
+        const responseData = response.data;
+        console.log("Success response data:", responseData);
       }
-
-      return json;
     }
 
     confirm()
