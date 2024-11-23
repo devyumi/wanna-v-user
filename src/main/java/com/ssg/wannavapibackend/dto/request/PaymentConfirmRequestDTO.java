@@ -1,8 +1,5 @@
 package com.ssg.wannavapibackend.dto.request;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.math.BigDecimal;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,13 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class PaymentConfirmRequestDTO {
 
-    private String paymentKey;  // 고유 결제 키
-    private String orderId;     // 주문 번호
-    private BigDecimal amount;  // 결제 금액
-
-    public String toJson() throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(this);
-    }
+    private TossPaymentRequestDTO tossPaymentRequestDTO; // toss 결제 승인 정보
+    private PaymentItemRequestDTO paymentItemRequestDTO; // 결제 정보
 
 }

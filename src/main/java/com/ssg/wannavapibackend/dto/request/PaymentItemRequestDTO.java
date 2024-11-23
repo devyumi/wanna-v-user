@@ -16,14 +16,18 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductPaymentRequestDTO {
+public class PaymentItemRequestDTO {
 
+    /**
+     * 결제 정보 저장 데이터
+     */
     private String orderId;
     private Double actualPrice;
     private Double finalPrice;
     private Integer pointsUsed;
     private Double finalDiscountRate;
     private Double finalDiscountAmount;
+    private Long couponId;
     private Long couponCode;
     private Status status;
     private Address address;
