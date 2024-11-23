@@ -87,6 +87,7 @@ public class Product {
         }
 
         this.stock -= quantity;
+        this.updatedAt = LocalDateTime.now();
     }
 
 }
