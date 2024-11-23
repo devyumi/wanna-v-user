@@ -1,6 +1,5 @@
 import {formatPrice, formatPriceElements} from "/js/common/format.js";
 
-console.log("pageInitData: \n", JSON.stringify(pageInitData))
 /**
  * 결제 페이지 초기 배송지
  */
@@ -34,7 +33,6 @@ formatPriceElements();
  */
 document.getElementById('find-address-btn').addEventListener("click",
     function execDaumPostcode() {
-      console.log("다음 주소 찾기 연결");
       new daum.Postcode({
         oncomplete: function (data) {
           zipCode = data.zonecode;
@@ -104,7 +102,8 @@ couponList.forEach(item => {
  */
 let finalDiscountRate = null;
 let finalDiscountAmount = null;
-let couponCode = null;
+let selectedCouponId = null;
+let selectedCouponCode = null;
 
 function chooseCoupon(couponId) {
 
@@ -133,10 +132,12 @@ function chooseCoupon(couponId) {
    */
   finalDiscountRate = null;
   finalDiscountAmount = null;
-  couponCode = null;
+  selectedCouponId = null
+  selectedCouponCode = null;
 
   if (selectedCoupon) {
-    couponCode = parseInt(selectedCoupon.code);
+    selectedCouponId = parseInt(selectedCoupon.id);
+    selectedCouponCode = parseInt(selectedCoupon.code);
     if (selectedCoupon.type === 'FIXED') {
       finalDiscountAmount = selectedCoupon.discountAmount;
       discountAmount = finalDiscountAmount;
@@ -299,7 +300,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           const updatedAmount = getCurrentAmount();
           await widgets.setAmount(updatedAmount);
 
-          const saveProductPaymentData = {
+          const productPaymentData = {
             orderId: orderData.orderId,
             actualPrice: pageInitData.products.reduce((total, product) => {
               return total + product.paymentPrice;
@@ -311,7 +312,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 10),
             finalDiscountRate: finalDiscountRate,
             finalDiscountAmount: finalDiscountAmount,
-            couponCode: couponCode,
+            couponId: selectedCouponId,
+            couponCode: selectedCouponCode,
             Address: {
               zipCode: zipCode,
               roadAddress: roadAddress,
@@ -324,24 +326,38 @@ document.addEventListener("DOMContentLoaded", async () => {
               quantity: product.quantity,
             }))
           };
-          console.log("saveProductPaymentData: " + JSON.stringify(
-              saveProductPaymentData))
 
           /**
            * 결제 정보 저장 API
            */
           try {
-            const response = await axios.post('/api/v1/checkout',
-                saveProductPaymentData, {
+            const response = await axios.post('/checkout/product-data',
+                productPaymentData, {
                   headers: {
                     'Content-Type': 'application/json'
                   }
                 });
             if (response.status === 200) {
               // 요청이 성공적으로 처리됨
-              console.log('결제 정보가 성공적으로 저장되었습니다:', response.data);
-              // 성공 메시지 표시 (필요 시 UI 업데이트)
-              alert('결제가 성공적으로 저장되었습니다!');
+              /**
+               * 결제 요청
+               *
+               * 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
+               * 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
+               */
+              await widgets.requestPayment({
+                orderId: orderData.orderId,
+                orderName: productList.length > 1
+                    ? pageInitData.products[0].name + " 외 "
+                    + (productList.length - 1)
+                    : pageInitData.products[0].name,
+                successUrl: orderData.successUrl,
+                failUrl: orderData.failUrl,
+                customerEmail: userEmail,
+                customerName: userName,
+                customerMobilePhone: phone,
+              });
+
             } else {
               // 예상치 못한 성공 상태 처리
               console.warn('Unexpected status:', response.status);
@@ -363,20 +379,6 @@ document.addEventListener("DOMContentLoaded", async () => {
               alert(`결제 요청 중 오류가 발생했습니다: ${error.message}`);
             }
           }
-
-          /**
-           * 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
-           * 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
-           */
-          await widgets.requestPayment({
-            orderId: orderData.orderId,
-            orderName: "결제 상품",
-            successUrl: orderData.successUrl,
-            failUrl: orderData.failUrl,
-            customerEmail: userEmail,
-            customerName: userName,
-            customerMobilePhone: phone,
-          });
         });
   } catch (error) {
     console.error("초기화 중 오류 발생:", error);

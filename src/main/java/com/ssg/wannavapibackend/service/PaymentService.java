@@ -1,9 +1,8 @@
 package com.ssg.wannavapibackend.service;
 
 
-import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
+import com.ssg.wannavapibackend.dto.request.ProductPurchaseRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
-import com.ssg.wannavapibackend.dto.request.ProductPaymentRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
@@ -14,13 +13,11 @@ public interface PaymentService {
     CheckoutResponseDTO processCartCheckout(Long userId, List<Long> cartIds);
 
     CheckoutResponseDTO processDirectProductCheckout(Long userId,
-        DirectProductCheckoutRequestDTO productRequestDTO);
+        ProductPurchaseRequestDTO productRequestDTO);
 
     PaymentResponseDTO generateOrderId();
 
-    void saveProductPayment(Long userId, ProductPaymentRequestDTO requestDTO);
-
-    PaymentConfirmResponseDTO sendRequest(PaymentConfirmRequestDTO requestDTO);
+    PaymentConfirmResponseDTO sendRequest(Long userId, PaymentConfirmRequestDTO requestDTO);
 
     void decrease(Long productId, int quantity);
 }
