@@ -358,7 +358,8 @@ public class PaymentServiceImpl implements PaymentService {
      * @param user      - 유저
      * @param usedPoint - 사용한 포인트
      */
-    private void savePointLog(User user, int usedPoint) {
+    @Transactional
+    protected void savePointLog(User user, int usedPoint) {
         PointLog oldPointLog = pointLogRepository.findFirstByUserIdOrderByCreatedAtDesc(
             user.getId()).orElseThrow(() -> new CustomException(ErrorCode.POINT_LOG_NOT_FOUND));
 
@@ -375,7 +376,10 @@ public class PaymentServiceImpl implements PaymentService {
             .createdAt(LocalDateTime.now())
             .build();
 
+        user.updatePoint(newPoint);
+
         pointLogRepository.save(newPointLog);
+        userRepository.save(user);
     }
 
 

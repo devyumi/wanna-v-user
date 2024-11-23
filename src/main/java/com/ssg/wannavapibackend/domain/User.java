@@ -72,4 +72,9 @@ public class User {
 //
 //    @OneToMany(mappedBy = "user")
 //    private List<Reservation> reservations;
+
+    public void updatePoint(long point) {
+        this.point = point;
+        this.updatedAt = LocalDateTime.now();
+    }
 }
