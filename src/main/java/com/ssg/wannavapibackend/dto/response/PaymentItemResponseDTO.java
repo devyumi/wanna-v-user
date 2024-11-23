@@ -13,6 +13,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class PaymentItemResponseDTO {
 
+    private Long id;                // 상품 ID
     private String image;           // 상품 이미지
     private String name;            // 상품 이름
     private Integer quantity;       // 상품 구매 수량

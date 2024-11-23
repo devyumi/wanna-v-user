@@ -18,7 +18,7 @@ import lombok.ToString;
 @AllArgsConstructor
 public class ProductPaymentRequestDTO {
 
-    private String orederId;
+    private String orderId;
     private Double actualPrice;
     private Double finalPrice;
     private Integer pointsUsed;
