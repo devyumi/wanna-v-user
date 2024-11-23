@@ -6,6 +6,7 @@ import com.ssg.wannavapibackend.common.Status;
 import com.ssg.wannavapibackend.config.TossPaymentConfig;
 import com.ssg.wannavapibackend.domain.Payment;
 import com.ssg.wannavapibackend.domain.PaymentItem;
+import com.ssg.wannavapibackend.domain.PointLog;
 import com.ssg.wannavapibackend.domain.Product;
 import com.ssg.wannavapibackend.domain.User;
 import com.ssg.wannavapibackend.domain.UserCoupon;
@@ -22,6 +23,7 @@ import com.ssg.wannavapibackend.exception.CustomException;
 import com.ssg.wannavapibackend.facade.RedissonLockStockFacade;
 import com.ssg.wannavapibackend.repository.PaymentItemRepository;
 import com.ssg.wannavapibackend.repository.PaymentRepository;
+import com.ssg.wannavapibackend.repository.PointLogRepository;
 import com.ssg.wannavapibackend.repository.ProductRepository;
 import com.ssg.wannavapibackend.repository.UserCouponRepository;
 import com.ssg.wannavapibackend.repository.UserRepository;
@@ -35,6 +37,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -57,6 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentItemRepository paymentItemRepository;
     private final UserRepository userRepository;
     private final UserCouponRepository userCouponRepository;
+    private final PointLogRepository pointLogRepository;
     private final ProductRepository productRepository;
     private final RedissonLockStockFacade redissonLockStockFacade;
 
@@ -163,7 +167,8 @@ public class PaymentServiceImpl implements PaymentService {
             requestDTO.getTossPaymentRequestDTO());
 
         // 결제 확인 요청이 성공일 경우 재고 감소 로직 실행
-        if ("SUCCESS".equalsIgnoreCase(confirmResponseDTO.getStatus()) || "DONE".equalsIgnoreCase(confirmResponseDTO.getStatus())) {
+        if ("SUCCESS".equalsIgnoreCase(confirmResponseDTO.getStatus()) || "DONE".equalsIgnoreCase(
+            confirmResponseDTO.getStatus())) {
             /**
              * 결제 상품 수량 감소
              */
@@ -176,9 +181,11 @@ public class PaymentServiceImpl implements PaymentService {
                 .collect(Collectors.toList());
 
             try {
+                User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
                 redissonLockStockFacade.decreaseProductStock(productRequestDTOList);
 
-                saveProductPayment(userId, requestDTO.getPaymentItemRequestDTO());
+                saveProductPayment(user, requestDTO.getPaymentItemRequestDTO());
 
                 //사용한 쿠폰 사용 여부 변경
                 userCouponRepository.updateCouponStatus(true, userId,
@@ -186,6 +193,9 @@ public class PaymentServiceImpl implements PaymentService {
                         .getCouponId());
 
                 // 사용한 포인트 로그
+                if (requestDTO.getPaymentItemRequestDTO().getPointsUsed() > 0) {
+                    savePointLog(user, requestDTO.getPaymentItemRequestDTO().getPointsUsed());
+                }
 
             } catch (Exception e) {
                 // 예외 발생 시 처리 (재고 감소 실패 시 결제 정보를 저장하지 않음)
@@ -293,14 +303,12 @@ public class PaymentServiceImpl implements PaymentService {
     /**
      * 결제 정보(Payment) & 결제 상품(PaymentItem) 데이터 저장
      *
-     * @param userId     - 유저
+     * @param user       - 유저
      * @param requestDTO - 결제 및 결제 상품 정보
      */
     @Transactional
-    protected void saveProductPayment(Long userId, PaymentItemRequestDTO requestDTO) {
+    protected void saveProductPayment(User user, PaymentItemRequestDTO requestDTO) {
         try {
-            User user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
             Payment savePayment = Payment.builder()
                 .user(user)
@@ -340,4 +348,32 @@ public class PaymentServiceImpl implements PaymentService {
             throw new CustomException(ErrorCode.PAYMENT_SAVE_FAILED);
         }
     }
+
+    /**
+     * 결제 시, 사용한 포인트 로그 생성
+     *
+     * @param user      - 유저
+     * @param usedPoint - 사용한 포인트
+     */
+    private void savePointLog(User user, int usedPoint) {
+        PointLog oldPointLog = pointLogRepository.findFirstByUserIdOrderByCreatedAtDesc(
+            user.getId()).orElseThrow(() -> new CustomException(ErrorCode.POINT_LOG_NOT_FOUND));
+
+        // 새로운 포인트가 음수로 계산되는 경우 예외 처리
+        int newPoint = oldPointLog.getNewPoint() - usedPoint;
+        if (newPoint < 0) {
+            throw new CustomException(ErrorCode.INSUFFICIENT_POINTS);
+        }
+
+        PointLog newPointLog = PointLog.builder()
+            .user(user)
+            .oldPoint(oldPointLog.getNewPoint())
+            .newPoint(newPoint)
+            .createdAt(LocalDateTime.now())
+            .build();
+
+        pointLogRepository.save(newPointLog);
+    }
+
+
 }

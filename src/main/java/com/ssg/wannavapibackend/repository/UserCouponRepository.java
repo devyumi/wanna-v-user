@@ -1,7 +1,6 @@
 package com.ssg.wannavapibackend.repository;
 
 import com.ssg.wannavapibackend.domain.UserCoupon;
-import com.ssg.wannavapibackend.dto.request.UserCouponRequestDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

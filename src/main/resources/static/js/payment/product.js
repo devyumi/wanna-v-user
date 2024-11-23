@@ -308,13 +308,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             finalPrice: parseInt(document.getElementById(
                 "final-payment-amount").textContent.replace(
                 /[^0-9]/g, ""), 10),
-            pointsUsed: parseInt(document.getElementById('used-points').value,
-                10),
+            pointsUsed: parseInt(
+                document.getElementById('used-points').value.replace(
+                    /[^0-9]/g, ""), 10),
             finalDiscountRate: finalDiscountRate,
             finalDiscountAmount: finalDiscountAmount,
             couponId: selectedCouponId,
             couponCode: selectedCouponCode,
-            Address: {
+            address: {
               zipCode: zipCode,
               roadAddress: roadAddress,
               landLotAddress: landLotAddress,
