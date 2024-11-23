@@ -15,6 +15,6 @@ import lombok.ToString;
 public class ProductCheckoutRequestDTO {
 
     private List<Long> cartIds; // 장바구니 ID 목록
-    private DirectProductCheckoutRequestDTO productRequestDTO; // 상품 결제 정보
+    private ProductPurchaseRequestDTO productRequestDTO; // 상품 결제 정보
 }
 

@@ -1,7 +1,7 @@
 package com.ssg.wannavapibackend.facade;
 
 import com.ssg.wannavapibackend.common.ErrorCode;
-import com.ssg.wannavapibackend.dto.request.DirectProductCheckoutRequestDTO;
+import com.ssg.wannavapibackend.dto.request.ProductPurchaseRequestDTO;
 import com.ssg.wannavapibackend.dto.request.ProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
@@ -20,7 +20,7 @@ public class CheckoutFacade {
         ProductCheckoutRequestDTO checkoutRequestDTO) {
         try {
             List<Long> cartIds = checkoutRequestDTO.getCartIds();
-            DirectProductCheckoutRequestDTO productRequestDTO = checkoutRequestDTO.getProductRequestDTO();
+            ProductPurchaseRequestDTO productRequestDTO = checkoutRequestDTO.getProductRequestDTO();
 
             if (cartIds != null && !cartIds.isEmpty()) {
                 return paymentService.processCartCheckout(userId, cartIds);

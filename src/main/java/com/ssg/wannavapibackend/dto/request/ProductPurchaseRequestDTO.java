@@ -11,7 +11,7 @@ import lombok.ToString;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
-public class DirectProductCheckoutRequestDTO {
+public class ProductPurchaseRequestDTO {
 
     private Long productId; // 상품 ID
     private Integer quantity; // 상품 수량
