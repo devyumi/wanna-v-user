@@ -1,17 +1,16 @@
 import {formatPrice, formatPriceElements} from "/js/common/format.js";
 
-    console.log("pageInitData: \n", JSON.stringify(pageInitData))
+console.log("pageInitData: \n", JSON.stringify(pageInitData))
 /**
  * 결제 페이지 초기 배송지
- * @type {number}
  */
 const userName = pageInitData.name;
 const phone = pageInitData.phone.replace(/-/g, '');
-const zipCode = pageInitData.address.zipCode || '';
-const roadAddress = pageInitData.address.roadAddress || '';
-const detailAddress = pageInitData.address.detailAddress || '';
-const userEmail = pageInitData.email;
-
+let zipCode = pageInitData.address.zipCode || '';
+let roadAddress = pageInitData.address.roadAddress || '';
+let landLotAddress = pageInitData.address.landLotAddress || '';
+let detailAddress = pageInitData.address.detailAddress || '';
+let userEmail = pageInitData.email;
 
 document.getElementById('name-type').value = userName;
 document.getElementById('phone-type').value = phone;
@@ -38,8 +37,11 @@ document.getElementById('find-address-btn').addEventListener("click",
       console.log("다음 주소 찾기 연결");
       new daum.Postcode({
         oncomplete: function (data) {
-          document.getElementById('address').value = data.address + " ("
-              + data.zonecode + ")";
+          zipCode = data.zonecode;
+          roadAddress = data.address;
+          landLotAddress = data.jibunAddress;
+          document.getElementById('address').value = roadAddress + " ("
+              + zipCode + ")";
         }
       }).open();
     });
@@ -100,6 +102,10 @@ couponList.forEach(item => {
 /**
  * 쿠폰 선택 시 실행될 함수
  */
+let finalDiscountRate = null;
+let finalDiscountAmount = null;
+let couponCode = null;
+
 function chooseCoupon(couponId) {
 
   // Offcanvas 닫기
@@ -120,10 +126,22 @@ function chooseCoupon(couponId) {
    * @type {number}
    */
   let discountAmount = 0;
+
+  /**
+   * 선택된 쿠폰 초기화
+   * @type {null}
+   */
+  finalDiscountRate = null;
+  finalDiscountAmount = null;
+  couponCode = null;
+
   if (selectedCoupon) {
+    couponCode = parseInt(selectedCoupon.code);
     if (selectedCoupon.type === 'FIXED') {
-      discountAmount = selectedCoupon.discountAmount;
+      finalDiscountAmount = selectedCoupon.discountAmount;
+      discountAmount = finalDiscountAmount;
     } else if (selectedCoupon.type === 'PERCENTAGE') {
+      finalDiscountRate = selectedCoupon.discountRate
       discountAmount = Math.ceil(
           (totalPrice * (selectedCoupon.discountRate / 100)) / 10) * 10;  // 10의 자리에서 올림
     }
@@ -199,7 +217,6 @@ function calculateFinalPaymentAmount(couponAmount = 0, point = 0) {
 
 document.getElementById(
     'final-payment-amount').innerText = calculateFinalPaymentAmount();
-
 
 /**
  * toss 결제
@@ -281,13 +298,79 @@ document.addEventListener("DOMContentLoaded", async () => {
            */
           const updatedAmount = getCurrentAmount();
           await widgets.setAmount(updatedAmount);
+
+          const saveProductPaymentData = {
+            orderId: orderData.orderId,
+            actualPrice: pageInitData.products.reduce((total, product) => {
+              return total + product.paymentPrice;
+            }, 0),
+            finalPrice: parseInt(document.getElementById(
+                "final-payment-amount").textContent.replace(
+                /[^0-9]/g, ""), 10),
+            pointsUsed: parseInt(document.getElementById('used-points').value,
+                10),
+            finalDiscountRate: finalDiscountRate,
+            finalDiscountAmount: finalDiscountAmount,
+            couponCode: couponCode,
+            Address: {
+              zipCode: zipCode,
+              roadAddress: roadAddress,
+              landLotAddress: landLotAddress,
+              detailAddress: document.getElementById('detail-address').value,
+            },
+            note: document.getElementById('note').value,
+            products: pageInitData.products.map(product => ({
+              productId: product.id,
+              quantity: product.quantity,
+            }))
+          };
+          console.log("saveProductPaymentData: " + JSON.stringify(
+              saveProductPaymentData))
+
+          /**
+           * 결제 정보 저장 API
+           */
+          try {
+            const response = await axios.post('/api/v1/checkout',
+                saveProductPaymentData, {
+                  headers: {
+                    'Content-Type': 'application/json'
+                  }
+                });
+            if (response.status === 200) {
+              // 요청이 성공적으로 처리됨
+              console.log('결제 정보가 성공적으로 저장되었습니다:', response.data);
+              // 성공 메시지 표시 (필요 시 UI 업데이트)
+              alert('결제가 성공적으로 저장되었습니다!');
+            } else {
+              // 예상치 못한 성공 상태 처리
+              console.warn('Unexpected status:', response.status);
+              alert('결제 요청이 비정상적으로 처리되었습니다. 다시 시도해주세요.');
+            }
+          } catch (error) {
+            // 요청 중 에러 발생
+            if (error.response) {
+              // 서버가 응답을 반환한 경우
+              console.error('서버 에러:', error.response.data);
+              alert(`결제 요청 실패: ${error.response.data.message || '서버 오류'}`);
+            } else if (error.request) {
+              // 서버 응답 없음 (네트워크 문제 등)
+              console.error('요청은 보내졌으나 응답이 없습니다:', error.request);
+              alert('서버 응답이 없습니다. 네트워크를 확인하세요.');
+            } else {
+              // 기타 오류
+              console.error('요청 생성 중 에러 발생:', error.message);
+              alert(`결제 요청 중 오류가 발생했습니다: ${error.message}`);
+            }
+          }
+
           /**
            * 결제를 요청하기 전에 orderId, amount를 서버에 저장하세요.
            * 결제 과정에서 악의적으로 결제 금액이 바뀌는 것을 확인하는 용도입니다.
            */
           await widgets.requestPayment({
             orderId: orderData.orderId,
-            orderName: "토스 테스트1",
+            orderName: "결제 상품",
             successUrl: orderData.successUrl,
             failUrl: orderData.failUrl,
             customerEmail: userEmail,
