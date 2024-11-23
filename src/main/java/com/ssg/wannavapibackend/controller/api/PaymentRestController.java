@@ -39,7 +39,6 @@ public class PaymentRestController {
     @PostMapping("/confirm/widget")
     public ResponseEntity<Map<String, Object>> confirmPayment(
         @RequestBody PaymentConfirmRequestDTO requestDTO) {
-        log.info("1requestDTO: " + requestDTO);
 
         PaymentConfirmResponseDTO responseDTO = paymentService.sendRequest(userId, requestDTO);
         HttpStatus status =

@@ -251,7 +251,7 @@
   justify-content: center;
   background-color: #ffffff;
   color: #5aab6f;
-  z-index: 2;
+  z-index: 100;
 }
 
 .offcanvas .offcanvas-header h5 {

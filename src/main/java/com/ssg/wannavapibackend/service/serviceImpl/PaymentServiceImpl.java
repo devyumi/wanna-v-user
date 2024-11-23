@@ -192,12 +192,13 @@ public class PaymentServiceImpl implements PaymentService {
                         .getCouponId());
 
                 // 사용한 포인트 로그
-                if (requestDTO.getPaymentItemRequestDTO().getPointsUsed() > 0) {
-                    savePointLog(user, requestDTO.getPaymentItemRequestDTO().getPointsUsed());
+                Integer pointsUsed = requestDTO.getPaymentItemRequestDTO().getPointsUsed();
+                if (pointsUsed != null && pointsUsed > 0) {
+                    savePointLog(user, pointsUsed);
                 }
 
             } catch (Exception e) {
-                // 예외 발생 시 처리 (재고 감소 실패 시 결제 정보를 저장하지 않음)
+                // 예외 발생 시 처리 (결제 정보를 저장하지 않음)
                 throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
             }
         }

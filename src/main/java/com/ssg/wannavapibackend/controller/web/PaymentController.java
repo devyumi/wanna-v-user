@@ -73,7 +73,6 @@ public class PaymentController {
     public String storeProductPaymentDataAndRedirectToSuccessPage(
         @RequestBody PaymentItemRequestDTO requestDTO,
         HttpSession session) {
-        log.info("requestDTO: " + requestDTO.toString());
         session.setAttribute("paymentItemData", requestDTO);
 
         return "redirect:/checkout/toss-success";
@@ -81,9 +80,7 @@ public class PaymentController {
 
     @GetMapping("/toss-success")
     public String paymentSuccess(HttpSession session, Model model) {
-        log.info("paymentSuccess");
         PaymentItemRequestDTO requestDTO = (PaymentItemRequestDTO) session.getAttribute("paymentItemData");
-        log.info("paymentSuccess requestDTO" + requestDTO.toString());
 
         model.addAttribute("paymentItemData", requestDTO);
 

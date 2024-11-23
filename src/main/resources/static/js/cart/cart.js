@@ -313,7 +313,6 @@ document.querySelector('.cart-grid').addEventListener('click',
  */
 document.querySelector('.btn-payment').addEventListener('click', async () => {
   const selectedCartIds = getSelectedCartIds(); // 선택된 cartId 배열 가져오기
-  console.log('selectedCartIds' + selectedCartIds)
   if (selectedCartIds.length === 0) {
     alert('선택된 상품이 없습니다.');
     return;

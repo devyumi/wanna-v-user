@@ -133,7 +133,6 @@ document.addEventListener('DOMContentLoaded', function () {
               'Content-Type': 'application/json'
             }
           });
-          console.log('장바구니 추가 성공:', response.data);
           alert('상품이 장바구니에 추가되었습니다.');
 
           // Offcanvas 닫기
