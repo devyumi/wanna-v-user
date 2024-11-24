@@ -55,6 +55,12 @@ public class Payment {
     @Column(name = "note")
     private String note;
 
+    @Column(name= "cancel_reason")
+    private String cancelReason;
+
+    @Column(name = "cancel_amount")
+    private Double cancelAmount;
+
     @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
