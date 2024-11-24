@@ -3,6 +3,7 @@ package com.ssg.wannavapibackend.dto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssg.wannavapibackend.common.Status;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,7 +21,7 @@ public class PaymentRefundDTO {
     private String paymentKey;      // 결제의 키 값 (필수)
     private String cancelReason;    // 결제를 취소하는 이유 (필수)
     private Double cancelAmount;    // 취소할 금액 (값이 없으면 전액 취소)
-    private String canceledAt;      // 결제 취소 승인 시각
+    private List<PaymentCancelDetailDTO> cancels; // 결제 취소 정보
 
     private String message;         // 오류 메시지 (예외 발생 시)
     private String code;            // 오류 코드
