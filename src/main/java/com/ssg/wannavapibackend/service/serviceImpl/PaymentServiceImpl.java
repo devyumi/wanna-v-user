@@ -216,7 +216,7 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentConfirmResponseDTO processPaymentConfirmation(
         TossPaymentRequestDTO requestDTO) {
         try {
-            String confirmUrl = tossPaymentConfig.getUrl() + "/confirm";
+            String confirmUrl = tossPaymentConfig.getUrl() + "confirm";
 
             // 결제 확인 요청을 위한 HTTP 연결 설정
             HttpURLConnection connection = createConnection(confirmUrl);
