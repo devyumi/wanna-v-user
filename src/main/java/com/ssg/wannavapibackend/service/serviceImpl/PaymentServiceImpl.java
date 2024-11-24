@@ -10,9 +10,9 @@ import com.ssg.wannavapibackend.domain.PointLog;
 import com.ssg.wannavapibackend.domain.Product;
 import com.ssg.wannavapibackend.domain.User;
 import com.ssg.wannavapibackend.domain.UserCoupon;
+import com.ssg.wannavapibackend.dto.PaymentRefundDTO;
 import com.ssg.wannavapibackend.dto.request.ProductPurchaseRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
-import com.ssg.wannavapibackend.dto.request.PaymentItemRequestDTO;
 import com.ssg.wannavapibackend.dto.request.TossPaymentRequestDTO;
 import com.ssg.wannavapibackend.dto.response.AvailableUserCouponResponseDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
@@ -216,8 +216,10 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentConfirmResponseDTO processPaymentConfirmation(
         TossPaymentRequestDTO requestDTO) {
         try {
+            String confirmUrl = tossPaymentConfig.getUrl() + "/confirm";
+
             // 결제 확인 요청을 위한 HTTP 연결 설정
-            HttpURLConnection connection = createConnection();
+            HttpURLConnection connection = createConnection(confirmUrl);
 
             // 요청 데이터(requestDTO)를 JSON 문자열로 변환하여 HTTP 요청 본문에 포함시켜 전송
             try (OutputStream os = connection.getOutputStream()) {
@@ -254,10 +256,10 @@ public class PaymentServiceImpl implements PaymentService {
      * @return 생성된 HttpURLConnection 객체.
      * @throws IOException 연결을 설정하는 과정에서 IO 예외가 발생할 수 있음.
      */
-    private HttpURLConnection createConnection() {
+    private HttpURLConnection createConnection(String connectionUrl) {
         try {
             // Toss 결제 API URL을 가져와 URL 객체 생성
-            URL url = new URL(tossPaymentConfig.getUrl());
+            URL url = new URL(connectionUrl);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
             // 인증 헤더 설정: Widget Secret Key를 Base64 인코딩하여 요청 헤더에 추가
@@ -303,12 +305,13 @@ public class PaymentServiceImpl implements PaymentService {
     /**
      * 결제 정보(Payment) & 결제 상품(PaymentItem) 데이터 저장
      *
-     * @param user       - 유저
-     * @param confirmRequestDTO - 결제 및 결제 상품 정보
+     * @param user               - 유저
+     * @param confirmRequestDTO  - 결제 및 결제 상품 정보
      * @param confirmResponseDTO - 결제 승인 정보
      */
     @Transactional
-    protected void saveProductPayment(User user, PaymentConfirmRequestDTO confirmRequestDTO, PaymentConfirmResponseDTO confirmResponseDTO) {
+    protected void saveProductPayment(User user, PaymentConfirmRequestDTO confirmRequestDTO,
+        PaymentConfirmResponseDTO confirmResponseDTO) {
         try {
 
             Payment savePayment = Payment.builder()
@@ -318,8 +321,10 @@ public class PaymentServiceImpl implements PaymentService {
                 .actualPrice(confirmRequestDTO.getPaymentItemRequestDTO().getActualPrice())
                 .finalPrice(confirmRequestDTO.getTossPaymentRequestDTO().getAmount())
                 .pointsUsed(confirmRequestDTO.getPaymentItemRequestDTO().getPointsUsed())
-                .finalDiscountRate(confirmRequestDTO.getPaymentItemRequestDTO().getFinalDiscountRate())
-                .finalDiscountAmount(confirmRequestDTO.getPaymentItemRequestDTO().getFinalDiscountAmount())
+                .finalDiscountRate(
+                    confirmRequestDTO.getPaymentItemRequestDTO().getFinalDiscountRate())
+                .finalDiscountAmount(
+                    confirmRequestDTO.getPaymentItemRequestDTO().getFinalDiscountAmount())
                 .couponCode(confirmRequestDTO.getPaymentItemRequestDTO().getCouponCode())
                 .status(confirmResponseDTO.getStatus())
                 .address(confirmRequestDTO.getPaymentItemRequestDTO().getAddress())
@@ -330,19 +335,21 @@ public class PaymentServiceImpl implements PaymentService {
 
             paymentRepository.save(savePayment);
 
-            Payment payment = paymentRepository.findByOrderId(confirmRequestDTO.getTossPaymentRequestDTO().getOrderId())
+            Payment payment = paymentRepository.findByOrderId(
+                    confirmRequestDTO.getTossPaymentRequestDTO().getOrderId())
                 .orElseThrow(() -> new CustomException(ErrorCode.PAYMENT_NOT_FOUND));
 
-            List<PaymentItem> paymentItems = confirmRequestDTO.getPaymentItemRequestDTO().getProducts().stream().map(item -> {
-                Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+            List<PaymentItem> paymentItems = confirmRequestDTO.getPaymentItemRequestDTO()
+                .getProducts().stream().map(item -> {
+                    Product product = productRepository.findById(item.getProductId())
+                        .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
 
-                return PaymentItem.builder()
-                    .payment(payment)
-                    .product(product)
-                    .quantity(item.getQuantity())
-                    .build();
-            }).collect(Collectors.toList());
+                    return PaymentItem.builder()
+                        .payment(payment)
+                        .product(product)
+                        .quantity(item.getQuantity())
+                        .build();
+                }).collect(Collectors.toList());
 
             paymentItemRepository.saveAll(paymentItems);
         } catch (
@@ -382,5 +389,42 @@ public class PaymentServiceImpl implements PaymentService {
         userRepository.save(user);
     }
 
+    @Transactional
+    protected PaymentRefundDTO requestPaymentCancel(PaymentRefundDTO requestDTO) {
+        try {
+            String cancelUrl = tossPaymentConfig.getUrl() + requestDTO.getPaymentKey() + "/cancel";
 
+            // 결제 확인 요청을 위한 HTTP 연결 설정
+            HttpURLConnection connection = createConnection(cancelUrl);
+
+            // 요청 데이터(requestDTO)를 JSON 문자열로 변환하여 HTTP 요청 본문에 포함시켜 전송
+            try (OutputStream os = connection.getOutputStream()) {
+                os.write(requestDTO.toJson().getBytes(StandardCharsets.UTF_8));
+            }
+
+            // 응답을 받아와서 JSON 스트림을 읽고, 그 데이터를 PaymentConfirmResponseDTO로 변환
+            try (InputStream responseStream = connection.getResponseCode() == 200
+                ? connection.getInputStream()  // 응답 코드가 200이면 정상 응답 스트림 사용
+                : connection.getErrorStream(); // 아니면 오류 응답 스트림 사용
+                Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8)) {
+                log.info(
+                    "PaymentRefundDTO\n" + objectMapper.readValue(reader, PaymentRefundDTO.class));
+                // JSON 응답을 PaymentConfirmResponseDTO 객체로 변환
+                return objectMapper.readValue(reader, PaymentRefundDTO.class);
+            } catch (Exception e) { // 응답 읽기 오류가 발생
+                log.error("Error reading response", e);// 예외 발생 시, 오류 상태를 반환하는 DTO 객체 생성
+
+                return PaymentRefundDTO.builder()
+                    .status(Status.ABORTED)
+                    .message("Error reading response: " + e)
+                    .build();
+            }
+        } catch (IOException e) { // 연결 생성 중 오류 발생
+            log.error("IOException in sendRequest", e);
+            throw new CustomException(ErrorCode.PAYMENT_CONNECTION_FAILED);
+        } catch (Exception e) { // 예기치 못한 오류
+            log.error("Unexpected error", e);
+            throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
+        }
+    }
 }

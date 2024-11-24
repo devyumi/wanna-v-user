@@ -24,5 +24,5 @@ public class PaymentConfirmResponseDTO {
     private String approvedAt; // 결제 승인 시간
 
     private String message; // 오류 메시지 (예외 발생 시)
-    private String errorCode; // 오류 코드
+    private String code;    // 오류 코드
 }
