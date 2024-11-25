@@ -96,8 +96,8 @@ public class CartServiceImpl implements CartService {
         }
 
         return cartList.stream()
-            .map(cart -> new CartResponseDTO(cart.getId(), cart.getQuantity(),
-                cart.getProduct().getId(), cart.getProduct().getName(),
+            .map(cart -> new CartResponseDTO(cart.getId(), cart.getProduct().getStock(),
+                cart.getQuantity(), cart.getProduct().getId(), cart.getProduct().getName(),
                 cart.getProduct().getImage(), cart.getProduct().getFinalPrice()))
             .collect(Collectors.toList());
 

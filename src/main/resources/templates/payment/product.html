@@ -7,9 +7,13 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/css/payment/product.css">
-  <script type="module" src="/js/payment/product.js"></script>
+  <script src="https://js.tosspayments.com/v2/standard"></script>
+  <script type="module" defer src="/js/payment/product.js"></script>
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <title>Product Detail Page</title>
+  <script th:inline="javascript">
+    const pageInitData = [[${pageInitData}]];
+  </script>
 </head>
 <body>
 <main layout:fragment="main-content" th:class="main-container">
@@ -17,12 +21,6 @@
   <div class="info-container">
     <p class="container-title">배송지</p>
     <div class="delivery-container">
-      <div class="address-type-container detail-container">
-        <div class="input-container">
-          <input type="text" id="address-type" placeholder=""/>
-          <label for="address-type">배송지명 (선택)</label>
-        </div>
-      </div>
       <p class="delivery-detail-container-title">받는 사람</p>
       <div class="person-info-container detail-container">
         <div class="input-container">
@@ -43,8 +41,14 @@
           <input type="text" id="address" value="" readonly/>
         </div>
         <div class="input-container">
-          <input type="text" id="detail-address" placeholder="" required/>
-          <label for="detail-address">상세주소 *</label>
+          <input type="text" id="detail-address" placeholder=""  th:required="required"/>
+          <label for="detail-address" th:required="required">상세주소 *</label>
+        </div>
+      </div>
+      <div class="address-type-container detail-container">
+        <div class="input-container">
+          <input type="text" id="note" placeholder=""/>
+          <label for="note">요청 사항(선택)</label>
         </div>
       </div>
     </div>
@@ -82,24 +86,34 @@
     </div>
   </div>
 
-  <div class="action-button">
-    <div class="total-price">
-      <div>총</div>
-      <span id="final-payment-amount"></span>
+  <!-- toss 결제 영역 -->
+  <div class="info-container payment-container">
+    <div class="box_section">
+      <!-- 결제 UI -->
+      <div id="payment-method"></div>
+      <!-- 이용약관 UI -->
+      <div id="agreement"></div>
     </div>
-    <button class="btn-payment" id="payment-button">결제</button>
-  </div>
+    <div class="action-button">
+      <div class="total-price">
+        <div>총</div>
+        <span id="final-payment-amount"></span>
+      </div>
+      <!-- 결제하기 버튼 -->
+      <button class="btn-payment" id="payment-button">결제</button>
+    </div>
 
-  <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart"
-       aria-labelledby="offcanvasCouponRightLabel">
-    <div class="offcanvas-header">
-      <h5 id="offcanvasCouponRightLabel">쿠폰</h5>
-      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-              aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-      <div class="info-container offcanvas-coupon-container" id="coupon-container">
-        <!-- coupon list -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasCart"
+         aria-labelledby="offcanvasCouponRightLabel">
+      <div class="offcanvas-header">
+        <h5 id="offcanvasCouponRightLabel">쿠폰</h5>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                aria-label="Close"></button>
+      </div>
+      <div class="offcanvas-body">
+        <div class="info-container offcanvas-coupon-container" id="coupon-container">
+          <!-- coupon list -->
+        </div>
       </div>
     </div>
   </div>

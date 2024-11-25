@@ -7,13 +7,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import lombok.ToString;
 
 @Data
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "pointlog")
+@Table(name = "PointLog")
 public class PointLog {
 
     @Id
@@ -24,10 +26,13 @@ public class PointLog {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "old_point")
     private Integer oldPoint;
 
+    @Column(name = "new_point")
     private Integer newPoint;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 }

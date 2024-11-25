@@ -13,6 +13,7 @@
 <body>
 <main layout:fragment="main-content" th:class="main-container">
   <div class="product-container">
+    <span id="hiddenProductId" th:text="${product.id}" hidden="hidden"></span>
     <div class="detail-container">
       <img th:id="product-image" th:src="@{${product.image}}" alt="Product image"/>
       <div class="product-info-container">
@@ -39,26 +40,35 @@
     <button
         class="btn btn-cart align-items-center"
         data-bs-toggle="offcanvas"
-        data-bs-target="#offcanvasBottom"
-        aria-controls="offcanvasBottom"
+        data-bs-target="#offcanvasCart"
+        aria-controls="offcanvasCart"
     >
       장바구니
     </button>
-    <button class="btn-payment">구매하기</button>
+    <button
+        class="btn btn-payment align-items-center"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasPayment"
+        aria-controls="offcanvasPayment"
+    >
+      구매하기
+    </button>
   </div>
-  <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasBottom"
-       aria-labelledby="offcanvasBottomLabel">
+  <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasCart"
+       aria-labelledby="offcanvasCartLabel">
     <div class="offcanvas-body small">
-      <div class="cart-container">
-        <span id="hiddenProductId" th:text="${product.id}"
-                    hidden="hidden"></span>
+      <div class="offcanvas-container">
         <p class="product-name" th:id="cart-product-name" th:text="${product.name}"></p>
         <div class="quantity-container">
-          <span class="product-stock" th:id="product-stock" th:text="${product.stock}">개 남음</span>
+          <span class="product-stock" th:id="cart-product-stock"
+                th:text="${product.stock} + '개 남음'"></span>
           <div class="input-group quantity-selector">
-            <button class="btn btn-outline-secondary" type="button" id="decrease-btn">-</button>
-            <input type="number" class="form-control text-center" value="1" id="quantity-input"/>
-            <button class="btn btn-outline-secondary" type="button" id="increase-btn">+</button>
+            <button class="btn btn-outline-secondary" type="button" id="cart-decrease-btn">-
+            </button>
+            <input type="number" class="form-control text-center" value="1"
+                   id="cart-quantity-input"/>
+            <button class="btn btn-outline-secondary" type="button" id="cart-increase-btn">+
+            </button>
           </div>
         </div>
       </div>
@@ -67,6 +77,32 @@
     </div>
     <div class="button-contain">
       <button class="btn-cart" id="add-cart-item">장바구니 담기</button>
+    </div>
+  </div>
+
+  <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvasPayment"
+       aria-labelledby="offcanvasPaymentLabel">
+    <div class="offcanvas-body small">
+      <div class="offcanvas-container">
+        <p class="product-name" th:id="order-product-name" th:text="${product.name}"></p>
+        <div class="quantity-container">
+          <span class="product-stock" th:id="order-product-stock"
+                th:text="${product.stock} + '개 남음'"></span>
+          <div class="input-group quantity-selector">
+            <button class="btn btn-outline-secondary" type="button" id="order-decrease-btn">-
+            </button>
+            <input type="number" class="form-control text-center" value="1"
+                   id="order-quantity-input"/>
+            <button class="btn btn-outline-secondary" type="button" id="order-increase-btn">+
+            </button>
+          </div>
+        </div>
+      </div>
+      <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+              aria-label="Close"></button>
+    </div>
+    <div class="button-contain">
+      <button class="btn-payment" id="order-item">구매하기</button>
     </div>
   </div>
 </main>
