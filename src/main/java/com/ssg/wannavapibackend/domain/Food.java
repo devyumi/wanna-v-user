@@ -7,13 +7,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import org.springframework.format.annotation.NumberFormat;
 
 @Entity
-@Getter @Setter(AccessLevel.PRIVATE)
+@Getter @Setter
+@NoArgsConstructor
+@ToString(exclude = "restaurant")
 public class Food {
 
   @Id @GeneratedValue(strategy =  GenerationType.IDENTITY)
@@ -29,6 +32,13 @@ public class Food {
   private Restaurant restaurant;
 
 
+  public Food(String name , String image , int price){
+    this.name =name;
+    this.image = image;
+    this.price = price;
+  }
+
+
   /**
    * 연관관계 편의 메서드
    */
@@ -36,4 +46,5 @@ public class Food {
     this.restaurant = restaurant;
     restaurant.getFoods().add(this);
   }
+
 }

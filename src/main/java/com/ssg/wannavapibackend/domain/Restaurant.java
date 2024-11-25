@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.domain;
 
+
 import com.ssg.wannavapibackend.common.BusinessStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
@@ -26,6 +27,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+
+
 @Entity
 @Getter
 @Setter(AccessLevel.PRIVATE)
@@ -38,6 +41,7 @@ public class Restaurant {
   private Long id;
 
   private String name;
+
 
   @Column(name = "business_num")
   private String businessNum;
@@ -62,6 +66,13 @@ public class Restaurant {
   private String image;
   private String description; //설명
 
+
+
+  private LocalDate createdAt; //생성일
+  private LocalDate updatedAt; //수정일
+
+  private String reservationTimeGap;
+
   @Column(name = "created_at")
   private LocalDate createdAt; //생성일
 
@@ -72,10 +83,14 @@ public class Restaurant {
   private String reservationTimeGap;
 
   @Column(name = "is_penalty")
+
   private Boolean isPenalty;
 
 
   @Enumerated(EnumType.STRING)
+  private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
+
+
   @Column(name = "business_status")
   private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
 
