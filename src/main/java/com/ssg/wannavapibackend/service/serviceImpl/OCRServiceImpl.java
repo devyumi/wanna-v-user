@@ -1,8 +1,8 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
-//import com.ssg.wannavapibackend.domain.Restaurant;
+import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.dto.response.OCRResponseDTO;
-//import com.ssg.wannavapibackend.repository.RestaurantRepository;
+import com.ssg.wannavapibackend.service.OCRService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
-public class OCRServiceImpl {
+public class OCRServiceImpl implements OCRService {
 
 //    private final RestaurantRepository restaurantRepository;
 
@@ -85,11 +85,11 @@ public class OCRServiceImpl {
      * @param storeInfo
      * @return
      */
-//    public Restaurant findCorrectRestaurant(OCRResponseDTO.StoreInfo storeInfo) {
-//
-//        String name = storeInfo.getName().getText();
-//
-//        //지점명 없을 경우 기본 상호명으로 식당 검색
+    public Restaurant findCorrectRestaurant(OCRResponseDTO.StoreInfo storeInfo) {
+
+        String name = storeInfo.getName().getText();
+
+        //지점명 없을 경우 기본 상호명으로 식당 검색
 //        if (storeInfo.getSubName() == null) {
 //            return restaurantRepository.findByNameContaining(name);
 //        } else {
@@ -104,7 +104,9 @@ public class OCRServiceImpl {
 //            }
 //
 //        }
-//    }
+        //임시
+        return null;
+    }
 
     /**
      * 영수증 정보에서 가져온 방문일자 타입 변환
