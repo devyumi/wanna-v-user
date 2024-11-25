@@ -42,9 +42,15 @@ public class RedissonLockStockFacade {
                 // 재고 감소 처리
                 paymentService.decrease(item.getProductId(), item.getQuantity());
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                log.error("Error while acquiring lock for productId: {}", item.getProductId(), e);
+                Thread.currentThread().interrupt(); // 현재 쓰레드의 인터럽트를 복원
+            } catch (Exception e) {
+                log.error("Unexpected error during stock decrease", e);
             } finally {
-                lock.unlock();
+                if (lock.isHeldByCurrentThread()) {
+                    lock.unlock(); // 현재 쓰레드가 획득한 락만 해제
+                    log.info("Lock released for productId: {}", item.getProductId());
+                }
             }
         }
     }
