@@ -20,6 +20,8 @@ public enum ErrorCode {
     PAYMENT_INVALID_RESPONSE_CODE(400, "Invalid payment response code"),  // 잘못된 결제 응답 코드
     PAYMENT_UNKNOWN_ERROR(500, "Unknown error during payment process"),  // 결제 중 예기치 못한 오류
     PAYMENT_SAVE_FAILED(500, "Failed to save payment info"),  // 결제 정보 저장 실패
+    PAYMENT_CANCEL_FAILED(500, "Failed to cancel payment"),  // 결제 취소 실패
+    PAYMENT_CANCELLED(200, "Payment successfully cancelled"),  // 결제 취소 성공
 
     INSUFFICIENT_STOCK(400, "Insufficient stock for the requested product");  // 재고 부족
 

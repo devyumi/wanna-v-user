@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.service.serviceImpl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssg.wannavapibackend.common.ErrorCode;
+import com.ssg.wannavapibackend.common.PaymentCancelReason;
 import com.ssg.wannavapibackend.common.Status;
 import com.ssg.wannavapibackend.config.TossPaymentConfig;
 import com.ssg.wannavapibackend.domain.Payment;
@@ -28,6 +29,7 @@ import com.ssg.wannavapibackend.repository.ProductRepository;
 import com.ssg.wannavapibackend.repository.UserCouponRepository;
 import com.ssg.wannavapibackend.repository.UserRepository;
 import com.ssg.wannavapibackend.service.PaymentService;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -165,6 +167,7 @@ public class PaymentServiceImpl implements PaymentService {
     public PaymentConfirmResponseDTO sendRequest(Long userId, PaymentConfirmRequestDTO requestDTO) {
         PaymentConfirmResponseDTO confirmResponseDTO = processPaymentConfirmation(
             requestDTO.getTossPaymentRequestDTO());
+        PaymentCancelReason cancelReason = null;
 
         // 결제 확인 요청이 성공일 경우 재고 감소 로직 실행
         if (Status.DONE.toString().equalsIgnoreCase(confirmResponseDTO.getStatus().toString())) {
@@ -180,26 +183,57 @@ public class PaymentServiceImpl implements PaymentService {
                 .collect(Collectors.toList());
 
             try {
+                // 1. 사용자 조회
                 User user = userRepository.findById(userId)
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
-                redissonLockStockFacade.decreaseProductStock(productRequestDTOList);
 
-                saveProductPayment(user, requestDTO, confirmResponseDTO);
-
-                //사용한 쿠폰 사용 여부 변경
-                userCouponRepository.updateCouponStatus(true, userId,
-                    requestDTO.getPaymentItemRequestDTO()
-                        .getCouponId());
-
-                // 사용한 포인트 로그
-                Integer pointsUsed = requestDTO.getPaymentItemRequestDTO().getPointsUsed();
-                if (pointsUsed != null && pointsUsed > 0) {
-                    savePointLog(user, pointsUsed);
+                // 2. 상품 재고 감소
+                try {
+                    redissonLockStockFacade.decreaseProductStock(productRequestDTOList);
+                } catch (Exception e) {
+                    cancelReason = PaymentCancelReason.STOCK_INSUFFICIENT;
+                    throw e;
                 }
 
+                // 3. 결제 정보 저장
+                try {
+                    saveProductPayment(user, requestDTO, confirmResponseDTO);
+                } catch (Exception e) {
+                    cancelReason = PaymentCancelReason.PAYMENT_SAVE_FAILED;
+                    throw e;
+                }
+
+                // 4. 쿠폰 상태 업데이트
+                try {
+                    userCouponRepository.updateCouponStatus(true, userId,
+                        requestDTO.getPaymentItemRequestDTO().getCouponId());
+                } catch (Exception e) {
+                    cancelReason = PaymentCancelReason.COUPON_UPDATE_FAILED;
+                    throw e;
+                }
+
+                // 5. 포인트 로그
+                Integer pointsUsed = requestDTO.getPaymentItemRequestDTO().getPointsUsed();
+                if (pointsUsed != null && pointsUsed > 0) {
+                    try {
+                        savePointLog(user, pointsUsed);
+                    } catch (Exception e) {
+                        cancelReason = PaymentCancelReason.POINT_LOG_FAILED;
+                        throw e;
+                    }
+                }
             } catch (Exception e) {
-                // 예외 발생 시 처리 (결제 정보를 저장하지 않음)
-                throw new CustomException(ErrorCode.PAYMENT_UNKNOWN_ERROR);
+                PaymentRefundDTO refundDTO = PaymentRefundDTO.builder()
+                    .paymentKey(requestDTO.getTossPaymentRequestDTO().getPaymentKey())
+                    .cancelReason(
+                        cancelReason != null ? cancelReason : PaymentCancelReason.UNKNOWN_ERROR)
+                    .cancelAmount(requestDTO.getTossPaymentRequestDTO().getAmount())
+                    .build();
+
+                log.error("Payment process failed, canceling payment. Reason: {}",
+                    cancelReason != null ? cancelReason : PaymentCancelReason.UNKNOWN_ERROR, e);
+                requestPaymentCancel(refundDTO);
+                throw new CustomException(ErrorCode.PAYMENT_CANCELLED);
             }
         }
 
@@ -389,6 +423,12 @@ public class PaymentServiceImpl implements PaymentService {
         userRepository.save(user);
     }
 
+    /**
+     * 결제 취소
+     *
+     * @param requestDTO
+     * @return
+     */
     @Transactional
     protected PaymentRefundDTO requestPaymentCancel(PaymentRefundDTO requestDTO) {
         try {
@@ -399,18 +439,28 @@ public class PaymentServiceImpl implements PaymentService {
 
             // 요청 데이터(requestDTO)를 JSON 문자열로 변환하여 HTTP 요청 본문에 포함시켜 전송
             try (OutputStream os = connection.getOutputStream()) {
-                os.write(requestDTO.toJson().getBytes(StandardCharsets.UTF_8));
+                String requestBody = requestDTO.toJson();
+                log.info("Cancel Request Body: {}", requestBody);
+                os.write(requestBody.getBytes(StandardCharsets.UTF_8));
             }
 
+            // 응답 읽기
+            int responseCode = connection.getResponseCode();
+            log.info("Cancel API Response Code: {}", responseCode);
+
             // 응답을 받아와서 JSON 스트림을 읽고, 그 데이터를 PaymentConfirmResponseDTO로 변환
-            try (InputStream responseStream = connection.getResponseCode() == 200
+            try (InputStream responseStream = responseCode == 200
                 ? connection.getInputStream()  // 응답 코드가 200이면 정상 응답 스트림 사용
-                : connection.getErrorStream(); // 아니면 오류 응답 스트림 사용
-                Reader reader = new InputStreamReader(responseStream, StandardCharsets.UTF_8)) {
-                log.info(
-                    "PaymentRefundDTO\n" + objectMapper.readValue(reader, PaymentRefundDTO.class));
-                // JSON 응답을 PaymentConfirmResponseDTO 객체로 변환
-                return objectMapper.readValue(reader, PaymentRefundDTO.class);
+                : connection.getErrorStream();) // 아니면 오류 응답 스트림 사용
+            {
+                String response = new BufferedReader(new InputStreamReader(responseStream))
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+
+                log.info("Cancel API Response: {}", response);
+
+                return objectMapper.readValue(response, PaymentRefundDTO.class);
+
             } catch (Exception e) { // 응답 읽기 오류가 발생
                 log.error("Error reading response", e);// 예외 발생 시, 오류 상태를 반환하는 DTO 객체 생성
 
