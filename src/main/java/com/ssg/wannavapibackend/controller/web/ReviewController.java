@@ -13,10 +13,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -97,6 +94,41 @@ public class ReviewController {
         reviewService.saveReview(1L, reviewSaveDTO);
         log.info("리뷰 작성 완료");
         redirectAttributes.addFlashAttribute("alertMessage", "작성 완료되었습니다.");
+        return "redirect:/reviews";
+    }
+
+    @PostMapping("reviews/{id}/edit")
+    public String updateReview(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
+        try {
+            reviewService.checkReviewUpdate(id);
+
+            if (id == null) {
+                log.info("리뷰 정보를 찾을 수 없습니다.");
+                return "redirect:/reviews";
+            }
+            model.addAttribute("reviewInfo", reviewService.findReview(id));
+            model.addAttribute("reviewUpdateDTO", reviewService.findReview(id));
+            model.addAttribute("tagsAll", tagService.findTagsForReview());
+            return "review/review-update";
+        } catch (Exception e) {
+            log.info("리뷰 수정 불가");
+            redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
+            return "redirect:/reviews";
+        }
+    }
+
+    @PostMapping("reviews/{id}/update")
+    public String processReview(@PathVariable Long id, @ModelAttribute @Validated ReviewSaveDTO reviewUpdateDTO, BindingResult bindingResult,
+                                Model model, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            printErrorLog(bindingResult);
+            model.addAttribute("reviewUpdateDTO", reviewUpdateDTO);
+            model.addAttribute("tagsAll", tagService.findTagsForReview());
+            return "review/review-update";
+        }
+        reviewService.updateReview(id, reviewUpdateDTO);
+        log.info("리뷰 수정 완료");
+        redirectAttributes.addFlashAttribute("alertMessage", "수정 되었습니다.");
         return "redirect:/reviews";
     }
 
