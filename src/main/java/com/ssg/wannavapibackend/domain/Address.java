@@ -28,5 +28,4 @@ public class Address {
   @Column(name = "detail_address")
   private String detailAddress;
 
-    
 }
