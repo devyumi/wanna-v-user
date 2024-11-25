@@ -1,8 +1,16 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
+import com.ssg.wannavapibackend.common.ErrorCode;
+import com.ssg.wannavapibackend.domain.Cart;
 import com.ssg.wannavapibackend.domain.Product;
+import com.ssg.wannavapibackend.domain.User;
+import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
+import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
 import com.ssg.wannavapibackend.dto.response.ProductResponseDTO;
+import com.ssg.wannavapibackend.exception.CustomException;
+import com.ssg.wannavapibackend.repository.CartRepository;
 import com.ssg.wannavapibackend.repository.ProductRepository;
+import com.ssg.wannavapibackend.repository.UserRepository;
 import com.ssg.wannavapibackend.service.ProductService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,6 +19,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Log4j2
 @Service
@@ -19,8 +28,10 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-
-    @Override
+    /**
+     * 상품 전체 조회
+     */
+    @Transactional(readOnly = true)
     public List<ProductResponseDTO> getProductList() {
         List<Product> products = productRepository.findAll(Sort.by(Direction.DESC, "id"));
 
@@ -30,4 +41,16 @@ public class ProductServiceImpl implements ProductService {
                 product.getFinalPrice()))
             .collect(Collectors.toList());
     }
+
+    /**
+     * 상품 상세 조회
+     *
+     * @param productId → 상품 ID
+     */
+    @Transactional(readOnly = true)
+    public Product getProduct(Long productId) {
+        return productRepository.findById(productId)
+            .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
+    }
+
 }

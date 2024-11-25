@@ -40,5 +40,4 @@ public class Admin {
     @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
-
 }

@@ -7,6 +7,8 @@ public enum ProvideServiceType {
   , BATHROOM("남녀 화장실 구분") , DELIVERY("배달 가능") , WHEEL_CHAIR("휠체어 이용 가능")
   , CHILD_CHAIR("유아의자 존재") , PET("반려동물 동반 가능") , ONE("1인 이용 가능");
 
+
+
   //설명 , 키는 영어 값은 한글
   private String description;
 
