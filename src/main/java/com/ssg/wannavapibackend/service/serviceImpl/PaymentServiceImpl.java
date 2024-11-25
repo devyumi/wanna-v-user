@@ -21,6 +21,7 @@ import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
+import com.ssg.wannavapibackend.exception.PaymentCancelException;
 import com.ssg.wannavapibackend.facade.RedissonLockStockFacade;
 import com.ssg.wannavapibackend.repository.PaymentItemRepository;
 import com.ssg.wannavapibackend.repository.PaymentRepository;
@@ -233,7 +234,7 @@ public class PaymentServiceImpl implements PaymentService {
                 log.error("Payment process failed, canceling payment. Reason: {}",
                     cancelReason != null ? cancelReason : PaymentCancelReason.UNKNOWN_ERROR, e);
                 requestPaymentCancel(refundDTO);
-                throw new CustomException(ErrorCode.PAYMENT_CANCELLED);
+                throw new PaymentCancelException(cancelReason);
             }
         }
 
