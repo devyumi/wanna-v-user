@@ -20,7 +20,7 @@ public class OCRResponseDTO {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Getter
-    private static class Image {
+    public static class Image {
 
         @JsonProperty("inferResult")
         private String inferResult;
@@ -28,51 +28,79 @@ public class OCRResponseDTO {
         @JsonProperty("message")
         private String message;
 
-        @JsonProperty("matchedTemplate")
-        private MatchedTemplate matchedTemplate;
-
-        @JsonProperty("fields")
-        private List<Field> fields;
+        @JsonProperty("receipt")
+        private Receipt receipt;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class MatchedTemplate {
+    @Getter
+    public static class Receipt {
 
-        @JsonProperty("name")
-        private String usedTemplate;
+        @JsonProperty("result")
+        private Result result;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    private static class Field {
+    @Getter
+    public static class Result {
 
+        @JsonProperty("storeInfo")
+        private StoreInfo storeInfo;
+
+        @JsonProperty("paymentInfo")
+        private PaymentInfo paymentInfo;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Getter
+    public static class StoreInfo {
         @JsonProperty("name")
-        String field;
+        private Name name;
 
-        @JsonProperty("inferText")
-        String inferText;
+        @JsonProperty("bizNum")
+        private BizNum bizNum;
+
+        @JsonProperty("subName")
+        private SubName subName;
+
     }
 
-    public String getInferResult() {
-        return images.get(0).inferResult;
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Getter
+    public static class Name {
+
+        @JsonProperty("text")
+        private String text;
     }
 
-    public String Message() {
-        return images.get(0).getMessage();
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Getter
+    public static class BizNum {
+
+        @JsonProperty("text")
+        private String text;
     }
 
-    public String getUsedTemplate() {
-        return images.get(0).getMatchedTemplate().usedTemplate;
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Getter
+    public static class SubName {
+        @JsonProperty("text")
+        private String text;
     }
 
-    public String getRestaurantName() {
-        return images.get(0).getFields().get(0).inferText;
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Getter
+    public static class PaymentInfo {
+        @JsonProperty("date")
+        private Date date;
+
     }
 
-    public String getAddress() {
-        return images.get(0).getFields().get(1).inferText;
-    }
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    @Getter
+    public static class Date {
 
-    public String getVisitedDate() {
-        return images.get(0).getFields().get(2).inferText;
+        @JsonProperty("text")
+        private String text;
     }
 }
