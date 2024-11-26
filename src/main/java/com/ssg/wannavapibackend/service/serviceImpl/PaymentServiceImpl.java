@@ -22,7 +22,7 @@ import com.ssg.wannavapibackend.dto.response.PaymentItemResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
 import com.ssg.wannavapibackend.exception.PaymentCancelException;
-import com.ssg.wannavapibackend.facade.RedissonLockStockFacade;
+//import com.ssg.wannavapibackend.facade.RedissonLockStockFacade;
 import com.ssg.wannavapibackend.repository.PaymentItemRepository;
 import com.ssg.wannavapibackend.repository.PaymentRepository;
 import com.ssg.wannavapibackend.repository.PointLogRepository;
@@ -65,7 +65,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final UserCouponRepository userCouponRepository;
     private final PointLogRepository pointLogRepository;
     private final ProductRepository productRepository;
-    private final RedissonLockStockFacade redissonLockStockFacade;
+//    private final RedissonLockStockFacade redissonLockStockFacade;
 
 
     @Override
@@ -189,12 +189,12 @@ public class PaymentServiceImpl implements PaymentService {
                     .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
                 // 2. 상품 재고 감소
-                try {
-                    redissonLockStockFacade.decreaseProductStock(productRequestDTOList);
-                } catch (Exception e) {
-                    cancelReason = PaymentCancelReason.STOCK_INSUFFICIENT;
-                    throw e;
-                }
+//                try {
+//                    redissonLockStockFacade.decreaseProductStock(productRequestDTOList);
+//                } catch (Exception e) {
+//                    cancelReason = PaymentCancelReason.STOCK_INSUFFICIENT;
+//                    throw e;
+//                }
 
                 // 3. 결제 정보 저장
                 try {
@@ -431,7 +431,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @return
      */
     @Transactional
-    protected PaymentRefundDTO requestPaymentCancel(PaymentRefundDTO requestDTO) {
+    public PaymentRefundDTO requestPaymentCancel(PaymentRefundDTO requestDTO) {
         try {
             String cancelUrl = tossPaymentConfig.getUrl() + requestDTO.getPaymentKey() + "/cancel";
 
