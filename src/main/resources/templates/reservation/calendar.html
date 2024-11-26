@@ -4,8 +4,8 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/layout}" lang="en">
 <head>
-  <link rel="stylesheet" href="/assets/calendar-17/css/style.css">
-  <link rel="stylesheet" href="/assets/calendar-17/css/rome.css">
+  <link rel="stylesheet" href="/css/reservation/calendar/style.css">
+  <link rel="stylesheet" href="/css/reservation/calendar/rome.css">
   <meta charset="UTF-8">
   <title>reservation Page</title>
 
@@ -33,11 +33,9 @@
 </main>
 </body>
 </html>
-<script src="/assets/calendar-17/js/jquery-3.3.1.min.js"></script>
-<script src="/assets/calendar-17/js/popper.min.js"></script>
-<script src="/assets/calendar-17/js/bootstrap.min.js"></script>
-<script src="/assets/calendar-17/js/rome.js"></script>
-<script src="/assets/calendar-17/js/main.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="/js/reservation/rome.js"></script>
+<script src="/js/reservation/main.js"></script>
 <script>
-    var restaurantId = [[${restaurantId}]];
+    let restaurantId = [[${restaurantId}]];
 </script>

@@ -2,20 +2,8 @@ package com.ssg.wannavapibackend.domain;
 
 
 import com.ssg.wannavapibackend.common.BusinessStatus;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -66,13 +54,6 @@ public class Restaurant {
   private String image;
   private String description; //설명
 
-
-
-  private LocalDate createdAt; //생성일
-  private LocalDate updatedAt; //수정일
-
-  private String reservationTimeGap;
-
   @Column(name = "created_at")
   private LocalDate createdAt; //생성일
 
@@ -80,17 +61,15 @@ public class Restaurant {
   private LocalDate updatedAt; //수정일
 
   @Column(name = "reservation_time_gap")
-  private String reservationTimeGap;
+  private Integer reservationTimeGap;
 
   @Column(name = "is_penalty")
-
   private Boolean isPenalty;
 
+    @OneToMany(mappedBy = "restaurant", fetch = FetchType.LAZY)
+    private List<Seat> seats;
 
   @Enumerated(EnumType.STRING)
-  private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
-
-
   @Column(name = "business_status")
   private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
 
@@ -157,7 +136,7 @@ public class Restaurant {
       Set<String> containFoodTypes, Set<String> provideServiceTypes, Set<String> restaurantTypes,
       String image, String roadNameAddress
       , String landLotAddress, String zipcode, String detailAddress, Boolean canPark,
-      String reservationTimeGap
+      Integer reservationTimeGap
       , Boolean isPenalty, List<BusinessDay> businessDays, List<Food> foods) {
 
     Restaurant restaurant = new Restaurant();
@@ -231,7 +210,7 @@ public class Restaurant {
   public void changeRestaurant(String businessNum, String restaurantName, Set<String> moodTypes,
       Set<String> containFoodTypes, Set<String> provideServiceTypes, Set<String> restaurantTypes,
       String image, String roadNameAddress, String landLotAddress, String zipcode,
-      String detailsAddress, Boolean canPark, String reservationTimeGap,
+      String detailsAddress, Boolean canPark, Integer reservationTimeGap,
       Boolean isPenalty, List<BusinessDay> businessDays, List<Food> foods) {
 
     setBusinessNum(businessNum);

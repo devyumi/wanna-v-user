@@ -5,6 +5,8 @@ import com.ssg.wannavapibackend.dto.response.ReservationDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationSaveResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationDateResponseDTO;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 

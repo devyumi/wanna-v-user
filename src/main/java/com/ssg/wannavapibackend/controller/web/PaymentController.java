@@ -94,14 +94,11 @@ public class PaymentController {
         return "/payment/toss-fail";
     }
 
-//    @GetMapping("/success")
-//    public String reservationPaySuccess(
-//        @RequestParam(value = "orderId") String orderId,
-//        @RequestParam(value = "amount") Integer amount,
-//        @RequestParam(value = "paymentKey") String paymentKey) {
-//        return "redirect:/success";
-//    }
-//
+    @GetMapping("/success")
+    public String reservationPaySuccess() {
+        return "payment/success";
+    }
+
 //    @GetMapping("/fail")
 //    public String reservationPayFail(
 //        @RequestParam(value = "orderId") String orderId,

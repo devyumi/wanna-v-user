@@ -4,6 +4,8 @@ import com.ssg.wannavapibackend.domain.Reservation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long>, ReservationCustomRepository {
@@ -23,7 +25,16 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
     SELECT r1
     FROM Reservation r1
     LEFT JOIN r1.restaurant r2
+    LEFT JOIN r1.user u
     WHERE r1.id = :reservationId
     """)
     Reservation findByReservationId(Long reservationId);
+
+    @Query("""
+    SELECT r.reservationDate, r.reservationTime
+    FROM Reservation r
+    WHERE r.reservationDate = :reservationDate
+    AND r.reservationTime = :reservationTime
+    """)
+    List<Reservation> findAllByReservation(LocalDate reservationDate, LocalTime reservationTime);
 }

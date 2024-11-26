@@ -108,13 +108,12 @@ public class ReservationServiceImpl implements ReservationService {
      */
     @Override
     public ReservationSaveResponseDTO saveReservation(ReservationRequestDTO reservationRequestDTO) {
-        log.info("서비스 왔다리~");
 
         Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("식당이 없습니다."));
 
         User user = userRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다."));
 
-        Reservation reservation = new Reservation(null, user, restaurant, null, reservationRequestDTO.getSelectGuest(), reservationRequestDTO.getSelectDate(), reservationRequestDTO.getSelectTime(),  LocalDateTime.now(), null);
+        Reservation reservation = new Reservation(null, user, restaurant, null, reservationRequestDTO.getSelectGuest(),true, reservationRequestDTO.getSelectDate(), reservationRequestDTO.getSelectTime(),  LocalDateTime.now(), null);
 
         Reservation reservationComplete = reservationRepository.save(reservation);
 
@@ -130,9 +129,6 @@ public class ReservationServiceImpl implements ReservationService {
      */
     @Override
     public ReservationDateResponseDTO getReservationTime(ReservationRequestDTO reservationRequestDTO) {
-        log.info("안녕 난 서비스");
-
-        log.info("잘 들어왔니? : " + reservationRequestDTO.getRestaurantId());
 
         List<Reservation> reservations = reservationRepository.findAllByRestaurantId(reservationRequestDTO.getRestaurantId());
 
@@ -141,11 +137,11 @@ public class ReservationServiceImpl implements ReservationService {
         int guest = 0;
 
         if(reservationRequestDTO.getSelectTime() == null) {
-            filteredTime = Timefilter(reservations, reservationRequestDTO);
+            filteredTime = filterAvailableTimes(reservations, reservationRequestDTO);
             return new ReservationDateResponseDTO(reservationRequestDTO.getRestaurantId(),null, reservationRequestDTO.getSelectDate(),filteredTime);
         }
         else {
-            guest = calRemainingGuest(reservations, reservationRequestDTO);
+            guest = calRemainingGuest(reservations, reservationRequestDTO, null, null);
             return new ReservationDateResponseDTO(reservationRequestDTO.getRestaurantId(), guest, reservationRequestDTO.getSelectDate(),null);
         }
     }
@@ -153,7 +149,15 @@ public class ReservationServiceImpl implements ReservationService {
     /**
      * 선택한 날짜 및 시간의 예약 인원 수 확인
      */
-    public int calRemainingGuest(List<Reservation> reservations, ReservationRequestDTO reservationRequestDTO) {
+    public int calRemainingGuest(List<Reservation> reservations, ReservationRequestDTO reservationRequestDTO, LocalTime localTime, LocalDate curDate) {
+        if(reservations.isEmpty()){
+            Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("식당이 없습니다."));
+
+            return restaurant.getSeats().stream()
+                    .mapToInt(seat -> seat.getSeatCount() * seat.getSeatCapacity())
+                    .sum();
+        }
+
         int totalReservationGuest = reservations.stream().map(Reservation::getRestaurant).distinct()
                 .flatMap(reservation -> reservation.getSeats().stream())
                 .mapToInt(seat -> seat.getSeatCount() * seat.getSeatCapacity())
@@ -162,187 +166,133 @@ public class ReservationServiceImpl implements ReservationService {
         int calGuest = 0;
 
         LocalDate reservationDate = reservationRequestDTO.getSelectDate();
-        log.info(reservationDate);
         LocalTime reservationTime = reservationRequestDTO.getSelectTime();
-        log.info(reservationTime);
 
         Map<Integer, Integer> tables = null;
 
         for(Reservation reservation : reservations){
-            if (tables == null){
+            if (tables == null)
                 tables = new HashMap<>();
 
-                for(Seat seat : reservation.getRestaurant().getSeats())
-                    tables.put(seat.getSeatCapacity(), seat.getSeatCount());
-            }
-
-            log.info("시작!!!!!!!!!!!!!!!!!");
+            for(Seat seat : reservation.getRestaurant().getSeats())
+                tables.put(seat.getSeatCapacity(), seat.getSeatCount());
 
             //달력에서 선택한 예약 날짜의 인원 수를 계산하는 로직
             if(reservationDate.equals(reservation.getReservationDate())
                     && reservationTime == null){
-                log.info("이곳은 날짜만 눌렀을 때다!");
 
-                log.info("테이블 : " + tables.toString());
+                //각 시간 마다 순회해야 한다.
+                if(!localTime.equals(reservation.getReservationTime()))
+                    continue;
 
-                //달력에서 선택한 날짜와 시간의 예약 하나 인원 수
                 int guest = reservation.getGuest();
-                log.info("인원 : " + guest);
 
-                //몇 인용 테이블인지 우선 저장
-                int[] seatCapacities = tables.keySet().stream().mapToInt(Integer::intValue).toArray();
-                log.info(seatCapacities);
+                List<Integer> sortedCapacities = tables.keySet().stream().sorted(Comparator.reverseOrder()).toList();
 
-                for (int capacity : seatCapacities) {
+                for (int capacity : sortedCapacities) {
                     while (guest > 0 && tables.containsKey(capacity) && tables.get(capacity) > 0) {
-                        if (guest >= capacity) {
-                            int tablesToAllocate = guest / capacity;
-
-                            if (guest % capacity != 0)
-                                tablesToAllocate++;
-
-                            int availableTables = tables.get(capacity);
-                            if (availableTables >= tablesToAllocate) {
-                                tables.put(capacity, availableTables - tablesToAllocate);
-                                calGuest += capacity * tablesToAllocate;
-                                guest -= capacity * tablesToAllocate;
-                            } else {
-                                tables.put(capacity, 0);
-                                calGuest += capacity * availableTables;
-                                guest -= capacity * availableTables;
-                            }
-                        } else {
+                        if (guest <= capacity) {
                             tables.put(capacity, tables.get(capacity) - 1);
-                            guest = capacity;
                             calGuest += guest;
                             guest = 0;
                         }
-                    }
-
-                    // 남은 인원이 없다면 종료
-                    if (guest == 0) {
-                        break;
-                    }
-                }
-
-                log.info("배정된 인원 수: " + calGuest);
-            }
-
-            else if(reservationDate.equals(reservation.getReservationDate())
-                && reservationTime.equals(reservation.getReservationTime())
-                && reservationTime != null){
-                log.info("이곳은 날짜와 시간 모두 눌렀을 때다!");
-                //테이블로 인원 수 계산하는 부분
-                log.info("테이블 : " + tables.toString());
-
-                //달력에서 선택한 날짜와 시간의 예약 하나 인원 수
-                int guest = reservation.getGuest();
-                log.info("인원 : " + guest);
-
-                //몇 인용 테이블인지 우선 저장
-                int[] seatCapacities = tables.keySet().stream().mapToInt(Integer::intValue).toArray();
-                log.info(seatCapacities);
-
-
-                for (int capacity : seatCapacities) {
-                    while (guest > 0 && tables.containsKey(capacity) && tables.get(capacity) > 0) {
-                        if (guest >= capacity) {
-                            // 배정할 테이블 개수 계산
-                            int tablesToAllocate = guest / capacity;
-                            // 남은 인원이 있으면 한 테이블 더 배정
-                            if (guest % capacity != 0) {
-                                tablesToAllocate++;
-                            }
-
-                            // 필요한 테이블이 충분한지 확인
-                            int availableTables = tables.get(capacity);
-                            if (availableTables >= tablesToAllocate) {
-                                tables.put(capacity, availableTables - tablesToAllocate);
-                                calGuest += capacity * tablesToAllocate; // 배정된 테이블 수 만큼 인원 추가
-                                guest -= capacity * tablesToAllocate;   // 배정된 인원 수만큼 차감
-                            } else {
-                                // 필요한 테이블이 부족한 경우, 가능한 만큼 배정
-                                tables.put(capacity, 0);
-                                calGuest += capacity * availableTables;  // 가능한 테이블만큼 배정
-                                guest -= capacity * availableTables;     // 배정된 인원 차감
-                            }
-                        } else {
-                            // 예약 신청 인원 수가 테이블 용량보다 적을 때, 해당 테이블 배정
+                        else {
                             tables.put(capacity, tables.get(capacity) - 1);
-                            guest = capacity;
-                            calGuest += guest;  // 남은 모든 인원을 배정
-                            guest = 0;  // 모든 인원 배정 완료
+                            calGuest += capacity;
+                            guest -= capacity;
                         }
                     }
-
-                    // 남은 인원이 없다면 종료
-                    if (guest == 0)
+                    if(guest <= 0)
                         break;
                 }
+            }
 
-                log.info("배정된 인원 수: " + calGuest);
+            else if(reservationDate.equals(reservation.getReservationDate()) &&
+                    reservationTime.equals(reservation.getReservationTime())){
+                //달력에서 선택한 날짜와 시간의 하나의 예약 인원 수
+                int guest = reservation.getGuest();
+
+                //몇 인용 테이블인지 우선 저장
+                List<Integer> sortedCapacities = tables.keySet().stream().sorted(Comparator.reverseOrder()).toList();
+
+                for (int capacity : sortedCapacities) {
+                    while (guest > 0 && tables.containsKey(capacity) && tables.get(capacity) > 0) {
+                        if (guest <= capacity) {
+                            tables.put(capacity, tables.get(capacity) - 1);
+                            calGuest += guest;
+                            guest = 0;
+                        }
+                        else {
+                            tables.put(capacity, tables.get(capacity) - 1);
+                            calGuest += capacity;
+                            guest -= capacity;
+                        }
+                    }
+                    if(guest <= 0)
+                        break;
+                }
             }
         }
-
-        log.info("예약 인원 수 :" + calGuest);
-
         return totalReservationGuest - calGuest;
     }
 
     /**
      * 예약 가능한 시간 필터링
      */
-    public List<LocalTime> Timefilter(List<Reservation> reservations, ReservationRequestDTO reservationRequestDTO){
+    public List<LocalTime> filterAvailableTimes(List<Reservation> reservations, ReservationRequestDTO reservationRequestDTO){
         List<LocalTime> reservationTimes = new ArrayList<>();
 
         LocalTime startTime = LocalTime.of(0, 0);
 
-        int intervalMinutes = reservations.get(0).getRestaurant().getReservationTimeGap();
-        log.info("갭 : " + intervalMinutes);
+        Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("식당이 없습니다."));
 
+        int intervalMinutes = restaurant.getReservationTimeGap();
+
+        // 예약 시간 갭 만큼의 시간을 모두 저장하는 부분
         do {
             reservationTimes.add(startTime);
             startTime = startTime.plusMinutes(intervalMinutes);
         } while (!startTime.equals(LocalTime.of(0, 0)));
 
+        for(LocalTime localTime : reservationTimes)
+            log.info(localTime);
+
         LocalDate curDate = reservationRequestDTO.getSelectDate();
 
-        //내가 선택한 날짜의 요일
         String dayOfWeek = curDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
 
+        //오픈 시간, 마감 시간, 브레이크 타임 시작 시간, 브레이크 타임 종료 시간, 예약이 꽉찬 시간, 현재 시간 보다 이전 시간 모두 필터링 하는 부분
         Iterator<LocalTime> iterator = reservationTimes.iterator();
         while (iterator.hasNext()) {
             LocalTime localTime = iterator.next();
-            log.info("가지고 온 것 : " + localTime);
-            for (int i = 0; i < reservations.get(0).getRestaurant().getBusinessDays().size(); i++) {
-                if (dayOfWeek.equals(reservations.get(0).getRestaurant().getBusinessDays().get(i).getDayOfWeek())) {
-                    LocalTime openTime = reservations.get(0).getRestaurant().getBusinessDays().get(i).getOpenTime();
-                    log.info("오픈 시간 : " + openTime);
-                    LocalTime breakStartTime = reservations.get(0).getRestaurant().getBusinessDays().get(i).getBreakStartTime();
-                    log.info("브레이스 시작 시간 : " + breakStartTime);
-                    LocalTime breakEndTime = reservations.get(0).getRestaurant().getBusinessDays().get(i).getBreakEndTime();
-                    log.info("브레이스 종료 시간 : " + breakEndTime);
-                    LocalTime lastOrderTime = reservations.get(0).getRestaurant().getBusinessDays().get(i).getLastOrderTime();
-                    log.info("라스트 오더 시간 : " + lastOrderTime);
-                    boolean isOpen = reservations.get(0).getRestaurant().getBusinessDays().get(i).getRestaurant().getBusinessDays().get(i).getIsClose();
-                    log.info("오픈 여부 : " + isOpen);
+            for (int i = 0; i < restaurant.getBusinessDays().size(); i++) {
+                if (dayOfWeek.equals(restaurant.getBusinessDays().get(i).getDayOfWeek())) {
+                    LocalTime openTime = restaurant.getBusinessDays().get(i).getOpenTime();
+                    LocalTime breakStartTime = restaurant.getBusinessDays().get(i).getBreakStartTime();
+                    LocalTime breakEndTime = restaurant.getBusinessDays().get(i).getBreakEndTime();
+                    LocalTime lastOrderTime = restaurant.getBusinessDays().get(i).getLastOrderTime();
+                    LocalTime currentTime = LocalTime.now();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                    LocalTime formattedTime = LocalTime.parse(currentTime.format(formatter), formatter);
+                    LocalDate currentDate = LocalDate.now();
 
-                    if(isOpen)
+                    if (openTime.isAfter(localTime) || lastOrderTime.isBefore(localTime))
                         iterator.remove();
-                    else{
-                        if (openTime.isAfter(localTime) || lastOrderTime.isBefore(localTime)) {
-                            log.info("잘가랑~ : " + localTime);
-                            iterator.remove();
-                        }
 
-                        else if (!localTime.isBefore(breakStartTime) && localTime.isBefore(breakEndTime)) {
-                            log.info("잘가랑~ : " + localTime);
+                    else if (!localTime.isBefore(breakStartTime) && localTime.isBefore(breakEndTime))
+                        iterator.remove();
+
+                    else if (curDate.isEqual(currentDate)) {
+                        if (localTime.isBefore(formattedTime) || localTime.equals(formattedTime))
                             iterator.remove();
-                        }
                     }
 
-                    int calRemainingGuest = calRemainingGuest(reservations, reservationRequestDTO);
-                    log.info("예약 가능 인원 수 : " + calRemainingGuest);
+                    if (!reservations.isEmpty()) {
+                        int calRemainingGuest = calRemainingGuest(reservations, reservationRequestDTO, localTime, curDate);
+
+                        if (calRemainingGuest == 0)
+                            iterator.remove();
+                    }
                 }
             }
         }
