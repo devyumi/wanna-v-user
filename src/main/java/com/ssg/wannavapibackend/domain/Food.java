@@ -1,12 +1,6 @@
 package com.ssg.wannavapibackend.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,7 +25,6 @@ public class Food {
   @JoinColumn(name = "restaurant_id")  //현재 테이블에서 정의할 FK 아이디 이름 기준임
   private Restaurant restaurant;
 
-
   public Food(String name , String image , int price){
     this.name =name;
     this.image = image;
@@ -42,9 +35,12 @@ public class Food {
   /**
    * 연관관계 편의 메서드
    */
+
   public void addRestaurant(Restaurant restaurant){
     this.restaurant = restaurant;
     restaurant.getFoods().add(this);
   }
+
+
 
 }
