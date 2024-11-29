@@ -476,7 +476,7 @@ public class PaymentServiceImpl implements PaymentService {
      * @return
      */
     @Transactional
-    protected PaymentRefundDTO requestPaymentCancel(PaymentRefundDTO requestDTO) {
+    public PaymentRefundDTO requestPaymentCancel(PaymentRefundDTO requestDTO) {
         try {
             String cancelUrl = tossPaymentConfig.getUrl() + requestDTO.getPaymentKey() + "/cancel";
 

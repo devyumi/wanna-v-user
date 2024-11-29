@@ -1,16 +1,11 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
+import com.ssg.wannavapibackend.common.Category;
 import com.ssg.wannavapibackend.common.ErrorCode;
-import com.ssg.wannavapibackend.domain.Cart;
 import com.ssg.wannavapibackend.domain.Product;
-import com.ssg.wannavapibackend.domain.User;
-import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
-import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
 import com.ssg.wannavapibackend.dto.response.ProductResponseDTO;
 import com.ssg.wannavapibackend.exception.CustomException;
-import com.ssg.wannavapibackend.repository.CartRepository;
 import com.ssg.wannavapibackend.repository.ProductRepository;
-import com.ssg.wannavapibackend.repository.UserRepository;
 import com.ssg.wannavapibackend.service.ProductService;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +29,20 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public List<ProductResponseDTO> getProductList() {
         List<Product> products = productRepository.findAll(Sort.by(Direction.DESC, "id"));
+
+        return products.stream()
+            .map(product -> new ProductResponseDTO(product.getId(), product.getName(),
+                product.getImage(), product.getSellingPrice(), product.getDiscountRate(),
+                product.getFinalPrice()))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * 카테고리별 상품 전체 조회
+     */
+    @Override
+    public List<ProductResponseDTO> getProductListByCategory(Category category) {
+        List<Product> products = productRepository.findAllByCategoryOrderById(category);
 
         return products.stream()
             .map(product -> new ProductResponseDTO(product.getId(), product.getName(),

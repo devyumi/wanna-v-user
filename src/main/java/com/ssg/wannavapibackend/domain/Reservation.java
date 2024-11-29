@@ -51,4 +51,6 @@ public class Reservation {
     @Column(name="updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
+
+    private Boolean status;
 }

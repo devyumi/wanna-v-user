@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.service;
 
 
 import com.ssg.wannavapibackend.domain.Reservation;
+import com.ssg.wannavapibackend.dto.PaymentRefundDTO;
 import com.ssg.wannavapibackend.dto.request.ProductPurchaseRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
@@ -20,6 +21,7 @@ public interface PaymentService {
     PaymentConfirmResponseDTO sendRequest(Long userId, PaymentConfirmRequestDTO requestDTO);
 
     PaymentConfirmResponseDTO sendRequestReservationPayment(PaymentConfirmRequestDTO requestDTO);
+    PaymentRefundDTO requestPaymentCancel(PaymentRefundDTO requestDTO);
 
     void decrease(Long productId, int quantity);
 }

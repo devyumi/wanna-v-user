@@ -22,6 +22,10 @@ public interface MyPageService {
 
     Reservation findMyReservation(Long reservationId);
 
+    void updateMyReservationStatus(Long reservationId);
+
+    Double calculateCancelAmount(Reservation reservation);
+
     List<Payment> findMyOrders(Long userId);
 
     Payment findMyOrdersDetails(Long paymentId);

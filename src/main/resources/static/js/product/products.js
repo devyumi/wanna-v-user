@@ -2,9 +2,10 @@ import { formatPrice, truncateText, formatPriceElements, formatNameElements } fr
 
 document.addEventListener('DOMContentLoaded', function () {
 
-  async function productList() {
+  let selectedCategory = "MK";
+  async function productList(selectedCategory) {
 
-    const response = await fetch('/api/v1/products');
+    const response = await fetch(`/api/v1/products?category=${selectedCategory}`);
     if (!response.ok) {
       throw new Error(`네트워크 오류: ${response.status} ${response.statusText}`);
     }
@@ -20,6 +21,24 @@ document.addEventListener('DOMContentLoaded', function () {
   productList();
   formatPriceElements();
   formatNameElements();
+
+  // 카테고리 클릭 이벤트
+  document.querySelectorAll('.category-item').forEach(item => {
+    item.addEventListener('click', function () {
+      // 기존 선택된 클래스 제거
+      document.querySelectorAll('.category-item').forEach(el => el.classList.remove('selected'));
+
+      // 현재 선택된 항목에 클래스 추가
+      this.classList.add('selected');
+
+      // 선택된 카테고리의 data-category 값 가져오기
+      selectedCategory = this.getAttribute('data-category');
+
+      // API 호출
+      productList(selectedCategory);
+    });
+  });
+
 
   function renderProducts(products) {
     const productGrid = document.getElementById("product-grid");

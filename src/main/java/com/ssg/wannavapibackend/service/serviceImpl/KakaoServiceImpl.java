@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
 import java.util.Random;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -103,7 +104,8 @@ public class KakaoServiceImpl implements KakaoService {
         User user = userRepository.findUserByEmail(email);
 
         if(user == null){
-            user = new User(null, nickName, profileImage, email, null, null, null, uniqueCode(), 0L, true, false, LocalDateTime.now(), null, null);
+            String chatbotCode = UUID.randomUUID().toString();
+            user = new User(null, nickName, profileImage, email, null, chatbotCode, null, null, uniqueCode(), 0L, true, false, LocalDateTime.now(), null, null);
             User userInfo = userRepository.save(user);
             return new KakaoResponseDTO(userInfo.getId(), userInfo.getEmail(), userInfo.getUsername());
         }
