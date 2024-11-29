@@ -18,7 +18,9 @@ import java.util.Optional;
 import java.util.Set;
 
 import static com.ssg.wannavapibackend.domain.QFood.food;
+import static com.ssg.wannavapibackend.domain.QLikes.likes;
 import static com.ssg.wannavapibackend.domain.QRestaurant.restaurant;
+import static com.ssg.wannavapibackend.domain.QReview.review;
 
 
 @Repository
