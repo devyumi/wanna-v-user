@@ -37,4 +37,14 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long>,
     AND r.reservationTime = :reservationTime
     """)
     List<Reservation> findAllByReservation(LocalDate reservationDate, LocalTime reservationTime);
+
+    @Query("""
+    SELECT CASE WHEN COUNT(r) > 0
+                THEN true ELSE false END
+                FROM Reservation r
+                WHERE r.user.id = :userId
+                AND r.restaurant.id = :restaurantId
+                AND r.reservationDate = :selectDate
+    """)
+    Boolean existsByMyReservaion(Long userId, Long restaurantId, LocalDate selectDate);
 }

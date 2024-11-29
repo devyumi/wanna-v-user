@@ -5,8 +5,6 @@ import com.ssg.wannavapibackend.dto.response.ReservationDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationSaveResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationDateResponseDTO;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.List;
 
@@ -15,9 +13,11 @@ public interface ReservationService {
 
     ReservationDTO getReservation(Long ReservationId);
 
-    ReservationPaymentResponseDTO getReservationPayment(Long ReservationId);
+    ReservationPaymentResponseDTO getReservationPayment(ReservationRequestDTO reservationRequestDTO);
 
     ReservationSaveResponseDTO saveReservation(ReservationRequestDTO reservationRequestDTO);
 
     ReservationDateResponseDTO getReservationTime(ReservationRequestDTO reservationRequestDTO);
+
+    Boolean getPenalty(Long restaurantId);
 }

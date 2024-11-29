@@ -14,27 +14,29 @@
 <main layout:fragment="main-content" th:class="container">
   <div class="content">
     <h2>예약 날짜</h2>
-      <div class="col-md-12">
-        <div id="inline_cal"></div>
-      </div>
+    <div class="col-md-12">
+      <div class="calendar" id="inline_cal"></div>
+    </div>
 
-      <h2 id="reservation-time"></h2>
-      <div class="button-slider" id="time-buttons">
-      </div>
+    <h2 id="reservation-time"></h2>
+    <div class="button-slider" id="time-buttons">
+    </div>
 
-      <h2 id="reservation-guest"></h2>
-      <div class="button-slider" id="person-buttons">
-      </div>
+    <h2 id="reservation-guest"></h2>
+    <div class="button-slider" id="person-buttons">
+    </div>
 
-      <div class="clear">
-        <button type="submit" class="clear-button" id="submitReservation">예약 하기</button>
-      </div>
+    <div class="clear">
+      <button type="submit" class="clear-button" id="submitReservation">예약 하기</button>
+    </div>
   </div>
 </main>
 </body>
 </html>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="/js/reservation/rome.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/rome/dist/rome.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment/min/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment/locale/ko.js"></script>
 <script src="/js/reservation/main.js"></script>
 <script>
     let restaurantId = [[${restaurantId}]];

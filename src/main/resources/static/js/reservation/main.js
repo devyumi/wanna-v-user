@@ -1,13 +1,12 @@
 $(function() {
-    let selectedDate = '';
-    let selectedTime = '';
-    let selectedGuest = '';
+    moment.locale('ko');
 
-    rome(inline_cal, { time: false }).on('data', function(value) {
-        selectedDate = value.split(' ')[0];
+    rome(inline_cal, { time: false, inputFormat: 'YYYY-MM-DD',dateValidator: rome.val.afterEq(moment().toDate()),}).on('data', function(value) {
+        selectedDate = value;
         console.log('선택한 날짜:', selectedDate);
 
         $("#person-buttons").empty();
+        $("#reservation-guest").empty();
         $(".rectangle-button").removeClass('selected');
         selectedTime = '';
         selectedGuest = '';
@@ -15,13 +14,14 @@ $(function() {
         fetchReservationData(selectedDate, restaurantId);
     });
 
+
     function fetchReservationData(date, restaurantId) {
         $.ajax({
             url: `/api/reservation/date`,
             type: 'GET',
             data: { selectDate: date, restaurantId: restaurantId },
             success: function(response) {
-                $("#reservation-time").html('<h2 style="padding-top: 40px;">예약 날짜</h2>');
+                $("#reservation-time").html('<h2 style="padding-top: 40px;">예약 시간</h2>');
 
                 let timeButton = '';
 
@@ -37,7 +37,7 @@ $(function() {
                 console.log("현재 시간:", formattedTime);
 
 
-                if (!response.reservationTimes || response.reservationTimes.length === 0 || formattedDate > response.reservationDate)
+                if (response.reservationTimes.length === 0 || formattedDate > response.reservationDate)
                     timeButton = '<h5 style="font-size: 15px">예약할 수 없습니다.</h5>';
                 else {
                     response.reservationTimes.forEach(function(time) {
@@ -123,8 +123,8 @@ $(function() {
                 if (response.status === 'success')
                     window.location.href = '/checkout/success';
                 else if (response.status === 'payment') {
-                    const reservationId = response.reservation.reservationId;
-                    window.location.href = `/payment/reservation/${reservationId}`;
+                    let url = `/checkout/reservation?selectDate=${selectedDate}&selectTime=${selectedTime}&restaurantId=${restaurantId}&selectGuest=${selectedGuest}`;
+                    window.location.href = url.replace(/ /g,"");
                 } else
                     alert(response.message);
             },

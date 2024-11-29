@@ -38,11 +38,16 @@ public class PaymentRestController {
 
     @PostMapping("/confirm/widget")
     public ResponseEntity<Map<String, Object>> confirmPayment(
-        @RequestBody PaymentConfirmRequestDTO requestDTO) {
+            @RequestBody PaymentConfirmRequestDTO requestDTO) {
 
-        PaymentConfirmResponseDTO responseDTO = paymentService.sendRequest(userId, requestDTO);
-        HttpStatus status =
-            responseDTO.getStatus().equals(Status.DONE) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
+        PaymentConfirmResponseDTO responseDTO;
+
+        if(requestDTO.getPaymentItemRequestDTO().getRestaurantId() == null)
+            responseDTO = paymentService.sendRequest(userId, requestDTO);
+        else
+            responseDTO = paymentService.sendRequestReservationPayment(requestDTO);
+
+        HttpStatus status = responseDTO.getStatus().equals(Status.DONE) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
 
         Map<String, Object> response = new HashMap<>();
         response.put("status", status);

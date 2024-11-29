@@ -1,4 +1,4 @@
-package com.ssg.wannavapibackend.security.util;//package com.ssg.wannavapibackend.security.util;
+//package com.ssg.wannavapibackend.security.util;
 //
 //import com.ssg.wannavapibackend.dto.response.KakaoResponseDTO;
 //import com.ssg.wannavapibackend.service.UserService;
@@ -65,16 +65,10 @@ package com.ssg.wannavapibackend.security.util;//package com.ssg.wannavapibacken
 //     * @return 클레임 정보 (JWT에 포함된 사용자 정보와 메타데이터)
 //     */
 //    public Map<String, Object> validateToken(String token, HttpServletRequest request, HttpServletResponse response) {
-//        SecretKey key = null;
-//        try {
-//            key = Keys.hmacShaKeyFor(JWTUtil.key.getBytes(StandardCharsets.UTF_8));
-//        } catch (Exception e) {
-//            throw new RuntimeException(e.getMessage());
-//        }
+//        SecretKey key = getKey();
 //
-//        if(getRefreshTokenCookie(request) == null){
+//        if(getRefreshTokenCookie(request) == null)
 //            throw new BadCredentialsException("로그인이 필요합니다.");
-//        }
 //
 //        Claims claims = verifyToken(token, key);
 //
@@ -87,10 +81,7 @@ package com.ssg.wannavapibackend.security.util;//package com.ssg.wannavapibacken
 //
 //            log.info(refreshClaims);
 //
-//
 //            Long userId = Long.valueOf(String.valueOf(refreshClaims.get("mid")));
-//
-//
 //
 //            log.info(userId);
 //
@@ -109,6 +100,9 @@ package com.ssg.wannavapibackend.security.util;//package com.ssg.wannavapibacken
 //        return claims;
 //    }
 //
+//    /**
+//     * JWT 토큰 재발급 메서드
+//     */
 //    public void regenerateToken(String accessToken, HttpServletResponse response){
 //        Cookie accessTokenCookie = new Cookie("accessToken", null);
 //        accessTokenCookie.setMaxAge(0);
@@ -136,11 +130,11 @@ package com.ssg.wannavapibackend.security.util;//package com.ssg.wannavapibacken
 //    }
 //
 //    public String getAccessTokenCookie(HttpServletRequest req){
-//        Cookie[] cookies=req.getCookies(); // 모든 쿠키 가져오기
+//        Cookie[] cookies=req.getCookies();
 //        if(cookies!=null){
 //            for (Cookie c : cookies) {
-//                String name = c.getName(); // 쿠키 이름 가져오기
-//                String value = c.getValue(); // 쿠키 값 가져오기
+//                String name = c.getName();
+//                String value = c.getValue();
 //                if (name.equals("accessToken")) {
 //                    return value;
 //                }
@@ -150,16 +144,49 @@ package com.ssg.wannavapibackend.security.util;//package com.ssg.wannavapibacken
 //    }
 //
 //    public String getRefreshTokenCookie(HttpServletRequest req){
-//        Cookie[] cookies=req.getCookies(); // 모든 쿠키 가져오기
+//        Cookie[] cookies=req.getCookies();
 //        if(cookies!=null){
 //            for (Cookie c : cookies) {
-//                String name = c.getName(); // 쿠키 이름 가져오기
-//                String value = c.getValue(); // 쿠키 값 가져오기
+//                String name = c.getName();
+//                String value = c.getValue();
 //                if (name.equals("refreshToken")) {
 //                    return value;
 //                }
 //            }
 //        }
 //        return null;
+//    }
+//
+//    //토큰을 통해서 유저ID 가지고 오는 메서드
+//    public Long getUserId(HttpServletRequest request, HttpServletResponse response){
+//        String accessToken = getAccessTokenCookie(request);
+//
+//        Map<String, Object> dataMap = validateToken(accessToken, request, response);
+//
+//        return Long.valueOf(String.valueOf(dataMap.get("id")));
+//    }
+//
+//    public SecretKey getKey(){
+//        SecretKey key = null;
+//
+//        try {
+//            key = Keys.hmacShaKeyFor(JWTUtil.key.getBytes(StandardCharsets.UTF_8));
+//        } catch (Exception e) {
+//            throw new RuntimeException(e.getMessage());
+//        }
+//
+//        return key;
+//    }
+//
+//    public void removeCookie(HttpServletResponse response){
+//        Cookie accessTokenCookie = new Cookie("accessToken", null);
+//        accessTokenCookie.setMaxAge(0);
+//        accessTokenCookie.setPath("/");
+//        response.addCookie(accessTokenCookie);
+//
+//        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+//        refreshTokenCookie.setMaxAge(0);
+//        refreshTokenCookie.setPath("/");
+//        response.addCookie(refreshTokenCookie);
 //    }
 //}

@@ -34,6 +34,8 @@ a, a:hover {
 
 h2 {
   font-size: 20px;
+  display: flex;
+  justify-content: center;
 }
 
 .form-control:active, .form-control:focus {
@@ -127,6 +129,11 @@ h2 {
 .rectangle-button.selected {
   background-color: #86ce99;
   color: #ffffff;
+}
+
+.calendar{
+  display: flex;
+  justify-content: center;
 }
 
 @media {

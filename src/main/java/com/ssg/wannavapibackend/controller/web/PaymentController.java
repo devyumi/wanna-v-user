@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.controller.web;
 
 import com.ssg.wannavapibackend.dto.request.ProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentItemRequestDTO;
+import com.ssg.wannavapibackend.dto.request.ReservationRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.facade.CheckoutFacade;
@@ -12,12 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @Controller
@@ -34,11 +30,11 @@ public class PaymentController {
      */
     @PostMapping("/product")
     public String redirectToProductPaymentPage(
-        @RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
-        HttpSession session) {
+            @RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
+            HttpSession session) {
 
         CheckoutResponseDTO responseDTO = checkoutFacade.processCheckout(userId,
-            checkoutRequestDTO);
+                checkoutRequestDTO);
         session.setAttribute("pageInitData", responseDTO);
 
         return "redirect:/checkout/product";
@@ -47,23 +43,24 @@ public class PaymentController {
     @GetMapping("/product")
     public String showProductPaymentPage(HttpSession session, Model model) {
         CheckoutResponseDTO responseDTO = (CheckoutResponseDTO) session.getAttribute(
-            "pageInitData");
+                "pageInitData");
 
         model.addAttribute("pageInitData", responseDTO);
 
         return "payment/product";
     }
 
-
-    @GetMapping("/reservation/{reservationId}")
-    public String reservationPayment(@PathVariable Long reservationId, Model model) {
-
-        ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(
-            reservationId);
-
-        model.addAttribute("reservationPaymentResponseDTO", reservationPaymentResponseDTO);
-
-        return "/payment/reservation";
+    @GetMapping("/reservation")
+    public String reservationPayment(@ModelAttribute ReservationRequestDTO reservationRequestDTO, Model model) {
+        try {
+            ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(reservationRequestDTO);
+            model.addAttribute("reservationPaymentResponseDTO", reservationPaymentResponseDTO);
+            return "/payment/reservation";
+        } catch (RuntimeException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            model.addAttribute("restaurantId", reservationRequestDTO.getRestaurantId());
+            return "/reservation/error";
+        }
     }
 
     /**
@@ -71,8 +68,9 @@ public class PaymentController {
      */
     @PostMapping("/product-data")
     public String storeProductPaymentDataAndRedirectToSuccessPage(
-        @RequestBody PaymentItemRequestDTO requestDTO,
-        HttpSession session) {
+            @RequestBody PaymentItemRequestDTO requestDTO,
+            HttpSession session) {
+
         session.setAttribute("paymentItemData", requestDTO);
 
         return "redirect:/checkout/toss-success";
@@ -93,17 +91,4 @@ public class PaymentController {
         model.addAttribute("message", request.getParameter("message"));
         return "/payment/toss-fail";
     }
-
-    @GetMapping("/success")
-    public String reservationPaySuccess() {
-        return "payment/success";
-    }
-
-//    @GetMapping("/fail")
-//    public String reservationPayFail(
-//        @RequestParam(value = "orderId") String orderId,
-//        @RequestParam(value = "amount") Integer amount,
-//        @RequestParam(value = "paymentKey") String paymentKey) {
-//        return "redirect:/success";
-//    }
 }

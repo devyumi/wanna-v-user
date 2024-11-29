@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.service.serviceImpl;
 
+import com.ssg.wannavapibackend.config.TossPaymentConfig;
 import com.ssg.wannavapibackend.domain.Reservation;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.domain.Seat;
@@ -16,6 +17,7 @@ import com.ssg.wannavapibackend.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,6 +35,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final RestaurantRepository restaurantRepository;
     private final UserRepository userRepository;
+    private final TossPaymentConfig tossPaymentConfig;
 
     /**
      * 한 유저의 예약 전체 조회(마이페이지)
@@ -40,9 +43,6 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<ReservationDTO> getReservationList(Long userId) {
         List<Reservation> reservations = reservationRepository.findAllByUserId(userId);
-
-        for(Reservation reservation : reservations)
-            log.info(reservation);
 
         return reservations.stream()
                 .map(reservation -> new ReservationDTO(
@@ -77,41 +77,51 @@ public class ReservationServiceImpl implements ReservationService {
     /**
      * 예약하기를 눌렀을 때 저장된 예약 데이터 조회
      */
-    @Override
-    public ReservationPaymentResponseDTO getReservationPayment(Long reservationId) {
-        Reservation reservation = reservationRepository.findByReservationId(reservationId);
 
-        LocalDateTime dateTime = LocalDateTime.of(reservation.getReservationDate(), reservation.getReservationTime());
+    @Override
+    public ReservationPaymentResponseDTO getReservationPayment(ReservationRequestDTO reservationRequestDTO) {
+
+         if(reservationRepository.existsByMyReservaion(1L, reservationRequestDTO.getRestaurantId(), reservationRequestDTO.getSelectDate()))
+             throw new RuntimeException("하루에 한 번만 예약이 가능합니다!");
+
+        Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("Invalid ID value: "));
+
+        LocalDateTime dateTime = LocalDateTime.of(reservationRequestDTO.getSelectDate(), reservationRequestDTO.getSelectTime());
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일");
-        String formattedDate = reservation.getReservationDate().format(formatter);
+        String formattedDate = reservationRequestDTO.getSelectDate().format(formatter);
 
         String dayOfWeek = dateTime.getDayOfWeek().getDisplayName(TextStyle.SHORT, Locale.KOREAN);
 
         String amPm = dateTime.getHour() < 12 ? "오전" : "오후";
 
-        return new ReservationPaymentResponseDTO(reservationId,
-                reservation.getUser().getId(),
-                reservation.getRestaurant().getId(),
-                reservation.getRestaurant().getName(),
-                reservation.getRestaurant().getAddress().getRoadAddress(),
-                reservation.getGuest(),
+        return new ReservationPaymentResponseDTO(
+                1L,
+                reservationRequestDTO.getRestaurantId(),
+                restaurant.getName(),
+                restaurant.getAddress().getRoadAddress(),
+                reservationRequestDTO.getSelectGuest(),
                 formattedDate,
-                reservation.getReservationTime(),
-                reservation.getGuest() * 10000,
+                reservationRequestDTO.getSelectTime(),
+                reservationRequestDTO.getSelectGuest() * 10000,
                 dayOfWeek,
-                amPm);
+                amPm,
+                tossPaymentConfig.getTossClientKey());
     }
 
     /**
      * 예약 등록
      */
-    @Override
+
+    @Transactional
     public ReservationSaveResponseDTO saveReservation(ReservationRequestDTO reservationRequestDTO) {
 
         Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("식당이 없습니다."));
 
         User user = userRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("유저가 없습니다."));
+
+        if (reservationRepository.existsByMyReservaion(user.getId(), reservationRequestDTO.getRestaurantId(), reservationRequestDTO.getSelectDate()))
+            throw new IllegalArgumentException("당일 예약은 한 번만 가능합니다.");
 
         Reservation reservation = new Reservation(null, user, restaurant, null, reservationRequestDTO.getSelectGuest(),true, reservationRequestDTO.getSelectDate(), reservationRequestDTO.getSelectTime(),  LocalDateTime.now(), null);
 
@@ -129,6 +139,7 @@ public class ReservationServiceImpl implements ReservationService {
      */
     @Override
     public ReservationDateResponseDTO getReservationTime(ReservationRequestDTO reservationRequestDTO) {
+        Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("식당이 없습니다."));
 
         List<Reservation> reservations = reservationRepository.findAllByRestaurantId(reservationRequestDTO.getRestaurantId());
 
@@ -137,13 +148,19 @@ public class ReservationServiceImpl implements ReservationService {
         int guest = 0;
 
         if(reservationRequestDTO.getSelectTime() == null) {
-            filteredTime = filterAvailableTimes(reservations, reservationRequestDTO);
-            return new ReservationDateResponseDTO(reservationRequestDTO.getRestaurantId(),null, reservationRequestDTO.getSelectDate(),filteredTime);
+            filteredTime = filterAvailableTimes(reservations, reservationRequestDTO, restaurant);
+            return new ReservationDateResponseDTO(reservationRequestDTO.getRestaurantId(),null, reservationRequestDTO.getSelectDate(),filteredTime, restaurant.getIsPenalty());
         }
         else {
             guest = calRemainingGuest(reservations, reservationRequestDTO, null, null);
-            return new ReservationDateResponseDTO(reservationRequestDTO.getRestaurantId(), guest, reservationRequestDTO.getSelectDate(),null);
+            return new ReservationDateResponseDTO(reservationRequestDTO.getRestaurantId(), guest, reservationRequestDTO.getSelectDate(),null, restaurant.getIsPenalty());
         }
+    }
+
+    @Override
+    public Boolean getPenalty(Long restaurantId) {
+        Restaurant restaurant = restaurantRepository.findById(restaurantId).orElseThrow(() -> new IllegalArgumentException("식당이 없습니다."));
+        return restaurant.getIsPenalty();
     }
 
     /**
@@ -239,12 +256,10 @@ public class ReservationServiceImpl implements ReservationService {
     /**
      * 예약 가능한 시간 필터링
      */
-    public List<LocalTime> filterAvailableTimes(List<Reservation> reservations, ReservationRequestDTO reservationRequestDTO){
+    public List<LocalTime> filterAvailableTimes(List<Reservation> reservations, ReservationRequestDTO reservationRequestDTO, Restaurant restaurant){
         List<LocalTime> reservationTimes = new ArrayList<>();
 
         LocalTime startTime = LocalTime.of(0, 0);
-
-        Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("식당이 없습니다."));
 
         int intervalMinutes = restaurant.getReservationTimeGap();
 
@@ -260,13 +275,18 @@ public class ReservationServiceImpl implements ReservationService {
         LocalDate curDate = reservationRequestDTO.getSelectDate();
 
         String dayOfWeek = curDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
+        log.info(dayOfWeek);
 
-        //오픈 시간, 마감 시간, 브레이크 타임 시작 시간, 브레이크 타임 종료 시간, 예약이 꽉찬 시간, 현재 시간 보다 이전 시간 모두 필터링 하는 부분
+        //오픈 시간, 마감 시간, 브레이크 타임 시작 시간, 브레이크 타임 종료 시간, 공휴일, 예약이 꽉찬 시간, 현재 시간 보다 이전 시간 모두 필터링 하는 부분
         Iterator<LocalTime> iterator = reservationTimes.iterator();
         while (iterator.hasNext()) {
             LocalTime localTime = iterator.next();
             for (int i = 0; i < restaurant.getBusinessDays().size(); i++) {
                 if (dayOfWeek.equals(restaurant.getBusinessDays().get(i).getDayOfWeek())) {
+                    if(restaurant.getBusinessDays().get(i).getIsDayOff()) {
+                        iterator.remove();
+                        continue;
+                    }
                     LocalTime openTime = restaurant.getBusinessDays().get(i).getOpenTime();
                     LocalTime breakStartTime = restaurant.getBusinessDays().get(i).getBreakStartTime();
                     LocalTime breakEndTime = restaurant.getBusinessDays().get(i).getBreakEndTime();
