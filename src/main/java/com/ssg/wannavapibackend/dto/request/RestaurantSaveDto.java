@@ -1,17 +1,22 @@
 package com.ssg.wannavapibackend.dto.request;
 
+import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.Data;
 
 @Data
 public class RestaurantSaveDto {
 
   private String restaurantName;
+  private String contact;
   private String businessNum;
+  private String description;
+
   private Set<String> restaurantTypes = new HashSet<>();
   private Set<String> containFoodTypes = new HashSet<>();
   private Set<String> provideServiceTypes = new HashSet<>();
@@ -23,7 +28,8 @@ public class RestaurantSaveDto {
   private Boolean canPark;
   private String reservationTimeGap;
   private Boolean isPenalty;
-  private String image; // 식당 사진
+  private List<MultipartFile> restaurantImages = new ArrayList<>(); // 식당 사진 폼에서 꺼내기
+  private List<String> restaurantImagesUrl = new ArrayList<>(); //식당 스토리지에 저장 후 URL을 DB에 저장용
 
   /**
    * BusinessDay DTO
@@ -33,12 +39,14 @@ public class RestaurantSaveDto {
   private List<LocalTime> breakStartTimes = new ArrayList<>();
   private List<LocalTime> breakEndTimes = new ArrayList<>();
   private List<LocalTime> lastOrderTimes = new ArrayList<>();
-  private List<Boolean> isDayOffList = new ArrayList<>();
+  private List<String> isDayOffList = new ArrayList<>();
 
   /**
    * Food DTO
    */
   private List<FoodSaveDto> foodSaveDtoList = new ArrayList<>();
+
+
 
 
 }
