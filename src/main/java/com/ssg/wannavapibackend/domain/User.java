@@ -37,6 +37,9 @@ public class User {
     @Column(length = 10)
     private String name;
 
+    @Column(name = "chatbot_code", length = 10)
+    private String chatbotCode;
+
     @Column(length = 15)
     private String phone;
 
