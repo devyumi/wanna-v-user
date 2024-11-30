@@ -59,4 +59,11 @@ document.addEventListener("DOMContentLoaded", function () {
       sendButton.click();
     }
   });
+
+  const closeButton = document.getElementById("close-chat");
+
+  // [X] 버튼 클릭 시 이전 페이지로 이동
+  closeButton.addEventListener("click", function () {
+    window.history.back();  // 이전 페이지로 돌아가기
+  });
 });
