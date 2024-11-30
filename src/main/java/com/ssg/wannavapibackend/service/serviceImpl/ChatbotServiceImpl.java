@@ -142,7 +142,6 @@ public class ChatbotServiceImpl implements ChatbotService {
 
 
             requestBody = obj.toString();
-            log.info("requestBody\n" + requestBody);
         } catch (Exception e) {
             log.error(e.getMessage());
         }
