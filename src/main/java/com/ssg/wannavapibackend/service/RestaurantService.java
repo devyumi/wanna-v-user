@@ -3,14 +3,14 @@ package com.ssg.wannavapibackend.service;
 import com.ssg.wannavapibackend.domain.BusinessDay;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.domain.Review;
-import com.ssg.wannavapibackend.dto.request.RestaurantSaveDto;
+import com.ssg.wannavapibackend.dto.request.RestaurantSaveDTO;
 import com.ssg.wannavapibackend.dto.request.RestaurantSearchCond;
-import com.ssg.wannavapibackend.dto.request.RestaurantUpdateDto;
+import com.ssg.wannavapibackend.dto.request.RestaurantUpdateDTO;
 
 import java.util.List;
 
 public interface RestaurantService {
-    Long save(RestaurantSaveDto restaurantSaveDto);
+    Long save(RestaurantSaveDTO restaurantSaveDto);
 
 
     List<Review> findReviewsByRating(Long id, Integer rating);
@@ -24,7 +24,7 @@ public interface RestaurantService {
 
     BusinessDay findToday(Restaurant restaurant);
 
-    void updateRestaurant(Long id , RestaurantUpdateDto restaurantUpdateDto);
+    void updateRestaurant(Long id , RestaurantUpdateDTO restaurantUpdateDto);
 
     void updateBusinessStatus();
 

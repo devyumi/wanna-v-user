@@ -115,13 +115,13 @@ public class RestaurantController {
 
   @GetMapping("/admin-restaurants/save")
   public String saveRestaurant(Model model) {
-    model.addAttribute("restaurantSaveDto", new RestaurantSaveDto());
+    model.addAttribute("restaurantSaveDto", new RestaurantSaveDTO());
     return "restaurant/admin-saveForm";
   }
 
   @PostMapping("/admin-restaurants/save")
   @ResponseBody
-  public String saveRestaurantPost(@ModelAttribute("restaurantSaveDto") RestaurantSaveDto restaurantSaveDto, RedirectAttributes redirectAttributes) {
+  public String saveRestaurantPost(@ModelAttribute("restaurantSaveDto") RestaurantSaveDTO restaurantSaveDto, RedirectAttributes redirectAttributes) {
     log.info("restaurant = {}" , restaurantSaveDto.getRestaurantImages());
     log.info("food = {}", restaurantSaveDto.getFoodSaveDtoList());
 
@@ -163,7 +163,7 @@ public class RestaurantController {
   @GetMapping("/admin-restaurants/{id}/update")
   public String updateRestaurant(@PathVariable("id") Long id ,  Model model) {
     Restaurant restaurant = restaurantService.findOne(id);
-    RestaurantUpdateDto restaurantUpdateDto = new RestaurantUpdateDto(restaurant.getName() , restaurant.getBusinessNum() , restaurant.getRestaurantTypes() , restaurant.getContainFoodTypes() , restaurant.getProvideServiceTypes() , restaurant.getMoodTypes() , restaurant.getAddress().getRoadAddress() , restaurant.getAddress().getLandLotAddress() , restaurant.getAddress().getZipCode() , restaurant.getAddress().getDetailAddress() , restaurant.getCanPark() , restaurant.getReservationTimeGap() , restaurant.getIsPenalty());
+    RestaurantUpdateDTO restaurantUpdateDto = new RestaurantUpdateDTO(restaurant.getName() , restaurant.getBusinessNum() , restaurant.getRestaurantTypes() , restaurant.getContainFoodTypes() , restaurant.getProvideServiceTypes() , restaurant.getMoodTypes() , restaurant.getAddress().getRoadAddress() , restaurant.getAddress().getLandLotAddress() , restaurant.getAddress().getZipCode() , restaurant.getAddress().getDetailAddress() , restaurant.getCanPark() , restaurant.getReservationTimeGap() , restaurant.getIsPenalty());
     model.addAttribute("restaurant", restaurant);
     return "restaurant/admin-updateForm";
   }

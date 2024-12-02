@@ -5,9 +5,9 @@ import com.ssg.wannavapibackend.domain.BusinessDay;
 import com.ssg.wannavapibackend.domain.Food;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.domain.Review;
-import com.ssg.wannavapibackend.dto.request.RestaurantSaveDto;
+import com.ssg.wannavapibackend.dto.request.RestaurantSaveDTO;
 import com.ssg.wannavapibackend.dto.request.RestaurantSearchCond;
-import com.ssg.wannavapibackend.dto.request.RestaurantUpdateDto;
+import com.ssg.wannavapibackend.dto.request.RestaurantUpdateDTO;
 import com.ssg.wannavapibackend.repository.RestaurantRepository;
 import com.ssg.wannavapibackend.service.RestaurantService;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +31,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
   @Transactional
-  public Long save(RestaurantSaveDto restaurantSaveDto) {
+  public Long save(RestaurantSaveDTO restaurantSaveDto) {
     List<BusinessDay> businessDays = BusinessDay.createBusinessDays(
             restaurantSaveDto.getOpenTimes(),
             restaurantSaveDto.getCloseTimes(), restaurantSaveDto.getBreakStartTimes(),
@@ -167,7 +167,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
 
   @Transactional
-  public void updateRestaurant(Long id , RestaurantUpdateDto restaurantUpdateDto) {
+  public void updateRestaurant(Long id , RestaurantUpdateDTO restaurantUpdateDto) {
     //새로 만들어줬음 , 이걸로 통으로 변경
     List<BusinessDay> businessDays = BusinessDay.createBusinessDays(
         restaurantUpdateDto.getOpenTimes(),

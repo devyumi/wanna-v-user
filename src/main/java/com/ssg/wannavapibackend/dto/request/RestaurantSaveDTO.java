@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class RestaurantSaveDto {
+public class RestaurantSaveDTO {
 
   private String restaurantName;
   private String contact;
