@@ -34,6 +34,8 @@ public class Reservation {
     @Column(name="guest_count", nullable = false)
     private Integer guest;
 
+    private Boolean status;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @Column(name="reservation_date", nullable = false)
     private LocalDate reservationDate;
@@ -49,6 +51,4 @@ public class Reservation {
     @Column(name="updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime updatedAt;
-
-    private Boolean status;
 }

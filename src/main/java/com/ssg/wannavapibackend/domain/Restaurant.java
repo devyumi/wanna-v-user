@@ -1,33 +1,15 @@
 package com.ssg.wannavapibackend.domain;
 
-
 import com.ssg.wannavapibackend.common.BusinessStatus;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.format.annotation.NumberFormat;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-
-
 
 @Entity
 @Getter
@@ -42,29 +24,38 @@ public class Restaurant {
 
   private String name;
 
-
   @Column(name = "business_num")
   private String businessNum;
 
   private String contact; //연락처
 
   @Transient
+  @NumberFormat(pattern = "#,###.##")
   private Double averageRating;
 
   @Transient
+  @NumberFormat(pattern = "#,###")
   private Integer reviewCount;
 
   @Transient
+  @NumberFormat(pattern = "#,###")
   private Integer likesCount;
 
   @Transient
   private String[] restaurantImages;
 
 
+  @Transient
+  @NumberFormat(pattern = "#,###원")
+  private Double averageFoodsPrice;
+
+
   @Embedded
   private Address address;
   private String image;
+
   private String description; //설명
+
 
   @Column(name = "created_at")
   private LocalDate createdAt; //생성일
@@ -73,18 +64,18 @@ public class Restaurant {
   private LocalDate updatedAt; //수정일
 
   @Column(name = "reservation_time_gap")
-  private String reservationTimeGap;
+  private int reservationTimeGap;
 
   @Column(name = "is_penalty")
-
   private Boolean isPenalty;
 
 
   @Enumerated(EnumType.STRING)
+  @Column(name = "business_status")
   private BusinessStatus businessStatus; //영업 상태 : 영업 중 , 영업 종료 , 브레이크타임
 
   @Column(name = "can_park")
-  private boolean canPark; //주차 가능 여부
+  private Boolean canPark; //주차 가능 여부
 
 
   @OneToMany(mappedBy = "restaurant")
@@ -103,6 +94,8 @@ public class Restaurant {
   @OneToMany(mappedBy = "restaurant")
   private List<Likes> likes = new ArrayList<>();
 
+  @OneToMany(mappedBy = "restaurant")
+  private List<Seat> seats = new ArrayList<>();
 
   /**
    * 체크박스 , 동적 검색조건 데이터 , 변경할 일 없으므로 @ElementCollection 정의
@@ -141,15 +134,17 @@ public class Restaurant {
 
 
 
-  public static Restaurant createRestaurant(String businessNum, String restaurantName,
+  public static Restaurant createRestaurant(String businessNum, String restaurantName, String contact,String description,
       Set<String> moodTypes,
       Set<String> containFoodTypes, Set<String> provideServiceTypes, Set<String> restaurantTypes,
       String image, String roadNameAddress
       , String landLotAddress, String zipcode, String detailAddress, Boolean canPark,
-      String reservationTimeGap
+      int reservationTimeGap
       , Boolean isPenalty, List<BusinessDay> businessDays, List<Food> foods) {
 
     Restaurant restaurant = new Restaurant();
+    restaurant.setContact(contact);
+    restaurant.setDescription(description);
     restaurant.setBusinessNum(businessNum);
     restaurant.setName(restaurantName);
     restaurant.setMoodTypes(moodTypes);
@@ -161,6 +156,8 @@ public class Restaurant {
     restaurant.setCanPark(canPark);
     restaurant.setReservationTimeGap(reservationTimeGap);
     restaurant.setIsPenalty(isPenalty);
+    restaurant.setCreatedAt(LocalDate.now());
+    restaurant.setUpdatedAt(LocalDate.now());
     businessDays.forEach(restaurant::addBusinessDay);
     foods.forEach(restaurant::addFood);
     return restaurant;
@@ -172,13 +169,11 @@ public class Restaurant {
    */
   //수정 발생 시 여기서 작업해줘도 될듯? ① 리스트 전부 삭제하고 ② 그 다음 add 하기 => 영소성 컨텍스트 초기화하고 하
   public void addBusinessDay(BusinessDay businessDay) {
-    businessDays.clear(); //이걸로 초기화를 먼저 해줘야 아무것도 없는 무의 상태에서 연관관계가 올바르게 설정됨 !
     businessDays.add(businessDay); //자신에게 연관관계 설정
     businessDay.setRestaurant(this); //B에게 연관관계 설정
   }
 
   public void addFood(Food food) {
-    foods.clear(); //이것도 마찬가지 먼저 비워주고 그 다음에 ㄱㄱ 변경을 대비한 ㅇㅇ
     foods.add(food); //자신에게 연관관계 설정
     food.setRestaurant(this); //B에게 연관관계 설정
   }
@@ -189,7 +184,7 @@ public class Restaurant {
    */
 
   public double averageRate() {
-    return reviews.stream().mapToInt(Review::getRating).average().orElseThrow(()->new IllegalArgumentException("현 식당에 대한 리뷰가 존재하지 않습니다.")); //평균 계산
+    return reviews.stream().mapToInt(Review::getRating).average().orElse(0); //평균 계산 , 리뷰가 없을 경우 그냥 0 반환 ㅇㅇ , 없으니 0이지 !
   }
 
   public void addStatistics(double averageRating , int likesCount , int reviewCount){
@@ -210,6 +205,11 @@ public class Restaurant {
     this.restaurantImages = restaurantImages;
   }
 
+  public void addFoodsPriceAverage(Double averageFoodsPrice){
+    this.averageFoodsPrice = averageFoodsPrice;
+  }
+
+
 
   //상태 설정 메서드로 가자
   public void changeBusinessStatus(BusinessStatus businessStatus) {
@@ -220,7 +220,7 @@ public class Restaurant {
   public void changeRestaurant(String businessNum, String restaurantName, Set<String> moodTypes,
       Set<String> containFoodTypes, Set<String> provideServiceTypes, Set<String> restaurantTypes,
       String image, String roadNameAddress, String landLotAddress, String zipcode,
-      String detailsAddress, Boolean canPark, String reservationTimeGap,
+      String detailsAddress, Boolean canPark, int reservationTimeGap,
       Boolean isPenalty, List<BusinessDay> businessDays, List<Food> foods) {
 
     setBusinessNum(businessNum);

@@ -1,17 +1,15 @@
 package com.ssg.wannavapibackend.common;
 
-public enum BusinessStatus {
-
-  OPEN("영업 중") , CLOSE("영업 종료") , BREAK_TIME("브레이크 타임") , DAY_OFF("오늘 휴무");
+public enum ReservationTimeGap {
+  HALF("30분") , ONE("1시간"), TWO("2시간");
 
   private String description;
 
-  BusinessStatus(String description){
+  ReservationTimeGap(String description){
     this.description = description;
   }
 
   public String getDescription(){
     return description;
   }
-
 }
