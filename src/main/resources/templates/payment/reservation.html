@@ -13,7 +13,7 @@
 <body>
 <main layout:fragment="main-content" th:class="main-container">
   <div class="card">
-    <h4>예약 날짜</h4>
+    <h4>예약 정보</h4>
     <h5 th:text="'예약 장소 : ' + ${reservationPaymentResponseDTO.restaurantName}"></h5>
     <h5 th:text="'예약 날짜 : ' + ${reservationPaymentResponseDTO.reservationDate} +
       ' (' + ${reservationPaymentResponseDTO.dayOfWeek} + ') ' +

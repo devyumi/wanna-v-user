@@ -1,4 +1,4 @@
-package com.ssg.wannavapibackend.repository.repositoryImpl;
+package com.ssg.wannavapibackend.repository;
 
 
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -14,6 +14,11 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
+
+import static com.ssg.wannavapibackend.domain.QFood.food;
+import static com.ssg.wannavapibackend.domain.QLikes.likes;
+import static com.ssg.wannavapibackend.domain.QRestaurant.restaurant;
+import static com.ssg.wannavapibackend.domain.QReview.review;
 
 @Repository
 public class RestaurantRepository {
