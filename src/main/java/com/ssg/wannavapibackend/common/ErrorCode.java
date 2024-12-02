@@ -33,6 +33,10 @@ public enum ErrorCode {
     // Coupon Errors
     COUPON_UPDATE_FAILED(500, "Failed to update coupon usage status"),  // 쿠폰 사용 여부 업데이트 실패
 
+    // Naver Chatbot Errors
+    CHATBOT_CONNECTION_FAILED(500, "Naver chatbot connection failed"),  // 네이버 챗봇 연결 실패
+    CHATBOT_UNKNOWN_ERROR(500, "Unknown error during chatbot process"),  // 챗봇 기능 수행 중 알 수 없는 오류
+
     // Other Errors
     UNKNOWN_ERROR(500, "Unknown error occurred");  // 알 수 없는 에러
 
