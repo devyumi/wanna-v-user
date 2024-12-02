@@ -8,24 +8,23 @@
 <head>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/css/event/events.css">
-  <title>Product List Page</title>
+  <title>Event List Page</title>
 </head>
 <body>
 <main layout:fragment="main-content" th:class="container">
-  <div class="content">
-    <div class="card">
-      <a href="#"><img src="/assets/images/logo/freshcart-logo.svg"></a>
+    <div th:each="event : ${eventList}">
+      <a th:href="@{/event/{eventId}(eventId=${event.eventId})}" class="card mb-3">
+        <span th:if="${T(java.time.LocalDate).now().isBefore(event.endDate)}"
+            class="badge text-bg-success" style="width: 15%; margin-bottom: 5px">진행중</span>
+        <span th:if="${T(java.time.LocalDate).now().isEqual(event.endDate) || T(java.time.LocalDate).now().isAfter(event.endDate)}"
+            class="badge text-bg-secondary" style="width: 15%; margin-bottom: 5px">종료</span>
+        <h5 class="card-title" th:text="${event.title}"></h5>
+        <p style="font-size: 10px" th:text="${event.startDate} + ' ~ ' + ${event.endDate}"></p>
+        <div class="card-body" style="padding: 0">
+          <img th:src="${event.thumbnail}" style="width: 320px; height: 300px; object-fit: cover;">
+        </div>
+      </a>
     </div>
-    <div class="card">
-      <a href="#"><img src="/assets/images/logo/freshcart-logo.svg"></a>
-    </div>
-    <div class="card">
-      <a href="#"><img src="/assets/images/logo/freshcart-logo.svg"></a>
-    </div>
-    <div class="card">
-      <a href="#"><img src="/assets/images/logo/freshcart-logo.svg"></a>
-    </div>
-  </div>
 </main>
 </body>
 </html>

@@ -3,6 +3,9 @@
   padding: 1rem;
   background-color: #ffffff;
   border-radius: 5px;
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.3s ease;
 }
 
 .content{
@@ -17,4 +20,8 @@
   border-radius: 5px;
   object-fit: contain;
   object-position: center;
+}
+
+.card.clicked {
+  background-color: rgba(0, 0, 0, 0.1);
 }
