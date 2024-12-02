@@ -86,7 +86,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
         .leftJoin(restaurant.likes , likes)
         .where(whereBuilder,
             eqCanPark(canPark), eqIsOpen(isOpen), likeRoadAddress(roadAddress))
-        .groupBy(restaurant) //restaurant.id로 해도 되고 restaurant로 해도 되는듯 ㅇㅇ 그냥 restaurant로 그루핑이 됨 ㅇㅇ
+        .groupBy(restaurant) //restaurant.id로 해도 되고 restaurant로 해도 됨. restaurant로 그루핑
         .having(havingBuilder, loeGoePrice(startPrice, endPrice));
     addOrderBy(sortConditions, dynamicQuery);
 
@@ -125,7 +125,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
   private void addOrderBy(List<String> sortConditions, JPAQuery<Restaurant> dynamicQuery) {
 
-    //생각해보면 굳이 Boolean으로 판정할 필요가 아예 없었네 ㅇㅇ 그냥 라디오 버튼으로 String 값 넘어오면 이 String 값 있냐고 확인해서 판정하면 끝나는 일을 ;; ㅋㅋ
+    //생각해보면 굳이 Boolean으로 판정할 필요가 아예 없었네  그냥 라디오 버튼으로 String 값 넘어오면 이 String 값 있냐고 확인해서 판정하면 끝나는 일을 ;; ㅋㅋ
     for (String sortCondition : sortConditions) {
       switch (sortCondition) {
         case "NEW":

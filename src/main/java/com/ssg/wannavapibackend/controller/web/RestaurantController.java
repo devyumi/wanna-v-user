@@ -196,7 +196,7 @@ public class RestaurantController {
   }
 
 
-  //UrlResource 자체가 필요 없음 , 어차피 Url직접 웹에서 링크로 조회해서 띄우는 것임 ㅇㅇ 내 서버로 들어와서 DB에 접근해서 띄우는 게 아닌 !
+  //UrlResource 자체가 필요 없음, Url직접 웹에서 링크로 조회해서 띄우는 것. 서버로 들어와서 DB에 접근해서 띄우는 게 아닌 !
 
 
 }
