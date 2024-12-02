@@ -42,7 +42,7 @@ public class RestaurantServiceImpl implements RestaurantService {
     /**
      * 식당 이미지 저장(음식은 그냥 dto에 있던 거 저장하면 됨)
      */
-    //식당은 여러 이미지가 한 String에 들어가야 하므로 ,로 파싱해주는 작업이 필요했음 ㅇㅇ
+    //식당은 여러 이미지가 한 String에 들어가야 하므로 파싱해주는 작업이 필요
     String storeRestaurantImagesUrl = getStoreRestaurantImagesUrl(restaurantSaveDto.getRestaurantImagesUrl());
 
     /**
@@ -51,11 +51,10 @@ public class RestaurantServiceImpl implements RestaurantService {
     int realReservationTimeGap = getRealReservationTimeGap(restaurantSaveDto.getReservationTimeGap());
 
 
-    //음식 사진은 한 음식 당 한 사진만이 할당되니 이미 컨트롤러 부에서 String 값의 Url정보를 dto에 담아서 던졌으므로 그냥 그대로 할당해주면 됨 ㅇㅇ
+    //음식 사진은 한 음식 당 한 사진만이 할당되니 이미 컨트롤러 부에서 String 값의 Url정보를 dto에 담아서 던졌으므로 그냥 그대로 할당
     List<Food> foods = restaurantSaveDto.getFoodSaveDtoList()
             .stream().map(foodSaveDto -> new Food(foodSaveDto.getName(), foodSaveDto.getFoodImageUrl(), foodSaveDto.getPrice())).toList();
 
-    //저장 !
     Restaurant restaurant = Restaurant.createRestaurant(restaurantSaveDto.getBusinessNum(),
             restaurantSaveDto.getRestaurantName(), restaurantSaveDto.getContact(), restaurantSaveDto.getDescription()
             , restaurantSaveDto.getMoodTypes(), restaurantSaveDto.getContainFoodTypes(), restaurantSaveDto.getProvideServiceTypes(),
@@ -128,7 +127,7 @@ public class RestaurantServiceImpl implements RestaurantService {
   private static RestaurantSearchCond getRestaurantSearchCond(Restaurant ownerRestaurant) {
     Set<String> restaurantTypes = ownerRestaurant.getRestaurantTypes(); // 유제품 포함 , 계란 포함
     Set<String> containFoodTypes = ownerRestaurant.getContainFoodTypes(); //양식 , 중식 , 한식
-    String roadAddress = ownerRestaurant.getAddress().getRoadAddress(); //도로명 주소 , 근처 주소면 좋으니 ! , 서울 강남구 까지 비슷할 경우 ㅇㅇ
+    String roadAddress = ownerRestaurant.getAddress().getRoadAddress(); //도로명 주소
     RestaurantSearchCond restaurantSearchCond = new RestaurantSearchCond();
     restaurantSearchCond.setContainFoodTypes(containFoodTypes);
     restaurantSearchCond.setRestaurantTypes(restaurantTypes);
@@ -194,7 +193,7 @@ public class RestaurantServiceImpl implements RestaurantService {
 
   }
 
-  // 프로세스 : 현재 요일과는 아무 상관없음 , 그냥 전체에 대한 로직임
+  // 프로세스 : 현재 요일과는 아무 상관없음, 전체에 대한 로직
   @Transactional
   @Scheduled(cron = "0 */30 * * * *")
   public void updateBusinessStatus(){
@@ -202,7 +201,6 @@ public class RestaurantServiceImpl implements RestaurantService {
     List<Restaurant> restaurants = restaurantRepository.findAll(new RestaurantSearchCond());
     //다 계산해주는 거니까 여기서 그냥 모든 상태를 이 메서드 안에서 동시에 업데이트 해주는 것!
 
-    //아니네 휴무일 계산은 마지막에 해줘야하네
     for (Restaurant restaurant : restaurants) {
       List<BusinessDay> businessDays = restaurant.getBusinessDays(); //한 식당에 대한 영업일들(7일)
       for (BusinessDay businessDay : businessDays) {

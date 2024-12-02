@@ -44,7 +44,7 @@ public class HelloController {
 
   //그냥 정렬도 다중 조건으로 처리하자 다중 정렬 될 수 있게끔 하자 !
   /**
-   * 현재 위치 기준 인기 식당 , 일단 보류 ㅇㅇ
+   * 현재 위치 기준 인기 식당 , 일단 보류 
    */
   private List<Restaurant> getPopularRestaurantsByCurrentLocation(String currentLocationRoadAddress) {
 

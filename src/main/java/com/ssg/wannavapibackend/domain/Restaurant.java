@@ -100,7 +100,7 @@ public class Restaurant {
   /**
    * 체크박스 , 동적 검색조건 데이터 , 변경할 일 없으므로 @ElementCollection 정의
    */
-  //여러 포함 음식 종류들(유제품 , 계란 , ...) ContaintFoodType ,조회 : 지연로딩 , 필요한 시점에 조회되게 저장 시 cascade로 연달아 저장됨 ㅇㅇ , 즉 알바없음 !
+  //여러 포함 음식 종류들(유제품 , 계란 , ...) ContaintFoodType ,조회 : 지연로딩 , 필요한 시점에 조회되게 저장 시 cascade로 연달아 저장됨
   // 기본적으로 cascade , orphanRemoval 걸려있음
 
   @ElementCollection
@@ -167,7 +167,7 @@ public class Restaurant {
   /**
    * 연관관계 편의 메서드
    */
-  //수정 발생 시 여기서 작업해줘도 될듯? ① 리스트 전부 삭제하고 ② 그 다음 add 하기 => 영소성 컨텍스트 초기화하고 하
+  //수정 발생 시 여기서 작업 ① 리스트 전부 삭제 ② 그 다음 add 하기 => 영소성 컨텍스트 초기화
   public void addBusinessDay(BusinessDay businessDay) {
     businessDays.add(businessDay); //자신에게 연관관계 설정
     businessDay.setRestaurant(this); //B에게 연관관계 설정
@@ -184,7 +184,7 @@ public class Restaurant {
    */
 
   public double averageRate() {
-    return reviews.stream().mapToInt(Review::getRating).average().orElse(0); //평균 계산 , 리뷰가 없을 경우 그냥 0 반환 ㅇㅇ , 없으니 0이지 !
+    return reviews.stream().mapToInt(Review::getRating).average().orElse(0); //평균 계산 , 리뷰가 없을 경우 그냥 0 반환, 없으니 0
   }
 
   public void addStatistics(double averageRating , int likesCount , int reviewCount){
@@ -211,7 +211,7 @@ public class Restaurant {
 
 
 
-  //상태 설정 메서드로 가자
+  //상태 설정 메서드
   public void changeBusinessStatus(BusinessStatus businessStatus) {
     this.businessStatus = businessStatus;
   }
