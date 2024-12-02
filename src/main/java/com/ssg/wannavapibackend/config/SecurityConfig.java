@@ -50,23 +50,20 @@
 //        });
 //
 //        httpSecurity.authorizeRequests(authorize -> authorize
-//                .requestMatchers("/css/**").permitAll()
-//                .requestMatchers("/reservation/**").authenticated()
-//                .requestMatchers("/reservations/**").authenticated()
-//                .requestMatchers("/likes").authenticated()
-//                .requestMatchers("/orders/**").authenticated()
-//                .requestMatchers("/points").authenticated()
-//                .requestMatchers("/coupons").authenticated()
-//                .requestMatchers("/reviews/**").authenticated()
-//                .requestMatchers("/carts/**").authenticated()
-//                .requestMatchers("/checkout/**").authenticated()
-//                .requestMatchers("/restaurants/**").authenticated()
-//                .requestMatchers("/upload-receipt").authenticated()
-//                .requestMatchers("/my/**").authenticated()
-//                .requestMatchers("/restaurant/{restaurantId}").authenticated()
-//                .requestMatchers("/restaurant/").permitAll()
-//                .requestMatchers("/auth/**").permitAll()
-//                .requestMatchers("/payment/**").authenticated()
+//                .requestMatchers(
+//                        "/reservation/**",
+//                        "/reservations/**",
+//                        "/likes",
+//                        "/orders/**",
+//                        "/points",
+//                        "/coupons",
+//                        "/reviews/**",
+//                        "/carts/**",
+//                        "/checkout/**",
+//                        "/restaurants/**",
+//                        "/my/**",
+//                        "/payment/**").authenticated()
+//                .anyRequest().permitAll()
 //        );
 //
 //        httpSecurity.formLogin(formLogin -> formLogin

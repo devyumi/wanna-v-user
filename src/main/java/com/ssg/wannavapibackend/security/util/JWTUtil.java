@@ -1,6 +1,7 @@
 //package com.ssg.wannavapibackend.security.util;
 //
 //import com.ssg.wannavapibackend.dto.response.KakaoResponseDTO;
+//import com.ssg.wannavapibackend.security.auth.CustomUserPrincipal;
 //import com.ssg.wannavapibackend.service.UserService;
 //import io.jsonwebtoken.Claims;
 //import io.jsonwebtoken.JwtException;
@@ -12,6 +13,9 @@
 //import lombok.RequiredArgsConstructor;
 //import lombok.extern.log4j.Log4j2;
 //import org.springframework.security.authentication.BadCredentialsException;
+//import org.springframework.security.core.Authentication;
+//import org.springframework.security.core.context.SecurityContextHolder;
+//import org.springframework.security.core.userdetails.UserDetails;
 //import org.springframework.stereotype.Component;
 //
 //import javax.crypto.SecretKey;
@@ -157,15 +161,6 @@
 //        return null;
 //    }
 //
-//    //토큰을 통해서 유저ID 가지고 오는 메서드
-//    public Long getUserId(HttpServletRequest request, HttpServletResponse response){
-//        String accessToken = getAccessTokenCookie(request);
-//
-//        Map<String, Object> dataMap = validateToken(accessToken, request, response);
-//
-//        return Long.valueOf(String.valueOf(dataMap.get("id")));
-//    }
-//
 //    public SecretKey getKey(){
 //        SecretKey key = null;
 //
@@ -188,5 +183,16 @@
 //        refreshTokenCookie.setMaxAge(0);
 //        refreshTokenCookie.setPath("/");
 //        response.addCookie(refreshTokenCookie);
+//    }
+//
+//    public Long getUserId() {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//
+//        if (authentication == null || authentication.getPrincipal().equals("anonymousUser"))
+//            throw new RuntimeException("로그인 후 이용이 가능합니다!");
+//
+//        String userId = ((CustomUserPrincipal) authentication.getPrincipal()).getName();
+//
+//        return Long.parseLong(userId);
 //    }
 //}

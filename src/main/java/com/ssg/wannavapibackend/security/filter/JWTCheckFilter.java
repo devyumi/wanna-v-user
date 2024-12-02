@@ -37,15 +37,22 @@
 //     * @param request
 //     */
 //    protected boolean shouldNotFilter(HttpServletRequest request) {
-//        if (request.getServletPath().startsWith("/css/") || request.getServletPath().startsWith("/js/") ||
-//                request.getServletPath().startsWith("/images/") || request.getServletPath().startsWith("/assets/"))
-//            return true;
-//        if (request.getRequestURI().equals("/restaurant/"))
-//            return true;
-//        if (request.getServletPath().startsWith("/auth/"))
-//            return true;
+//        String path = request.getServletPath();
 //
-//        return false;
+//        // 특정 경로들에 대해서만 false(필터 적용 함) 반환, 나머지는 true(필터 적용 안함)
+//        return !(path.startsWith("/reservation/") ||
+//                path.startsWith("/reservations/") ||
+//                path.equals("/likes") ||
+//                path.startsWith("/orders/") ||
+//                path.equals("/points") ||
+//                path.equals("/coupons") ||
+//                path.startsWith("/reviews/") ||
+//                path.startsWith("/carts/") ||
+//                path.startsWith("/checkout/") ||
+//                path.startsWith("/restaurants/") ||
+//                path.startsWith("/my/") ||
+//                path.startsWith("/payment/") ||
+//                path.equals("/restaurant/"));
 //    }
 //
 //
