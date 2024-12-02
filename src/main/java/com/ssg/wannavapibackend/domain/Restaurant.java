@@ -94,6 +94,8 @@ public class Restaurant {
   @OneToMany(mappedBy = "restaurant")
   private List<Likes> likes = new ArrayList<>();
 
+  @OneToMany(mappedBy = "restaurant")
+  private List<Seat> seats = new ArrayList<>();
 
   /**
    * 체크박스 , 동적 검색조건 데이터 , 변경할 일 없으므로 @ElementCollection 정의

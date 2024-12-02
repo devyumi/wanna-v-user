@@ -13,9 +13,11 @@ public interface ReservationService {
 
     ReservationDTO getReservation(Long ReservationId);
 
-    ReservationPaymentResponseDTO getReservationPayment(Long ReservationId);
+    ReservationPaymentResponseDTO getReservationPayment(ReservationRequestDTO reservationRequestDTO);
 
     ReservationSaveResponseDTO saveReservation(ReservationRequestDTO reservationRequestDTO);
 
     ReservationDateResponseDTO getReservationTime(ReservationRequestDTO reservationRequestDTO);
+
+    Boolean getPenalty(Long restaurantId);
 }

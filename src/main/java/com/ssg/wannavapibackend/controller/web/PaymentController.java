@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.controller.web;
 
 import com.ssg.wannavapibackend.dto.request.ProductCheckoutRequestDTO;
 import com.ssg.wannavapibackend.dto.request.PaymentItemRequestDTO;
+import com.ssg.wannavapibackend.dto.request.ReservationRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.facade.CheckoutFacade;
@@ -12,12 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Log4j2
 @Controller
@@ -55,17 +51,18 @@ public class PaymentController {
     }
 
 
-    @GetMapping("/reservation/{reservationId}")
-    public String reservationPayment(@PathVariable Long reservationId, Model model) {
-
-        ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(
-            reservationId);
-
-        model.addAttribute("reservationPaymentResponseDTO", reservationPaymentResponseDTO);
-
-        return "/payment/reservation";
+    @GetMapping("/reservation")
+    public String reservationPayment(@ModelAttribute ReservationRequestDTO reservationRequestDTO, Model model) {
+        try {
+            ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(reservationRequestDTO);
+            model.addAttribute("reservationPaymentResponseDTO", reservationPaymentResponseDTO);
+            return "/payment/reservation";
+        } catch (RuntimeException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            model.addAttribute("restaurantId", reservationRequestDTO.getRestaurantId());
+            return "/reservation/error";
+        }
     }
-
     /**
      * 상품 결제 정보를 세션에 저장하고, 결제 승인 페이지로 리다이렉트하는 메서드
      */

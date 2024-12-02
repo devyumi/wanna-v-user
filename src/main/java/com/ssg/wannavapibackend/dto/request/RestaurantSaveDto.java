@@ -44,7 +44,7 @@ public class RestaurantSaveDto {
   /**
    * Food DTO
    */
-  private List<FoodSaveDto> foodSaveDtoList = new ArrayList<>();
+  private List<FoodSaveDTO> foodSaveDtoList = new ArrayList<>();
 
 
 

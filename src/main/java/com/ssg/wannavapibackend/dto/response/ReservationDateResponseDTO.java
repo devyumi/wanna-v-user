@@ -25,4 +25,6 @@ public class ReservationDateResponseDTO {
 
     @JsonFormat(pattern = "HH:mm")
     private List<LocalTime> reservationTimes;
+
+    private Boolean isPenalty;
 }
