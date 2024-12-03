@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,13 +44,13 @@ public class AuthController {
 
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setMaxAge(60 * 60 * 3);
-        //accessTokenCookie.setHttpOnly(true);
+        //accessTokenCookie.setHttpOnly(true); // https 가능 (도메인)
         accessTokenCookie.setPath("/");
 
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 3);
+        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 3); // https 가능 (도메인)
         //refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setPath("/");
 

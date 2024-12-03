@@ -81,7 +81,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
-
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
                             new CustomUserPrincipal(mid),

@@ -87,13 +87,13 @@ public class PaymentController {
 
         model.addAttribute("paymentItemData", requestDTO);
 
-        return "/payment/toss-success";
+        return "payment/toss-success";
     }
 
     @GetMapping("/toss-fail")
     public String failPayment(HttpServletRequest request, Model model) {
         model.addAttribute("code", request.getParameter("code"));
         model.addAttribute("message", request.getParameter("message"));
-        return "/payment/toss-fail";
+        return "payment/toss-fail";
     }
 }
