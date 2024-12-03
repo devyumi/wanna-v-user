@@ -271,13 +271,9 @@ public class ReservationServiceImpl implements ReservationService {
             startTime = startTime.plusMinutes(intervalMinutes);
         } while (!startTime.equals(LocalTime.of(0, 0)));
 
-        for(LocalTime localTime : reservationTimes)
-            log.info(localTime);
-
         LocalDate curDate = reservationRequestDTO.getSelectDate();
 
         String dayOfWeek = curDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
-        log.info(dayOfWeek);
 
         //오픈 시간, 마감 시간, 브레이크 타임 시작 시간, 브레이크 타임 종료 시간, 공휴일, 예약이 꽉찬 시간, 현재 시간 보다 이전 시간 모두 필터링 하는 부분
         Iterator<LocalTime> iterator = reservationTimes.iterator();

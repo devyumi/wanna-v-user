@@ -76,7 +76,6 @@ public class KakaoServiceImpl implements KakaoService {
 
     // 액세스 토큰으로 카카오 사용자 정보 가져오는 메서드
     public KakaoResponseDTO getUserInfoFromToken(String accessToken) throws JsonProcessingException {
-        log.info("엑세스 토큰: {}", accessToken);
 
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
@@ -90,7 +89,6 @@ public class KakaoServiceImpl implements KakaoService {
                 httpEntity,
                 String.class
         );
-        log.info("응답: {}", response);
         ObjectMapper objectMapper = new ObjectMapper();
         JsonNode responseBody = objectMapper.readTree(response.getBody());
 
