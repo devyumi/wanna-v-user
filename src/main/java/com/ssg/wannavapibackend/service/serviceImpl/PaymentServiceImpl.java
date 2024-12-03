@@ -441,13 +441,11 @@ public class PaymentServiceImpl implements PaymentService {
             // 요청 데이터(requestDTO)를 JSON 문자열로 변환하여 HTTP 요청 본문에 포함시켜 전송
             try (OutputStream os = connection.getOutputStream()) {
                 String requestBody = requestDTO.toJson();
-                log.info("Cancel Request Body: {}", requestBody);
                 os.write(requestBody.getBytes(StandardCharsets.UTF_8));
             }
 
             // 응답 읽기
             int responseCode = connection.getResponseCode();
-            log.info("Cancel API Response Code: {}", responseCode);
 
             // 응답을 받아와서 JSON 스트림을 읽고, 그 데이터를 PaymentConfirmResponseDTO로 변환
             try (InputStream responseStream = responseCode == 200
@@ -457,8 +455,6 @@ public class PaymentServiceImpl implements PaymentService {
                 String response = new BufferedReader(new InputStreamReader(responseStream))
                     .lines()
                     .collect(Collectors.joining("\n"));
-
-                log.info("Cancel API Response: {}", response);
 
                 return objectMapper.readValue(response, PaymentRefundDTO.class);
 

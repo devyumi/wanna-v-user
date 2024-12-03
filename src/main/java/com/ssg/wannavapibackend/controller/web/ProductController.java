@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.controller.web;
 
+import com.ssg.wannavapibackend.common.Category;
 import com.ssg.wannavapibackend.dto.response.ProductResponseDTO;
 import com.ssg.wannavapibackend.service.ProductService;
 import java.util.List;
@@ -22,7 +23,7 @@ public class ProductController {
 
     @GetMapping()
     public String getProductList(Model model) {
-        List<ProductResponseDTO> products = productService.getProductList();
+        List<ProductResponseDTO> products = productService.getProductListByCategory(Category.MK);
         model.addAttribute("products", products);
         return "product/products";
     }
