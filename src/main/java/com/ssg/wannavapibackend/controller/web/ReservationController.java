@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/")
 public class ReservationController {
 
-    @GetMapping("restaurant/{restaurantId}")
-    public String test2(@PathVariable("restaurantId") Long restaurantId) {
-        return "redirect:/reservation/calendar?restaurantId=" + restaurantId;
-    }
-
-//    @GetMapping("restaurants/{restaurantId}/reservation")
+//    @GetMapping("restaurant/{restaurantId}")
 //    public String test2(@PathVariable("restaurantId") Long restaurantId) {
 //        return "redirect:/reservation/calendar?restaurantId=" + restaurantId;
 //    }
+
+    @GetMapping("restaurants/{restaurantId}/reservation")
+    public String test2(@PathVariable("restaurantId") Long restaurantId) {
+        return "redirect:/reservation/calendar?restaurantId=" + restaurantId;
+    }
 
     @GetMapping("/reservation/calendar")
     public String reservation1(@RequestParam(value = "restaurantId") Long restaurantId, Model model) {
