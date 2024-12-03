@@ -31,11 +31,11 @@ public class ReservationController {
             throw new IllegalArgumentException("Restaurant ID is required.");
         }
         model.addAttribute("restaurantId", restaurantId);
-        return "/reservation/calendar";
+        return "reservation/calendar";
     }
 
     @GetMapping("/reservation")
     public String reservation() {
-        return "/payment/success";
+        return "payment/success";
     }
 }
