@@ -3,12 +3,14 @@ package com.ssg.wannavapibackend.controller.web;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.dto.request.ReviewSaveDTO;
 import com.ssg.wannavapibackend.dto.response.OCRResponseDTO;
+import com.ssg.wannavapibackend.repository.RestaurantCustomRepository;
 import com.ssg.wannavapibackend.service.OCRService;
 import com.ssg.wannavapibackend.service.ReviewService;
 import com.ssg.wannavapibackend.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -33,8 +35,8 @@ public class ReviewController {
     public String uploadReceipt() {
         return "review/receipt";
     }
-
     @PostMapping("upload-receipt")
+    @Transactional(readOnly = true)
     public String ProcessReceipt(@RequestParam("file") MultipartFile file, Model model,
                                  RedirectAttributes redirectAttributes) throws IOException {
         OCRResponseDTO responseDTO = ocrService.findReceiptData(file);
@@ -61,28 +63,29 @@ public class ReviewController {
         }
 
         //정상 처리
-        redirectAttributes.addFlashAttribute("restaurant", restaurant);
+        redirectAttributes.addFlashAttribute("restaurant", restaurant.getName());
         redirectAttributes.addFlashAttribute("visitDate", ocrService.findCorrectVisitDate(responseDTO.getImages().get(0).getReceipt().getResult().getPaymentInfo().getDate().getText()));
         return "redirect:/reviews/write";
     }
 
     @GetMapping("reviews/write")
+    @Transactional(readOnly = true)
     public String saveReview(Model model) {
-        Restaurant restaurant = (Restaurant) model.getAttribute("restaurant");
+        String restaurant = (String) model.getAttribute("restaurant");
         LocalDate visitDate = (LocalDate) model.getAttribute("visitDate");
-
         if (restaurant == null || visitDate == null) {
             log.info("리뷰 작성 GET 요청 방지");
             model.addAttribute("alertMessage", "영수증을 먼저 인식해주세요.");
             return "review/receipt";
         }
 
-        model.addAttribute("reviewSaveDTO", ReviewSaveDTO.builder().restaurant(restaurant).visitDate(visitDate).build());
+        model.addAttribute("reviewSaveDTO", ReviewSaveDTO.builder().restaurant(restaurant).visitDate(visitDate.toString()).build());
         model.addAttribute("tagsAll", tagService.findTagsForReview());
         return "review/review-write";
     }
 
     @PostMapping("reviews/write")
+    @Transactional
     public String saveReview(@ModelAttribute @Validated ReviewSaveDTO reviewSaveDTO, BindingResult bindingResult,
                              Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -91,7 +94,7 @@ public class ReviewController {
             model.addAttribute("tagsAll", tagService.findTagsForReview());
             return "review/review-write";
         }
-        reviewService.saveReview(1L, reviewSaveDTO);
+        reviewService.saveReview(1L, reviewSaveDTO, reviewSaveDTO.getRestaurant(), reviewSaveDTO.getVisitDate());
         log.info("리뷰 작성 완료");
         redirectAttributes.addFlashAttribute("alertMessage", "작성 완료되었습니다.");
         return "redirect:/reviews";

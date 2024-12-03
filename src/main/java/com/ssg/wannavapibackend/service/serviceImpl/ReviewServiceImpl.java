@@ -4,12 +4,10 @@ import com.ssg.wannavapibackend.domain.Review;
 import com.ssg.wannavapibackend.domain.ReviewTag;
 import com.ssg.wannavapibackend.dto.request.FileDTO;
 import com.ssg.wannavapibackend.dto.request.ReviewSaveDTO;
-import com.ssg.wannavapibackend.repository.ReviewRepository;
-import com.ssg.wannavapibackend.repository.ReviewTagRepository;
-import com.ssg.wannavapibackend.repository.TagRepository;
-import com.ssg.wannavapibackend.repository.UserRepository;
+import com.ssg.wannavapibackend.repository.*;
 import com.ssg.wannavapibackend.service.BadWordService;
 import com.ssg.wannavapibackend.service.FileService;
+import com.ssg.wannavapibackend.service.OCRService;
 import com.ssg.wannavapibackend.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,11 +22,13 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
     private final FileService fileService;
+    private final OCRService ocrService;
     private final BadWordService badWordService;
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     private final ReviewTagRepository reviewTagRepository;
+    private final RestaurantCustomRepository restaurantCustomRepository;
 
     @Value("${file.upload.review}")
     private String path;
@@ -40,7 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
      * @param reviewSaveDTO
      */
     @Transactional
-    public void saveReview(Long userId, ReviewSaveDTO reviewSaveDTO) {
+    public void saveReview(Long userId, ReviewSaveDTO reviewSaveDTO, String restaurantName, String visitDate) {
         String imgUrl = "";
 
         if (!reviewSaveDTO.getFiles().get(0).isEmpty()) {
@@ -49,12 +49,12 @@ public class ReviewServiceImpl implements ReviewService {
         }
 
         Review review = reviewRepository.save(Review.builder()
-                .restaurant(reviewSaveDTO.getRestaurant())
+                .restaurant(restaurantCustomRepository.findByNameContaining(reviewSaveDTO.getRestaurant()))
                 .user(userRepository.findById(userId).get())
                 .rating(reviewSaveDTO.getRating())
                 .content(badWordService.changeBadWord(reviewSaveDTO.getContent()))
                 .image(imgUrl.equals("") ? null : imgUrl)
-                .visitDate(reviewSaveDTO.getVisitDate())
+                .visitDate(ocrService.findCorrectVisitDate(reviewSaveDTO.getVisitDate()))
                 .isActive(true)
                 .createdAt(LocalDateTime.now())
                 .build());
@@ -108,7 +108,8 @@ public class ReviewServiceImpl implements ReviewService {
                 .image(imgUrl.equals("") ? null : imgUrl)
                 .visitDate(originalReview.getVisitDate())
                 .isActive(originalReview.getIsActive())
-                .createdAt(LocalDateTime.now())
+                .createdAt(originalReview.getCreatedAt())
+                .updatedAt(LocalDateTime.now())
                 .build());
 
         if (reviewTags != null) {
