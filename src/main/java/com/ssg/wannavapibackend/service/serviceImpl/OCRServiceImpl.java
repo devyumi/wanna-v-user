@@ -31,10 +31,10 @@ public class OCRServiceImpl implements OCRService {
 
     private final RestaurantCustomRepository restaurantRepository;
 
-    @Value("${naver.ocr.invoke_url}")
+    @Value("${naver.ocr.invoke-url}")
     private String url;
 
-    @Value("${naver.ocr.secret_key}")
+    @Value("${naver.ocr.secret-key}")
     private String secretKey;
 
     /**
