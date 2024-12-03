@@ -47,7 +47,6 @@ public class ReviewController {
                 || responseDTO.getImages().get(0).getReceipt().getResult().getStoreInfo() == null
                 || responseDTO.getImages().get(0).getReceipt().getResult().getStoreInfo().getBizNum() == null
                 || responseDTO.getImages().get(0).getReceipt().getResult().getPaymentInfo() == null) {
-            log.info("영수증 처리 불가");
             model.addAttribute("alertMessage", "영수증이 아니거나 식당명을 확인할 수 없습니다.");
             return "review/receipt";
         }
@@ -74,7 +73,6 @@ public class ReviewController {
         String restaurant = (String) model.getAttribute("restaurant");
         LocalDate visitDate = (LocalDate) model.getAttribute("visitDate");
         if (restaurant == null || visitDate == null) {
-            log.info("리뷰 작성 GET 요청 방지");
             model.addAttribute("alertMessage", "영수증을 먼저 인식해주세요.");
             return "review/receipt";
         }
@@ -95,7 +93,6 @@ public class ReviewController {
             return "review/review-write";
         }
         reviewService.saveReview(1L, reviewSaveDTO, reviewSaveDTO.getRestaurant(), reviewSaveDTO.getVisitDate());
-        log.info("리뷰 작성 완료");
         redirectAttributes.addFlashAttribute("alertMessage", "작성 완료되었습니다.");
         return "redirect:/reviews";
     }
@@ -106,7 +103,6 @@ public class ReviewController {
             reviewService.checkReviewUpdate(id);
 
             if (id == null) {
-                log.info("리뷰 정보를 찾을 수 없습니다.");
                 return "redirect:/reviews";
             }
             model.addAttribute("reviewInfo", reviewService.findReview(id));
@@ -114,7 +110,6 @@ public class ReviewController {
             model.addAttribute("tagsAll", tagService.findTagsForReview());
             return "review/review-update";
         } catch (Exception e) {
-            log.info("리뷰 수정 불가");
             redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
             return "redirect:/reviews";
         }
@@ -130,7 +125,6 @@ public class ReviewController {
             return "review/review-update";
         }
         reviewService.updateReview(id, reviewUpdateDTO);
-        log.info("리뷰 수정 완료");
         redirectAttributes.addFlashAttribute("alertMessage", "수정 되었습니다.");
         return "redirect:/reviews";
     }
@@ -139,11 +133,9 @@ public class ReviewController {
     public String deleteReview(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             reviewService.deleteReview(id);
-            log.info("{}번 리뷰 삭제 완료", id);
             redirectAttributes.addFlashAttribute("alertMessage", "삭제 되었습니다.");
             return "redirect:/reviews";
         } catch (Exception e) {
-            log.info("리뷰 삭제 불가");
             redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
             return "redirect:/reviews";
         }

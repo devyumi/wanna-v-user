@@ -45,7 +45,6 @@ public class MyPageController {
             return "user/mypage-edit";
         }
         myPageService.updateMyPage(1L, myPageUpdateDTO);
-        log.info("마이페이지 수정 완료");
         return "redirect:/my";
     }
 
@@ -58,7 +57,6 @@ public class MyPageController {
     @PostMapping("reservations/{id}")
     public String getMyReservationsDetails(@PathVariable Long id, Model model) {
         if (id == null) {
-            log.info("예약 정보를 찾을 수 없습니다.");
             return "redirect:/reservations";
         }
         model.addAttribute("myReservation", myPageService.findMyReservation(id));
@@ -92,7 +90,6 @@ public class MyPageController {
     @PostMapping("orders/{id}")
     public String getMyOrdersDetails(@PathVariable Long id, Model model) {
         if (id == null) {
-            log.info("주문 정보를 찾을 수 없습니다.");
             return "redirect:/orders";
         }
         model.addAttribute("myOrders", myPageService.findMyOrdersDetails(id));
