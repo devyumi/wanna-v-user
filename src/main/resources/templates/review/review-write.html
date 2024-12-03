@@ -117,13 +117,13 @@
     <table class="table table-borderless mb-0 fw-bold text-black text-center fs-5">
       <tr>
         <td class="d-flex justify-content-center">
-          <p style="color: #5AAB6F;" th:text="${reviewSaveDTO.visitDate.year} + '년 ' + ${reviewSaveDTO.visitDate.monthValue} + '월 ' + ${reviewSaveDTO.visitDate.dayOfMonth} + '일'"></p>
+          <p style="color: #5AAB6F;" th:text="${reviewSaveDTO.visitDate}"></p>
         </td>
       </tr>
 
       <tr>
         <td class="d-flex justify-content-center">
-          <p style="color: #5AAB6F;" th:text="${reviewSaveDTO.restaurant.name}"></p>
+          <p style="color: #5AAB6F;" th:text="${reviewSaveDTO.restaurant}"></p>
           <p>&nbsp;방문하셨어요</p>
         </td>
       </tr>
