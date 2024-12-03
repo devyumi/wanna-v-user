@@ -71,8 +71,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         }
 
         try {
-
-            log.info(jwtUtil.getRefreshTokenCookie(request));
             if(jwtUtil.getRefreshTokenCookie(request) == null) {
                 response.sendRedirect("/auth/login");
             }
@@ -97,7 +95,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e){
-            log.info("에러코드" + e);
             handleException(response, e);
         }
     }
