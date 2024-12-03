@@ -71,12 +71,6 @@ public class User {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime unregisteredAt;
 
-//    @OneToMany(mappedBy = "user")
-//    private List<UserCoupon> userCoupons;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<Reservation> reservations;
-
     public void updatePoint(long point) {
         this.point = point;
         this.updatedAt = LocalDateTime.now();

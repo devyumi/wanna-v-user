@@ -21,12 +21,12 @@ public class Event {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="created_by_id", nullable = false)
-    private Admin createdBy;
+    @JoinColumn(name = "created_by_id", nullable = false)
+    private Admin createdById;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="updated_by_id")
-    private Admin updatedBy;
+    @JoinColumn(name = "updated_by_id")
+    private Admin updatedById;
 
     @Column(length = 20, nullable = false)
     private String title;

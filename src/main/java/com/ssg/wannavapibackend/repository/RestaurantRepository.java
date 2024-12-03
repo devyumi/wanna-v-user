@@ -3,7 +3,6 @@ package com.ssg.wannavapibackend.repository;
 
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.dto.request.RestaurantSearchCond;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 import java.util.Optional;

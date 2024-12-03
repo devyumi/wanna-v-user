@@ -30,11 +30,11 @@ public class PaymentController {
      */
     @PostMapping("/product")
     public String redirectToProductPaymentPage(
-        @RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
-        HttpSession session) {
+            @RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
+            HttpSession session) {
 
         CheckoutResponseDTO responseDTO = checkoutFacade.processCheckout(userId,
-            checkoutRequestDTO);
+                checkoutRequestDTO);
         session.setAttribute("pageInitData", responseDTO);
 
         return "redirect:/checkout/product";
@@ -43,13 +43,12 @@ public class PaymentController {
     @GetMapping("/product")
     public String showProductPaymentPage(HttpSession session, Model model) {
         CheckoutResponseDTO responseDTO = (CheckoutResponseDTO) session.getAttribute(
-            "pageInitData");
+                "pageInitData");
 
         model.addAttribute("pageInitData", responseDTO);
 
         return "payment/product";
     }
-
 
     @GetMapping("/reservation")
     public String reservationPayment(@ModelAttribute ReservationRequestDTO reservationRequestDTO, Model model) {
@@ -63,13 +62,20 @@ public class PaymentController {
             return "/reservation/error";
         }
     }
+
+    @GetMapping("/success")
+    public String reservationNoPenaltySuccess(){
+        return "/reservation/complete";
+    }
+
     /**
      * 상품 결제 정보를 세션에 저장하고, 결제 승인 페이지로 리다이렉트하는 메서드
      */
     @PostMapping("/product-data")
     public String storeProductPaymentDataAndRedirectToSuccessPage(
-        @RequestBody PaymentItemRequestDTO requestDTO,
-        HttpSession session) {
+            @RequestBody PaymentItemRequestDTO requestDTO,
+            HttpSession session) {
+
         session.setAttribute("paymentItemData", requestDTO);
 
         return "redirect:/checkout/toss-success";
@@ -90,20 +96,4 @@ public class PaymentController {
         model.addAttribute("message", request.getParameter("message"));
         return "/payment/toss-fail";
     }
-
-//    @GetMapping("/success")
-//    public String reservationPaySuccess(
-//        @RequestParam(value = "orderId") String orderId,
-//        @RequestParam(value = "amount") Integer amount,
-//        @RequestParam(value = "paymentKey") String paymentKey) {
-//        return "redirect:/success";
-//    }
-//
-//    @GetMapping("/fail")
-//    public String reservationPayFail(
-//        @RequestParam(value = "orderId") String orderId,
-//        @RequestParam(value = "amount") Integer amount,
-//        @RequestParam(value = "paymentKey") String paymentKey) {
-//        return "redirect:/success";
-//    }
 }

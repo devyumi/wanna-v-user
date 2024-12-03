@@ -1,38 +1,41 @@
 package com.ssg.wannavapibackend.controller.web;
 
-import com.ssg.wannavapibackend.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Log4j2
 @Controller
 @RequiredArgsConstructor
-@RequestMapping("/restaurant")
+@RequestMapping("/")
 public class ReservationController {
 
-    private final ReservationService reservationService;
+//    @GetMapping("restaurant/{restaurantId}")
+//    public String test2(@PathVariable("restaurantId") Long restaurantId) {
+//        return "redirect:/reservation/calendar?restaurantId=" + restaurantId;
+//    }
 
-    @GetMapping("/{restaurantId}")
-    public String test2(@PathVariable("restaurantId") Long restaurantId, RedirectAttributes redirectAttributes) {
-        log.info("여기 왔당");
-
-        redirectAttributes.addFlashAttribute("restaurantId", restaurantId);
-
-        return "redirect:/restaurant/reservation/calendar";
+    @GetMapping("restaurants/{restaurantId}/reservation")
+    public String test2(@PathVariable("restaurantId") Long restaurantId) {
+        return "redirect:/reservation/calendar?restaurantId=" + restaurantId;
     }
 
     @GetMapping("/reservation/calendar")
-    public String reservation1(@ModelAttribute("restaurantId") Long restaurantId) {
-        log.info(restaurantId);
-        return "/restaurant/reservation/calendar";
+    public String reservation1(@RequestParam(value = "restaurantId") Long restaurantId, Model model) {
+        if (restaurantId == null) {
+            throw new IllegalArgumentException("Restaurant ID is required.");
+        }
+        model.addAttribute("restaurantId", restaurantId);
+        return "/reservation/calendar";
     }
 
     @GetMapping("/reservation")
     public String reservation() {
-        log.info("예약 끝!");
-        return "success";
+        return "/payment/success";
     }
 }

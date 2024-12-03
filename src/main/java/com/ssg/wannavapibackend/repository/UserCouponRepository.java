@@ -23,4 +23,6 @@ public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
     void updateCouponStatus(@Param("isUsed") Boolean isUsed,
         @Param("userId") Long userId, @Param("couponId") Long couponId);
 
+    @Query("SELECT COUNT(u) > 0 FROM UserCoupon u WHERE u.user.id = :userId AND u.coupon.id = :couponId")
+    Boolean findUserCouponByCouponId(Long userId, Long couponId);
 }

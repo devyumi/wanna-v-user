@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.controller.web;
 
+
 import com.ssg.wannavapibackend.common.*;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.domain.Review;
@@ -197,6 +198,5 @@ public class RestaurantController {
 
 
   //UrlResource 자체가 필요 없음, Url직접 웹에서 링크로 조회해서 띄우는 것. 서버로 들어와서 DB에 접근해서 띄우는 게 아닌 !
-
 
 }

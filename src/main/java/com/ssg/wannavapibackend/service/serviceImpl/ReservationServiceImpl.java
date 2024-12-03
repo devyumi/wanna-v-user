@@ -95,18 +95,20 @@ public class ReservationServiceImpl implements ReservationService {
 
         String amPm = dateTime.getHour() < 12 ? "오전" : "오후";
 
-        return new ReservationPaymentResponseDTO(
-                1L,
-                reservationRequestDTO.getRestaurantId(),
-                restaurant.getName(),
-                restaurant.getAddress().getRoadAddress(),
-                reservationRequestDTO.getSelectGuest(),
-                formattedDate,
-                reservationRequestDTO.getSelectTime(),
-                reservationRequestDTO.getSelectGuest() * 10000,
-                dayOfWeek,
-                amPm,
-                tossPaymentConfig.getTossClientKey());
+        return ReservationPaymentResponseDTO.builder()
+                .reservationId(1L)
+                .userId(1L)
+                .restaurantId(reservationRequestDTO.getRestaurantId())
+                .restaurantName(restaurant.getName())
+                .roadAddress(restaurant.getAddress().getRoadAddress())
+                .guestAccount(reservationRequestDTO.getSelectGuest())
+                .reservationDate(formattedDate)
+                .reservationTime(reservationRequestDTO.getSelectTime())
+                .penalty(reservationRequestDTO.getSelectGuest() * 10000)
+                .dayOfWeek(dayOfWeek)
+                .amPm(amPm)
+                .clientKey(tossPaymentConfig.getTossClientKey())
+                .build();
     }
 
     /**
@@ -269,13 +271,9 @@ public class ReservationServiceImpl implements ReservationService {
             startTime = startTime.plusMinutes(intervalMinutes);
         } while (!startTime.equals(LocalTime.of(0, 0)));
 
-        for(LocalTime localTime : reservationTimes)
-            log.info(localTime);
-
         LocalDate curDate = reservationRequestDTO.getSelectDate();
 
         String dayOfWeek = curDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.KOREAN);
-        log.info(dayOfWeek);
 
         //오픈 시간, 마감 시간, 브레이크 타임 시작 시간, 브레이크 타임 종료 시간, 공휴일, 예약이 꽉찬 시간, 현재 시간 보다 이전 시간 모두 필터링 하는 부분
         Iterator<LocalTime> iterator = reservationTimes.iterator();
