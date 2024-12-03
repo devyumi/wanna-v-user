@@ -11,7 +11,6 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
@@ -28,9 +27,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class JWTUtil {
-
-//    @Value("${jwt.key}")
-//    private static String jwtKey;
 
     private final UserService userService;
 
@@ -110,7 +106,7 @@ public class JWTUtil {
         accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setMaxAge(60 * 60 * 3);
         accessTokenCookie.setHttpOnly(true);
-//        accessTokenCookie.setSecure(true); // https 가능 (도메인)
+        //        accessTokenCookie.setSecure(true); // https 가능 (도메인)
         accessTokenCookie.setPath("/");
         response.addCookie(accessTokenCookie);
     }

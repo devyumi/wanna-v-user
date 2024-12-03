@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,11 +17,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -40,19 +37,18 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         String path = request.getServletPath();
 
         // 특정 경로들에 대해서만 false(필터 적용 함) 반환, 나머지는 true(필터 적용 안함)
-        return !(path.startsWith("/reservation/") ||
-                path.startsWith("/reservations/") ||
+        return !(path.startsWith("/reservation") ||
+                path.startsWith("/reservations") ||
                 path.equals("/likes") ||
-                path.startsWith("/orders/") ||
+                path.startsWith("/orders") ||
                 path.equals("/points") ||
                 path.equals("/coupons") ||
-                path.startsWith("/reviews/") ||
-                path.startsWith("/carts/") ||
-                path.startsWith("/checkout/") ||
+                path.startsWith("/reviews") ||
+                path.startsWith("/carts") ||
+                path.startsWith("/checkout") ||
                 path.startsWith("/restaurants/") ||
-                path.startsWith("/my/") ||
-                path.startsWith("/payment/") ||
-                path.equals("/restaurant/"));
+                path.startsWith("/my") ||
+                path.startsWith("/payment"));
     }
 
 
@@ -75,24 +71,15 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         }
 
         try {
-            log.info(jwtUtil.getRefreshTokenCookie(request));
-
             if(jwtUtil.getRefreshTokenCookie(request) == null) {
-                throw new BadCredentialsException("로그인이 필요합니다.");
+                response.sendRedirect("/auth/login");
             }
 
             Map<String, Object> tokenMap = jwtUtil.validateToken(jwtUtil.getAccessTokenCookie(request), request, response);
 
             String mid = tokenMap.get("id").toString();
 
-            List<GrantedAuthority> authorities = Collections.emptyList();
-
-            if (tokenMap.containsKey("role") && tokenMap.get("role") != null) {
-                String[] roles = tokenMap.get("role").toString().split(",");
-                authorities = Arrays.stream(roles)
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                        .collect(Collectors.toList());
-            }
+            List<GrantedAuthority> authorities = Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"));
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
@@ -115,6 +102,5 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
         response.getWriter().println("{\"error\": \"" + e.getMessage() + "\"}");
-        response.sendRedirect("/auth/login");
     }
 }
