@@ -16,19 +16,22 @@
       </div>
     </div>
 
-    <div class="py-4 pt-lg-3 pb-lg-0">
+    <div class="py-2 pt-lg-3 pb-lg-0">
       <div class="container">
         <div class="row w-100 align-items-center gx-lg-2 gx-0">
           <div class="col-xxl-2 col-lg-3">
             <a class="navbar-brand d-none d-lg-block" href="/">
-              <img src="/assets/images/logo/freshcart-logo.svg"
-                   th:src="@{/assets/images/logo/freshcart-logo.svg}" alt="eCommerce HTML Template">
+              <img src="/media/logo/removebg-logo-horizontal.svg"
+                   th:src="@{/media/logo/removebg-logo-horizontal.svg}"
+                   alt="eCommerce HTML Template"
+                   style="width:160px; height: 80px;">
             </a>
             <div class="d-flex justify-content-between w-100 d-lg-none">
               <a class="navbar-brand" href="/">
-                <img src="/assets/images/logo/freshcart-logo.svg"
-                     th:src="@{/assets/images/logo/freshcart-logo.svg}"
-                     alt="eCommerce HTML Template">
+                <img src="/media/logo/removebg-logo-horizontal.svg"
+                     th:src="@{/media/logo/removebg-logo-horizontal.svg}"
+                     alt="wannav-logo"
+                     style="width:150px; height: 50px;">
               </a>
 
               <div class="d-flex align-items-center lh-1">
@@ -46,11 +49,6 @@
                             d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
                         </path>
                       </svg>
-                      <span
-                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
-                    5
-                    <span class="visually-hidden">unread messages</span>
-                  </span>
                     </a>
                   </div>
 
@@ -81,11 +79,6 @@
                         <line x1="3" y1="6" x2="21" y2="6"></line>
                         <path d="M16 10a4 4 0 0 1-8 0"></path>
                       </svg>
-                      <!--                      <span-->
-                      <!--                          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">&ndash;&gt;-->
-                      <!--                    1-->
-                      <!--                    <span class="visually-hidden">unread messages</span>-->
-                      </span>
                     </a>
                   </div>
                 </div>
@@ -124,7 +117,7 @@
             <div class="list-inline">
               <!--찜 목록 하트 버튼 , 이것도 모바일 데스크탑 UI 공통-->
               <div class="list-inline-item">
-                <a href="/likesl" th:href="@{/pages/shop-wishlist.html}"
+                <a href="/likes" th:href="@{/pages/shop-wishlist.html}"
                    class="text-muted position-relative">
 
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -136,11 +129,6 @@
                         d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
                     </path>
                   </svg>
-                  <span
-                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">
-                    5
-                    <span class="visually-hidden">unread messages</span>
-                  </span>
                 </a>
               </div>
 
@@ -171,11 +159,6 @@
                     <line x1="3" y1="6" x2="21" y2="6"></line>
                     <path d="M16 10a4 4 0 0 1-8 0"></path>
                   </svg>
-                  <!--                  <span-->
-                  <!--                      class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success">&ndash;&gt;-->
-                  <!--                    1-->
-                  <!--                    <span class="visually-hidden">unread messages</span>-->
-                  <!--                  </span>-->
                 </a>
               </div>
             </div>
@@ -221,10 +204,6 @@
           </li>
 
           <li class="nav-item desktop-header-nav-item">
-            <a class="nav-link" href="/community" role="button">커뮤니티</a>
-          </li>
-
-          <li class="nav-item desktop-header-nav-item">
             <a class="nav-link" href="/events" role="button">이벤트</a>
           </li>
         </ul>
@@ -243,10 +222,6 @@
 
           <li class="nav-item mobile-header-nav-item">
             <a class="nav-link" href="/products" role="button">상점</a>
-          </li>
-
-          <li class="nav-item mobile-header-nav-item">
-            <a class="nav-link" href="/community" role="button">커뮤니티</a>
           </li>
 
           <li class="nav-item mobile-header-nav-item">

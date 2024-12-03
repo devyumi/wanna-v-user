@@ -37,7 +37,7 @@ public class User {
     @Column(length = 10)
     private String name;
 
-    @Column(name = "chatbot_code", length = 255)
+    @Column(name = "chatbot_code", length = 10)
     private String chatbotCode;
 
     @Column(length = 15)
@@ -70,12 +70,6 @@ public class User {
     @Column(name="unregistered_at")
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime unregisteredAt;
-
-//    @OneToMany(mappedBy = "user")
-//    private List<UserCoupon> userCoupons;
-//
-//    @OneToMany(mappedBy = "user")
-//    private List<Reservation> reservations;
 
     public void updatePoint(long point) {
         this.point = point;

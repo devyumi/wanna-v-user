@@ -13,7 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "tag")
 public class Tag {
 
     @Id

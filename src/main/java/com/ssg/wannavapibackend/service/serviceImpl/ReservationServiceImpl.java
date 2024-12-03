@@ -81,8 +81,8 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public ReservationPaymentResponseDTO getReservationPayment(ReservationRequestDTO reservationRequestDTO) {
 
-         if(reservationRepository.existsByMyReservaion(1L, reservationRequestDTO.getRestaurantId(), reservationRequestDTO.getSelectDate()))
-             throw new RuntimeException("하루에 한 번만 예약이 가능합니다!");
+        if(reservationRepository.existsByMyReservaion(1L, reservationRequestDTO.getRestaurantId(), reservationRequestDTO.getSelectDate()))
+            throw new RuntimeException("하루에 한 번만 예약이 가능합니다!");
 
         Restaurant restaurant = restaurantRepository.findById(reservationRequestDTO.getRestaurantId()).orElseThrow(() -> new IllegalArgumentException("Invalid ID value: "));
 
@@ -95,18 +95,20 @@ public class ReservationServiceImpl implements ReservationService {
 
         String amPm = dateTime.getHour() < 12 ? "오전" : "오후";
 
-        return new ReservationPaymentResponseDTO(
-                1L,
-                reservationRequestDTO.getRestaurantId(),
-                restaurant.getName(),
-                restaurant.getAddress().getRoadAddress(),
-                reservationRequestDTO.getSelectGuest(),
-                formattedDate,
-                reservationRequestDTO.getSelectTime(),
-                reservationRequestDTO.getSelectGuest() * 10000,
-                dayOfWeek,
-                amPm,
-                tossPaymentConfig.getTossClientKey());
+        return ReservationPaymentResponseDTO.builder()
+                .reservationId(1L)
+                .userId(1L)
+                .restaurantId(reservationRequestDTO.getRestaurantId())
+                .restaurantName(restaurant.getName())
+                .roadAddress(restaurant.getAddress().getRoadAddress())
+                .guestAccount(reservationRequestDTO.getSelectGuest())
+                .reservationDate(formattedDate)
+                .reservationTime(reservationRequestDTO.getSelectTime())
+                .penalty(reservationRequestDTO.getSelectGuest() * 10000)
+                .dayOfWeek(dayOfWeek)
+                .amPm(amPm)
+                .clientKey(tossPaymentConfig.getTossClientKey())
+                .build();
     }
 
     /**
