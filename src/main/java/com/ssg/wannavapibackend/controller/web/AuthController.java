@@ -43,15 +43,17 @@ public class AuthController {
         String refreshToken = jwtUtil.createToken(Map.of("mid", userId), 60 * 60 * 24 * 3);
 
         Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
-        accessTokenCookie.setMaxAge(60 * 60 * 3);
-        //accessTokenCookie.setHttpOnly(true); // https 가능 (도메인)
+        accessTokenCookie.setMaxAge(60);
+        accessTokenCookie.setHttpOnly(true);
+//        accessTokenCookie.setSecure(true); // https 가능 (도메인)
         accessTokenCookie.setPath("/");
 
         response.addCookie(accessTokenCookie);
 
         Cookie refreshTokenCookie = new Cookie("refreshToken", refreshToken);
-        refreshTokenCookie.setMaxAge(60 * 60 * 24 * 3); // https 가능 (도메인)
-        //refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setMaxAge(60 * 3);
+        refreshTokenCookie.setHttpOnly(true);
+//        refreshTokenCookie.setSecure(true); // https 가능 (도메인)
         refreshTokenCookie.setPath("/");
 
         response.addCookie(refreshTokenCookie);
