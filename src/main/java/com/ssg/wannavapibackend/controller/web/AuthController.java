@@ -64,6 +64,6 @@ public class AuthController {
     @GetMapping("/logout")
     public String logout(HttpServletResponse response){
         jwtUtil.removeCookie(response);
-        return "redirect:/auth/login";
+        return "redirect:/";
     }
 }
