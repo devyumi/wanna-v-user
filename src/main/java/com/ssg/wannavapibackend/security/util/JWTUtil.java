@@ -110,7 +110,7 @@ public class JWTUtil {
         accessTokenCookie = new Cookie("accessToken", accessToken);
         accessTokenCookie.setMaxAge(60 * 60 * 3);
         accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
+//        accessTokenCookie.setSecure(true); // https 가능 (도메인)
         accessTokenCookie.setPath("/");
         response.addCookie(accessTokenCookie);
     }
