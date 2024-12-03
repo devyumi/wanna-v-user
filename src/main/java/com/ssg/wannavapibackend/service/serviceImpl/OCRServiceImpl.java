@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.service.serviceImpl;
 
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.dto.response.OCRResponseDTO;
+import com.ssg.wannavapibackend.repository.RestaurantCustomRepository;
 import com.ssg.wannavapibackend.service.OCRService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -27,12 +29,12 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class OCRServiceImpl implements OCRService {
 
-//    private final RestaurantRepository restaurantRepository;
+    private final RestaurantCustomRepository restaurantRepository;
 
-    @Value("${naver.ocr.invoke_url}")
+    @Value("${naver.ocr.invoke-url}")
     private String url;
 
-    @Value("${naver.ocr.secret_key}")
+    @Value("${naver.ocr.secret-key}")
     private String secretKey;
 
     /**
@@ -85,27 +87,25 @@ public class OCRServiceImpl implements OCRService {
      * @param storeInfo
      * @return
      */
+    @Transactional(readOnly = true)
     public Restaurant findCorrectRestaurant(OCRResponseDTO.StoreInfo storeInfo) {
 
         String name = storeInfo.getName().getText();
 
         //지점명 없을 경우 기본 상호명으로 식당 검색
-//        if (storeInfo.getSubName() == null) {
-//            return restaurantRepository.findByNameContaining(name);
-//        } else {
-//
-//            Pattern pattern = Pattern.compile("\\((.*?)\\)");
-//            Matcher matcher = pattern.matcher(storeInfo.getSubName().getText());
-//
-//            if (matcher.find()) {
-//                return restaurantRepository.findByNameContainingAndNameContaining(name, matcher.group(1));
-//            } else {
-//                return restaurantRepository.findByNameContainingAndNameContaining(name, storeInfo.getSubName().getText());
-//            }
-//
-//        }
-        //임시
-        return null;
+        if (storeInfo.getSubName() == null) {
+            return restaurantRepository.findByNameContaining(name);
+        } else {
+
+            Pattern pattern = Pattern.compile("\\((.*?)\\)");
+            Matcher matcher = pattern.matcher(storeInfo.getSubName().getText());
+
+            if (matcher.find()) {
+                return restaurantRepository.findByNameContainingAndNameContaining(name, matcher.group(1));
+            } else {
+                return restaurantRepository.findByNameContainingAndNameContaining(name, storeInfo.getSubName().getText());
+            }
+        }
     }
 
     /**

@@ -3,12 +3,14 @@ package com.ssg.wannavapibackend.controller.web;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.dto.request.ReviewSaveDTO;
 import com.ssg.wannavapibackend.dto.response.OCRResponseDTO;
+import com.ssg.wannavapibackend.repository.RestaurantCustomRepository;
 import com.ssg.wannavapibackend.service.OCRService;
 import com.ssg.wannavapibackend.service.ReviewService;
 import com.ssg.wannavapibackend.service.TagService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -33,8 +35,8 @@ public class ReviewController {
     public String uploadReceipt() {
         return "review/receipt";
     }
-
     @PostMapping("upload-receipt")
+    @Transactional(readOnly = true)
     public String ProcessReceipt(@RequestParam("file") MultipartFile file, Model model,
                                  RedirectAttributes redirectAttributes) throws IOException {
         OCRResponseDTO responseDTO = ocrService.findReceiptData(file);
@@ -45,7 +47,6 @@ public class ReviewController {
                 || responseDTO.getImages().get(0).getReceipt().getResult().getStoreInfo() == null
                 || responseDTO.getImages().get(0).getReceipt().getResult().getStoreInfo().getBizNum() == null
                 || responseDTO.getImages().get(0).getReceipt().getResult().getPaymentInfo() == null) {
-            log.info("영수증 처리 불가");
             model.addAttribute("alertMessage", "영수증이 아니거나 식당명을 확인할 수 없습니다.");
             return "review/receipt";
         }
@@ -61,28 +62,28 @@ public class ReviewController {
         }
 
         //정상 처리
-        redirectAttributes.addFlashAttribute("restaurant", restaurant);
+        redirectAttributes.addFlashAttribute("restaurant", restaurant.getName());
         redirectAttributes.addFlashAttribute("visitDate", ocrService.findCorrectVisitDate(responseDTO.getImages().get(0).getReceipt().getResult().getPaymentInfo().getDate().getText()));
         return "redirect:/reviews/write";
     }
 
     @GetMapping("reviews/write")
+    @Transactional(readOnly = true)
     public String saveReview(Model model) {
-        Restaurant restaurant = (Restaurant) model.getAttribute("restaurant");
+        String restaurant = (String) model.getAttribute("restaurant");
         LocalDate visitDate = (LocalDate) model.getAttribute("visitDate");
-
         if (restaurant == null || visitDate == null) {
-            log.info("리뷰 작성 GET 요청 방지");
             model.addAttribute("alertMessage", "영수증을 먼저 인식해주세요.");
             return "review/receipt";
         }
 
-        model.addAttribute("reviewSaveDTO", ReviewSaveDTO.builder().restaurant(restaurant).visitDate(visitDate).build());
+        model.addAttribute("reviewSaveDTO", ReviewSaveDTO.builder().restaurant(restaurant).visitDate(visitDate.toString()).build());
         model.addAttribute("tagsAll", tagService.findTagsForReview());
         return "review/review-write";
     }
 
     @PostMapping("reviews/write")
+    @Transactional
     public String saveReview(@ModelAttribute @Validated ReviewSaveDTO reviewSaveDTO, BindingResult bindingResult,
                              Model model, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
@@ -91,8 +92,7 @@ public class ReviewController {
             model.addAttribute("tagsAll", tagService.findTagsForReview());
             return "review/review-write";
         }
-        reviewService.saveReview(1L, reviewSaveDTO);
-        log.info("리뷰 작성 완료");
+        reviewService.saveReview(1L, reviewSaveDTO, reviewSaveDTO.getRestaurant(), reviewSaveDTO.getVisitDate());
         redirectAttributes.addFlashAttribute("alertMessage", "작성 완료되었습니다.");
         return "redirect:/reviews";
     }
@@ -103,7 +103,6 @@ public class ReviewController {
             reviewService.checkReviewUpdate(id);
 
             if (id == null) {
-                log.info("리뷰 정보를 찾을 수 없습니다.");
                 return "redirect:/reviews";
             }
             model.addAttribute("reviewInfo", reviewService.findReview(id));
@@ -111,7 +110,6 @@ public class ReviewController {
             model.addAttribute("tagsAll", tagService.findTagsForReview());
             return "review/review-update";
         } catch (Exception e) {
-            log.info("리뷰 수정 불가");
             redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
             return "redirect:/reviews";
         }
@@ -127,7 +125,6 @@ public class ReviewController {
             return "review/review-update";
         }
         reviewService.updateReview(id, reviewUpdateDTO);
-        log.info("리뷰 수정 완료");
         redirectAttributes.addFlashAttribute("alertMessage", "수정 되었습니다.");
         return "redirect:/reviews";
     }
@@ -136,11 +133,9 @@ public class ReviewController {
     public String deleteReview(@PathVariable Long id, RedirectAttributes redirectAttributes) {
         try {
             reviewService.deleteReview(id);
-            log.info("{}번 리뷰 삭제 완료", id);
             redirectAttributes.addFlashAttribute("alertMessage", "삭제 되었습니다.");
             return "redirect:/reviews";
         } catch (Exception e) {
-            log.info("리뷰 삭제 불가");
             redirectAttributes.addFlashAttribute("alertMessage", e.getMessage());
             return "redirect:/reviews";
         }
