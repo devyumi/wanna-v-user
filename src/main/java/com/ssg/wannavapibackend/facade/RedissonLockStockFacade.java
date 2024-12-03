@@ -26,7 +26,6 @@ public class RedissonLockStockFacade {
     }
 
     public void decreaseProductStock(List<ProductPurchaseRequestDTO> requestDTOList) {
-        log.info("decreaseProductStock");
         for (ProductPurchaseRequestDTO item : requestDTOList) {
             String lockName = "lock-" + item.getProductId(); // 상품 ID로 고유 락 이름 생성
             RLock lock = redissonClient.getLock(lockName);
@@ -35,7 +34,6 @@ public class RedissonLockStockFacade {
                 boolean available = lock.tryLock(5, 1, TimeUnit.SECONDS);
 
                 if (!available) {
-                    log.info("lock 획득 실패 for productId: " + item.getProductId());
                     continue; // 락을 획득하지 못한 경우에는 넘어가서 다음 상품 처리
                 }
 
@@ -49,7 +47,6 @@ public class RedissonLockStockFacade {
             } finally {
                 if (lock.isHeldByCurrentThread()) {
                     lock.unlock(); // 현재 쓰레드가 획득한 락만 해제
-                    log.info("Lock released for productId: {}", item.getProductId());
                 }
             }
         }
@@ -59,9 +56,7 @@ public class RedissonLockStockFacade {
 //    private void decrease(Long productId, int quantity) {
 //        Product product = productRepository.findById(productId)
 //            .orElseThrow(() -> new CustomException(ErrorCode.PRODUCT_NOT_FOUND));
-//        log.info("product Before: " + product);
 //        product.decrease(quantity);
-//        log.info("product After: " + product);
 //
 //        productRepository.saveAndFlush(product);
 //    }
