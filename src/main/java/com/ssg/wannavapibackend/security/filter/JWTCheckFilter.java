@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,7 +46,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 path.startsWith("/reviews") ||
                 path.startsWith("/carts") ||
                 path.startsWith("/checkout") ||
-                path.startsWith("/restaurants") ||
+                path.startsWith("/restaurants/") ||
                 path.startsWith("/my") ||
                 path.startsWith("/payment"));
     }
@@ -75,7 +74,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             log.info(jwtUtil.getRefreshTokenCookie(request));
             if(jwtUtil.getRefreshTokenCookie(request) == null) {
-                throw new BadCredentialsException("로그인이 필요합니다.");
+                response.sendRedirect("/auth/login");
             }
 
             Map<String, Object> tokenMap = jwtUtil.validateToken(jwtUtil.getAccessTokenCookie(request), request, response);
@@ -98,6 +97,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e){
+            log.info("에러코드" + e);
             handleException(response, e);
         }
     }
