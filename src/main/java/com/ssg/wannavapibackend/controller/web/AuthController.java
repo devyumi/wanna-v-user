@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,10 +27,13 @@ public class AuthController {
 
     private final JWTUtil jwtUtil;
 
+    @Value("${app.external.api.url}")
+    private String login;
+
     @GetMapping("/login")
     public String login(Model model){
         model.addAttribute("location", kakaoService.getKakaoLogin());
-        return "/auth/login";
+        return login;
     }
 
     @GetMapping("/callback")
