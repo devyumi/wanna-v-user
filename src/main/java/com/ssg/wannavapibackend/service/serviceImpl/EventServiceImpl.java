@@ -12,6 +12,7 @@ import com.ssg.wannavapibackend.repository.EventRepository;
 import com.ssg.wannavapibackend.repository.UserCouponRepository;
 import com.ssg.wannavapibackend.repository.UserRepository;
 //import com.ssg.wannavapibackend.security.util.JWTUtil;
+import com.ssg.wannavapibackend.security.util.JWTUtil;
 import com.ssg.wannavapibackend.service.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,7 +32,7 @@ public class EventServiceImpl implements EventService {
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
     private final UserCouponRepository userCouponRepository;
-//    private final JWTUtil jwtUtil;
+    private final JWTUtil jwtUtil;
 
     @Override
     public List<EventListResponseDTO> getEventList() {
@@ -63,17 +64,17 @@ public class EventServiceImpl implements EventService {
             throw new RuntimeException("이벤트가 종료되었습니다.");
 
         //유저 확인
-        if(!userRepository.existsById(1L))
+        if(!userRepository.existsById(jwtUtil.getUserId()))
             throw new RuntimeException("회원가입 후 발급이 가능합니다.");
 
         //유저가 쿠폰을 가지고 있는지 확인
-        if(userCouponRepository.findUserCouponByCouponId(1L, eventCouponRequestDTO.getCouponId()))
+        if(userCouponRepository.findUserCouponByCouponId(jwtUtil.getUserId(), eventCouponRequestDTO.getCouponId()))
             throw new RuntimeException("쿠폰이 이미 존재합니다.");
 
-        User user = userRepository.findById(1L).orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+        User user = userRepository.findById(jwtUtil.getUserId()).orElseThrow(() -> new IllegalArgumentException("유저 없음"));
         Coupon coupon = couponRepository.findById(eventCouponRequestDTO.getCouponId()).orElseThrow(() -> new IllegalArgumentException("쿠폰 없음"));
 
-        UserCoupon userCoupon = new UserCoupon(1L, user, coupon, false);
+        UserCoupon userCoupon = new UserCoupon(jwtUtil.getUserId(), user, coupon, false);
 
         userCouponRepository.save(userCoupon);
 
