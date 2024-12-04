@@ -31,7 +31,6 @@ public class EventServiceImpl implements EventService {
     private final CouponRepository couponRepository;
     private final UserRepository userRepository;
     private final UserCouponRepository userCouponRepository;
-//    private final JWTUtil jwtUtil;
 
     @Override
     public List<EventListResponseDTO> getEventList() {
@@ -53,20 +52,16 @@ public class EventServiceImpl implements EventService {
 
     @Transactional
     public void couponDistribution(EventCouponRequestDTO eventCouponRequestDTO) {
-//        Long id = jwtUtil.getUserId();
 
         if(eventCouponRequestDTO.getCouponId() == null)
             throw new RuntimeException("아직 쿠폰을 받을 수 없습니다.");
 
-        //쿠폰 액티브 검사
         if(!couponRepository.findIsActiveById(eventCouponRequestDTO.getCouponId()))
             throw new RuntimeException("이벤트가 종료되었습니다.");
 
-        //유저 확인
         if(!userRepository.existsById(1L))
             throw new RuntimeException("회원가입 후 발급이 가능합니다.");
 
-        //유저가 쿠폰을 가지고 있는지 확인
         if(userCouponRepository.findUserCouponByCouponId(1L, eventCouponRequestDTO.getCouponId()))
             throw new RuntimeException("쿠폰이 이미 존재합니다.");
 
