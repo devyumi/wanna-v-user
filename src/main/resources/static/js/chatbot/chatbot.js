@@ -26,6 +26,10 @@ document.addEventListener("DOMContentLoaded", function () {
     scrollToBottom();
   }
 
+  const welcomeMessage = '안녕하세요!<br>무엇을 도와드릴까요? 🙂'
+
+  addMessage("bot-message", welcomeMessage);
+
   // 메시지 전송 이벤트
   sendButton.addEventListener("click", function () {
     const userMessage = userMessageInput.value.trim();
