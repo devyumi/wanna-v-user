@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  productList();
   formatPriceElements();
   formatNameElements();
 
