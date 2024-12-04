@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html th:replace="~{fragment/layout_v1.html :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{fragment/layout.html :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
 
 
 <main>
 
   <main>
 
-    <!-- 상위 카테고리 표시 영역 Home / 식당 / 오 이터리 이런 느낌-->
+    <!-- 상위 카테고리 표시 영역 Home / 식당 / 음 이터리 -->
   <div class="mt-4">
     <div class="container">
       <!-- row -->
@@ -80,7 +80,9 @@
               <span class="text-muted me-1" th:each="restaurantType : ${restaurant.restaurantTypes}" th:text="|${restaurantType}|">양식</span>
             <h1 class="mb-1" th:text="${restaurant.name}">음 이터리 </h1>
             <div class="mb-4">
-              <!-- rating --> <small class="text-warning"><i class="bi bi-star-fill"></i></small><a href="#" class="ms-1" th:text="|${restaurant.averageRating}(${restaurant.reviewCount})|">4.5(30)</a>
+              <!-- rating --> <small class="text-warning"><i class="bi bi-star-fill"></i></small><a href="#" class="ms-1" th:text="|${{restaurant.averageRating}}(${{restaurant.reviewCount}})|">4.5(30)</a>
+                              <small class="text-danger"><i class="bi bi-heart-fill"></i></small> <span class="text-muted small" th:text="|${{restaurant.likesCount}}|">123</span>
+
             </div>
             <span th:text="${restaurant.description}">최고의 비건 맛집 음 이터리입니다.</span>
 
@@ -119,10 +121,12 @@
               <div class="col-xxl-4 col-lg-4 col-md-5 col-5 d-grid d-flex justify-content-start" style="width:100%">
                 <!-- button -->
                 <!-- btn --> <button type="button" class="btn btn-primary col-11 clear-button"  data-bs-toggle="modal" href="#exampleModalToggle"><i class="feather-icon icon-shopping-bag me-2"></i>예약하기</button>
-                <a class="btn btn-light col-1" href="../pages/shop-wishlist.html" data-bs-toggle="tooltip" data-bs-html="true" aria-label="Wishlist"><i class="feather-icon icon-heart"></i></a>
+
+                    <a class="btn btn-light col-1" href="../pages/shop-wishlist.html" th:href="@{/restaurants/{id}(id = ${restaurant.id})}" data-bs-toggle="tooltip" data-bs-html="true" aria-label="Wishlist">
+                      <i class="feather-icon icon-heart"></i>
+                    </a>
+
               </div>
-
-
 
             </div>
             <!-- hr -->
@@ -216,7 +220,7 @@
                     <!-- 이미지 -->
                     <div class="row align-items-center" >
                       <div class="col-3 col-lg-1">
-                        <img src="/assets/images/restaurant/food/food1.jpeg" th:src="@{${food.image}}" alt="Ecommerce" class="img-fluid">
+                        <img src="/assets/images/restaurant/food/food4.jpeg" th:src="@{${food.image}}" alt="Ecommerce" class="img-fluid">
                       </div>
 
                       <div class="col-4 col-md-6 col-lg-5">  <!-- col로 조절하면 됨-->
@@ -384,237 +388,91 @@
 
 </main>
 
-  <!-- modal -->
-  <!-- Modal -->
-<div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog modal-xl modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-body p-8">
-        <div class="position-absolute top-0 end-0 me-3 mt-3">
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div class="row">
-          <div class="col-lg-6">
-            <!-- img slide -->
-            <div class="product productModal" id="productModal">
-              <div
-                class="zoom"
-                onmousemove="zoom(event)"
-                style="
-                  background-image: url(../assets/images/products/product-single-img-1.jpg);
-                "
-              >
-                <!-- img -->
-                <img
-                  src="../../static/assets/images/products/product-single-img-1.jpg"
-                  alt=""
-            >
-              </div>
-              <div>
-                <div
-                  class="zoom"
-                  onmousemove="zoom(event)"
-                  style="
-                    background-image: url(../assets/images/products/product-single-img-2.jpg);
-                  "
-                >
-                  <!-- img -->
-                  <img
-                    src="../../static/assets/images/products/product-single-img-2.jpg"
-                    alt=""
-              >
-                </div>
-              </div>
-              <div>
-                <div
-                  class="zoom"
-                  onmousemove="zoom(event)"
-                  style="
-                    background-image: url(../assets/images/products/product-single-img-3.jpg);
-                  "
-                >
-                  <!-- img -->
-                  <img
-                    src="../../static/assets/images/products/product-single-img-3.jpg"
-                    alt=""
-              >
-                </div>
-              </div>
-              <div>
-                <div
-                  class="zoom"
-                  onmousemove="zoom(event)"
-                  style="
-                    background-image: url(../assets/images/products/product-single-img-4.jpg);
-                  "
-                >
-                  <!-- img -->
-                  <img
-                    src="../../static/assets/images/products/product-single-img-4.jpg"
-                    alt=""
-              >
-                </div>
-              </div>
-            </div>
-            <!-- product tools -->
-            <div class="product-tools">
-              <div class="thumbnails row g-3" id="productModalThumbnails">
-                <div class="col-3 tns-nav-active">
-                  <div class="thumbnails-img">
-                    <!-- img -->
-                    <img
-                      src="../../static/assets/images/products/product-single-img-1.jpg"
-                      alt=""
-                >
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="thumbnails-img" >
-                    <!-- img -->
-                    <img
-                      src="../../static/assets/images/products/product-single-img-2.jpg"
-                      alt=""
-                >
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="thumbnails-img">
-                    <!-- img -->
-                    <img
-                      src="../../static/assets/images/products/product-single-img-3.jpg"
-                      alt=""
-                >
-                  </div>
-                </div>
-                <div class="col-3">
-                  <div class="thumbnails-img">
-                    <!-- img -->
-                    <img
-                      src="../../static/assets/images/products/product-single-img-4.jpg"
-                      alt=""
-                >
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="ps-lg-8 mt-6 mt-lg-0">
-              <a href="#!" class="mb-4 d-block">Bakery Biscuits</a>
-              <h2 class="mb-1 h1">Napolitanke Ljesnjak</h2>
-              <div class="mb-4">
-                <small class="text-warning">
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-fill"></i>
-                  <i class="bi bi-star-half"></i></small
-                ><a href="#" class="ms-2">(30 reviews)</a>
-              </div>
-              <div class="fs-4">
-                <span class="fw-bold text-dark">$32</span>
-                <span class="text-decoration-line-through text-muted">$35</span
-                ><span
-                  ><small class="fs-6 ms-2 text-danger">26% Off</small></span
-                >
-              </div>
-              <hr class="my-6">
-              <div class="mb-4">
-                <button type="button" class="btn btn-outline-secondary">
-                  250g
-                </button>
-                <button type="button" class="btn btn-outline-secondary">
-                  500g
-                </button>
-                <button type="button" class="btn btn-outline-secondary">
-                  1kg
-                </button>
-              </div>
-              <div>
-                <!-- input -->
-                <!-- input -->
-                <div class="input-group input-spinner  ">
-                  <input type="button" value="-" class="button-minus  btn  btn-sm " data-field="quantity">
-                  <input type="number" step="1" max="10" value="1" name="quantity" class="quantity-field form-control-sm form-input   ">
-                  <input type="button" value="+" class="button-plus btn btn-sm " data-field="quantity">
-                </div>
-              </div>
-              <div
-                class="mt-3 row justify-content-start g-2 align-items-center"
-              >
-
-                <div class="col-lg-4 col-md-5 col-6 d-grid">
-                  <!-- button -->
-                  <!-- btn -->
-                  <button type="button" class="btn btn-primary">
-                    <i class="feather-icon icon-shopping-bag me-2"></i>Add to
-                    cart
-                  </button>
-                </div>
-                <div class="col-md-4 col-5">
-                  <!-- btn -->
-                  <a
-                    class="btn btn-light"
-                    href="#"
-                    data-bs-toggle="tooltip"
-                    data-bs-html="true"
-                    aria-label="Compare"
-                    ><i class="bi bi-arrow-left-right"></i
-                  ></a>
-                  <a
-                    class="btn btn-light"
-                    href="#!"
-                    data-bs-toggle="tooltip"
-                    data-bs-html="true"
-                    aria-label="Wishlist"
-                    ><i class="feather-icon icon-heart"></i
-                  ></a>
-                </div>
-              </div>
-              <hr class="my-6">
-              <div>
-                <table class="table table-borderless">
-                  <tbody>
-                    <tr>
-                      <td>Product Code:</td>
-                      <td>FBB00255</td>
-                    </tr>
-                    <tr>
-                      <td>Availability:</td>
-                      <td>In Stock</td>
-                    </tr>
-                    <tr>
-                      <td>Type:</td>
-                      <td>Fruits</td>
-                    </tr>
-                    <tr>
-                      <td>Shipping:</td>
-                      <td>
-                        <small
-                          >01 day shipping.<span class="text-muted"
-                            >( Free pickup today)</span
-                          ></small
-                        >
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 
+  <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1820ddf0f285025d0105d85dfd07591c&libraries=services,clusterer,drawing"></script>
+  <script th:inline="javascript">
+    // 1. 서버에서 전달된 데이터를 JavaScript 변수에 저장
+    var restaurant = [[${restaurant}]];
 
+
+    // 2. 카카오 맵 초기화
+    var mapContainer = document.getElementById('map'); // 지도를 표시할 div
+    var mapOption = {
+      center: new kakao.maps.LatLng(37.5665, 126.9780), // 지도의 중심좌표 (서울 기준)
+      level: 10 // 지도의 확대 레벨
+    };
+    var map = new kakao.maps.Map(mapContainer, mapOption);
+
+    var imageSrc = 'https://kr.object.ncloudstorage.com/wannav/marker_img/restaurant.png', // 마커이미지의 주소입니다
+            imageSize = new kakao.maps.Size(40, 45), // 마커이미지의 크기입니다
+            imageOption = {offset: new kakao.maps.Point(27, 69)}; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+    var bounds = new kakao.maps.LatLngBounds();
+
+
+    var address = restaurant.address.roadAddress; // 도로명 주소
+    var restaurantName = restaurant.name; // 창고 이름
+
+    // 주소를 좌표로 변환하는 Geocoder
+    var geocoder = new kakao.maps.services.Geocoder();
+    // 주소를 좌표로 변환 후 마커 생성
+    geocoder.addressSearch(address, function(result, status) {
+      if (status === kakao.maps.services.Status.OK) {
+        var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize, imageOption)
+
+        var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+
+        // 마커 생성
+        var marker = new kakao.maps.Marker({
+          map: map,
+          position: coords,
+          image: markerImage
+        });
+
+        // 마커 범위 추가
+        bounds.extend(coords);
+
+        var content = `
+                  <div class ="label">
+                  <span class="left"></span>
+                  <span class="center" style="
+      padding:5px;
+      border-radius: 10px;
+      background-color: rgba(255, 255, 255, 0.9);
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+      text-align: center;
+      border: 2px solid black;
+    ">${restaurantName}</span>
+                  <span class="right"></span></div>`;
+
+
+// 커스텀 오버레이를 생성합니다
+        var customOverlay = new kakao.maps.CustomOverlay({
+          position: coords,
+          content: content
+        });
+
+// 커스텀 오버레이를 지도에 표시합니다
+        customOverlay.setMap(map);
+
+
+        // 마커 클릭 시 상세 페이지로 이동
+        kakao.maps.event.addListener(marker, 'click', function() {
+          window.location.href = '/restaurants/' + restaurant.id; // 상세 페이지 URL
+        });
+
+
+        // 마커가 지도 중심에 맞게 조정 (첫 번째 마커 기준)
+        // 마커를 모두 추가한 후에 중심을 맞춤
+        map.setBounds(bounds);
+      }
+    });
+
+  </script>
 </main>
 
 </html>
