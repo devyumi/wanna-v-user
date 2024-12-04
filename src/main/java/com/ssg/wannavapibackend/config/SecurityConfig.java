@@ -59,7 +59,8 @@ public class SecurityConfig {
                         "/points",
                         "/coupons",
                         "/reviews/**",
-                        "/carts/**",
+                        "/carts",
+                        "/api/**",
                         "/checkout/**",
                         "/my/**",
                         "/payment/**").authenticated()

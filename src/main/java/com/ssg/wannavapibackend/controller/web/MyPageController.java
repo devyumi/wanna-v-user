@@ -2,6 +2,7 @@ package com.ssg.wannavapibackend.controller.web;
 
 import com.ssg.wannavapibackend.dto.request.MyPageUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.MyReservationRequestDTO;
+import com.ssg.wannavapibackend.security.util.JWTUtil;
 import com.ssg.wannavapibackend.service.MyPageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,17 +23,18 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class MyPageController {
 
     private final MyPageService myPageService;
+    private final JWTUtil jwtUtil;
 
     @GetMapping("my")
     public String getMyPage(Model model) {
-        model.addAttribute("my", myPageService.findMyPage(1L));
+        model.addAttribute("my", myPageService.findMyPage(jwtUtil.getUserId()));
         return "user/mypage";
     }
 
     @GetMapping("my/edit")
     public String getMyPageEdit(Model model) {
-        model.addAttribute("myPageUpdateDTO", myPageService.findUserInfo(1L));
-        model.addAttribute("userInfo", myPageService.findUserInfo(1L));
+        model.addAttribute("myPageUpdateDTO", myPageService.findUserInfo(jwtUtil.getUserId()));
+        model.addAttribute("userInfo", myPageService.findUserInfo(jwtUtil.getUserId()));
         return "user/mypage-edit";
     }
 
@@ -40,17 +42,17 @@ public class MyPageController {
     public String postMyPageEdit(Model model, @ModelAttribute @Validated MyPageUpdateDTO myPageUpdateDTO, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             model.addAttribute("myPageUpdateDTO", myPageUpdateDTO);
-            model.addAttribute("userInfo", myPageService.findUserInfo(1L));
+            model.addAttribute("userInfo", myPageService.findUserInfo(jwtUtil.getUserId()));
             printErrorLog(bindingResult);
             return "user/mypage-edit";
         }
-        myPageService.updateMyPage(1L, myPageUpdateDTO);
+        myPageService.updateMyPage(jwtUtil.getUserId(), myPageUpdateDTO);
         return "redirect:/my";
     }
 
     @GetMapping("reservations")
     public String getMyReservations(MyReservationRequestDTO myReservationRequestDTO, Model model) {
-        model.addAttribute("myReservation", myPageService.findMyReservations(1L, myReservationRequestDTO));
+        model.addAttribute("myReservation", myPageService.findMyReservations(jwtUtil.getUserId(), myReservationRequestDTO));
         return "user/my-reservation";
     }
 
@@ -77,13 +79,13 @@ public class MyPageController {
 
     @GetMapping("likes")
     public String getMyLikes(Model model) {
-        model.addAttribute("myLikes", myPageService.findMyLikes(1L));
+        model.addAttribute("myLikes", myPageService.findMyLikes(jwtUtil.getUserId()));
         return "user/my-likes";
     }
 
     @GetMapping("orders")
     public String getMyOrders(Model model) {
-        model.addAttribute("myOrders", myPageService.findMyOrders(1L));
+        model.addAttribute("myOrders", myPageService.findMyOrders(jwtUtil.getUserId()));
         return "user/my-order";
     }
 
@@ -98,21 +100,21 @@ public class MyPageController {
 
     @GetMapping("points")
     public String getMyPoints(Model model) {
-        model.addAttribute("myPoints", myPageService.findMyPoints(1L));
-        model.addAttribute("sum", myPageService.findUserInfo(1L));
+        model.addAttribute("myPoints", myPageService.findMyPoints(jwtUtil.getUserId()));
+        model.addAttribute("sum", myPageService.findUserInfo(jwtUtil.getUserId()));
         return "user/my-point";
     }
 
     @GetMapping("coupons")
     public String getMyCoupons(Model model) {
-        model.addAttribute("myCoupons", myPageService.findMyCoupons(1L));
+        model.addAttribute("myCoupons", myPageService.findMyCoupons(jwtUtil.getUserId()));
         return "user/my-coupon";
     }
 
     @GetMapping("reviews")
     public String getMyReviews(Model model) {
-        model.addAttribute("myReviews", myPageService.findMyReviews(1L));
-        model.addAttribute("reviewSum", myPageService.findMyPage(1L).getReviewCount());
+        model.addAttribute("myReviews", myPageService.findMyReviews(jwtUtil.getUserId()));
+        model.addAttribute("reviewSum", myPageService.findMyPage(jwtUtil.getUserId()).getReviewCount());
         return "user/my-review";
     }
 

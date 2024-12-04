@@ -1,8 +1,10 @@
 package com.ssg.wannavapibackend.controller.api;
 
+import com.ssg.wannavapibackend.domain.Cart;
 import com.ssg.wannavapibackend.dto.request.CartItemQuantityUpdateDTO;
 import com.ssg.wannavapibackend.dto.request.CartRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CartResponseDTO;
+import com.ssg.wannavapibackend.security.util.JWTUtil;
 import com.ssg.wannavapibackend.service.CartService;
 import jakarta.validation.Valid;
 import java.util.HashMap;
@@ -28,12 +30,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class CartRestController {
 
     private final CartService cartService;
-    final Long userId = 1L; // Security 적용 후 삭제 예정
+    private final JWTUtil jwtUtil;
 
     @PostMapping()
     public ResponseEntity<Map<String, String>> addCartItem(
         @RequestBody @Valid CartRequestDTO requestDTO) {
-        cartService.addCartItem(userId, requestDTO);
+        cartService.addCartItem(jwtUtil.getUserId(), requestDTO);
 
         Map<String, String> response = new HashMap<>();
         response.put("status", "success");
@@ -43,9 +45,12 @@ public class CartRestController {
 
     @GetMapping("/list")
     public ResponseEntity<Map<String, Object>> getCartItemList() {
+        log.info("ID: " + jwtUtil.getUserId());
+        List<CartResponseDTO> cartItems = cartService.getCartItemList(jwtUtil.getUserId());
 
-        List<CartResponseDTO> cartItems = cartService.getCartItemList(userId);
-
+        for (CartResponseDTO cart : cartItems) {
+            log.info("cart2222\n" + cart.toString());
+        }
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
         response.put("data", cartItems);
