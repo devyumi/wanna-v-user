@@ -45,12 +45,8 @@ public class CartRestController {
 
     @GetMapping("/list")
     public ResponseEntity<Map<String, Object>> getCartItemList() {
-        log.info("ID: " + jwtUtil.getUserId());
         List<CartResponseDTO> cartItems = cartService.getCartItemList(jwtUtil.getUserId());
 
-        for (CartResponseDTO cart : cartItems) {
-            log.info("cart2222\n" + cart.toString());
-        }
         Map<String, Object> response = new HashMap<>();
         response.put("status", "success");
         response.put("data", cartItems);

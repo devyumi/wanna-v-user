@@ -90,9 +90,7 @@ public class CartServiceImpl implements CartService {
     public List<CartResponseDTO> getCartItemList(Long userId) {
         List<Cart> cartList = cartRepository.findAllByUserId(userId,
             Sort.by(Sort.Order.desc("id")));
-        for (Cart cart : cartList) {
-            log.info("cart1111\n" + cart.toString());
-        }
+
         if (cartList.isEmpty()) {
             throw new CustomException(ErrorCode.CART_ITEM_NOT_FOUND);
         }
