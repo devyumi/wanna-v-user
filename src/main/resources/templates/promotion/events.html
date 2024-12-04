@@ -13,7 +13,7 @@
 <body>
 <main layout:fragment="main-content" th:class="container">
     <div th:each="event : ${eventList}">
-      <a th:href="@{/event/{eventId}(eventId=${event.eventId})}" class="card mb-3">
+      <a th:href="@{/promotion/{eventId}(eventId=${event.eventId})}" class="card mb-3">
         <span th:if="${T(java.time.LocalDate).now().isBefore(event.endDate)}"
             class="badge text-bg-success" style="width: 15%; margin-bottom: 5px">진행중</span>
         <span th:if="${T(java.time.LocalDate).now().isEqual(event.endDate) || T(java.time.LocalDate).now().isAfter(event.endDate)}"
