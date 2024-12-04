@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.controller.api;
 
+import com.ssg.wannavapibackend.security.util.JWTUtil;
 import com.ssg.wannavapibackend.service.ChatbotService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -11,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/v1/chatbot")
 public class ChatbotRestController {
 
     private final ChatbotService chatbotService;
-    final Long userId = 1L; // Security 적용 후 삭제 예정
+    private final JWTUtil jwtUtil;
 
     @PostMapping("/send-message")
     public String sendMessage(@RequestBody String requestMessage) {
-        return chatbotService.sendMessage(userId, requestMessage);
+        return chatbotService.sendMessage(jwtUtil.getUserId(), requestMessage);
     }
 }

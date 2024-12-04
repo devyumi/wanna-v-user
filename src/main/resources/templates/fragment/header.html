@@ -38,7 +38,7 @@
                 <div class="list-inline me-4">
                   <!--하트 이모티콘-->
                   <div class="list-inline-item">
-                    <a href="/likes" th:href="@{/pages/shop-wishlist.html}"
+                    <a href="/likes"
                        class="text-muted position-relative">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                            viewBox="0 0 24 24" fill="none"
@@ -54,8 +54,7 @@
 
                   <!-- 사람 이모티콘 -->
                   <div class="list-inline-item">
-                    <a href="/my" class="text-muted" data-bs-toggle="modal"
-                       data-bs-target="#userModal">
+                     <a class="text-muted position-relative" href="/my">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                            viewBox="0 0 24 24" fill="none"
                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -117,7 +116,7 @@
             <div class="list-inline">
               <!--찜 목록 하트 버튼 , 이것도 모바일 데스크탑 UI 공통-->
               <div class="list-inline-item">
-                <a href="/likes" th:href="@{/pages/shop-wishlist.html}"
+                <a href="/likes"
                    class="text-muted position-relative">
 
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
@@ -135,7 +134,7 @@
               <!--마이페이지 버튼 , 모바일 데스크탑 UI 공통-->
               <div class="list-inline-item">
 
-                <a href="/my" class="text-muted" data-bs-toggle="modal" data-bs-target="#userModal">
+                <a class="text-muted position-relative" href="/my">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
                        fill="none"
                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -204,7 +203,7 @@
           </li>
 
           <li class="nav-item desktop-header-nav-item">
-            <a class="nav-link" href="/events" role="button">이벤트</a>
+            <a class="nav-link" href="/promotion/events" role="button">이벤트</a>
           </li>
         </ul>
 
@@ -225,7 +224,7 @@
           </li>
 
           <li class="nav-item mobile-header-nav-item">
-            <a class="nav-link" href="/events" role="button">이벤트</a>
+            <a class="nav-link" href="/promotion/events" role="button">이벤트</a>
           </li>
         </ul>
       </div>

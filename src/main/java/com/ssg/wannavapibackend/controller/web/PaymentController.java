@@ -6,6 +6,7 @@ import com.ssg.wannavapibackend.dto.request.ReservationRequestDTO;
 import com.ssg.wannavapibackend.dto.response.CheckoutResponseDTO;
 import com.ssg.wannavapibackend.dto.response.ReservationPaymentResponseDTO;
 import com.ssg.wannavapibackend.facade.CheckoutFacade;
+import com.ssg.wannavapibackend.security.util.JWTUtil;
 import com.ssg.wannavapibackend.service.ReservationService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -23,7 +24,7 @@ public class PaymentController {
 
     private final CheckoutFacade checkoutFacade;
     private final ReservationService reservationService;
-    final Long userId = 1L; // Security 적용 후 삭제 예정
+    private final JWTUtil jwtUtil;
 
     /**
      * (상품 페이지 OR 장바구니 페이지) 에서 결제 이동 시, 상품 정보를 세션으로 전달하기 위한 메서드
@@ -33,7 +34,7 @@ public class PaymentController {
             @RequestBody ProductCheckoutRequestDTO checkoutRequestDTO,
             HttpSession session) {
 
-        CheckoutResponseDTO responseDTO = checkoutFacade.processCheckout(userId,
+        CheckoutResponseDTO responseDTO = checkoutFacade.processCheckout(jwtUtil.getUserId(),
                 checkoutRequestDTO);
         session.setAttribute("pageInitData", responseDTO);
 

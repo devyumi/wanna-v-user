@@ -132,7 +132,6 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
                     dynamicQuery.orderBy(review.count().desc().nullsLast()); //리뷰 많은 순
                     break;
             }
-            System.out.println("11111");
         }
 //      sortConditions.clear();
     }

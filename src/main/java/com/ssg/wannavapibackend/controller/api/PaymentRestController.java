@@ -4,6 +4,7 @@ import com.ssg.wannavapibackend.common.Status;
 import com.ssg.wannavapibackend.dto.request.PaymentConfirmRequestDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentConfirmResponseDTO;
 import com.ssg.wannavapibackend.dto.response.PaymentResponseDTO;
+import com.ssg.wannavapibackend.security.util.JWTUtil;
 import com.ssg.wannavapibackend.service.PaymentService;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaymentRestController {
 
     private final PaymentService paymentService;
-    final Long userId = 1L; // Security 적용 후 삭제 예정
+    private final JWTUtil jwtUtil;
 
     @PostMapping("/generate-order-id")
     public ResponseEntity<Map<String, Object>> generateOrderId() {
@@ -43,7 +44,7 @@ public class PaymentRestController {
         PaymentConfirmResponseDTO responseDTO;
 
         if(requestDTO.getPaymentItemRequestDTO().getRestaurantId() == null)
-            responseDTO = paymentService.sendRequest(userId, requestDTO);
+            responseDTO = paymentService.sendRequest(jwtUtil.getUserId(), requestDTO);
         else
             responseDTO = paymentService.sendRequestReservationPayment(requestDTO);
 

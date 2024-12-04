@@ -3,13 +3,13 @@ import {formatPrice, formatPriceElements} from "/js/common/format.js";
 /**
  * 결제 페이지 초기 배송지
  */
-const userName = pageInitData.name;
-const phone = pageInitData.phone.replace(/-/g, '');
-let zipCode = pageInitData.address.zipCode || '';
-let roadAddress = pageInitData.address.roadAddress || '';
-let landLotAddress = pageInitData.address.landLotAddress || '';
-let detailAddress = pageInitData.address.detailAddress || '';
-let userEmail = pageInitData.email;
+const userName = pageInitData.name === null ? '' : pageInitData.name;
+const phone = pageInitData.phone === null ? '' : pageInitData.phone.replace(/-/g, '');
+let zipCode = pageInitData.address.zipCode === null ? '' : pageInitData.address.zipCode;
+let roadAddress = pageInitData.address.roadAddress === null ? '' : pageInitData.address.roadAddress;
+let landLotAddress = pageInitData.address.landLotAddress === null ? '' : pageInitData.address.landLotAddress;
+let detailAddress = pageInitData.address.detailAddress === null ? '' : pageInitData.address.detailAddress;
+let userEmail = pageInitData.email === null ? '' : pageInitData.email;
 
 document.getElementById('name-type').value = userName;
 document.getElementById('phone-type').value = phone;
