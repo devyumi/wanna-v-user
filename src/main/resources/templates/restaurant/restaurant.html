@@ -3,12 +3,27 @@
 
 
 <main>
+
   <main>
 
-    <!-- 상위 카테고리 표시 영역 Home / 식당 / 음 이터리 -->
+    <!-- 상위 카테고리 표시 영역 Home / 식당 / 오 이터리 이런 느낌-->
   <div class="mt-4">
     <div class="container">
+      <!-- row -->
+      <div class="row ">
+        <!-- col -->
+        <div class="col-12">
+          <!-- breadcrumb -->
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+              <li class="breadcrumb-item"><a href="#"></a></li>
+              <li class="breadcrumb-item"><a href="#"></a></li>
 
+              <li class="breadcrumb-item active" aria-current="page"></li>
+            </ol>
+          </nav>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -105,13 +120,17 @@
 
               <div class="col-xxl-4 col-lg-4 col-md-5 col-5 d-grid d-flex justify-content-start" style="width:100%">
                 <!-- button -->
-                <!-- btn --> <button type="button" class="btn btn-primary col-11 clear-button"  data-bs-toggle="modal" href="#exampleModalToggle"><i class="feather-icon icon-shopping-bag me-2"></i>예약하기</button>
+                <!-- btn --> <button type="button" th:onclick="|location.href='@{/restaurants/{restaurantId}/reservation(restaurantId = ${restaurant.id})}'|" class="btn btn-primary col-11 clear-button"  data-bs-toggle="modal" href="#exampleModalToggle"><i class="feather-icon icon-shopping-bag me-2"></i>예약하기</button>
 
                     <a class="btn btn-light col-1" href="../pages/shop-wishlist.html" th:href="@{/restaurants/{id}(id = ${restaurant.id})}" data-bs-toggle="tooltip" data-bs-html="true" aria-label="Wishlist">
                       <i class="feather-icon icon-heart"></i>
                     </a>
 
+
+
               </div>
+
+
 
             </div>
             <!-- hr -->
@@ -349,8 +368,8 @@
             <div class="card-body " >
               <!-- badge -->
               <div class="text-center position-relative ">
-                <a th:href="@{/restaurants/{id}(id = ${similarRestaurant.id})}"  ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}" style="width:50rem;height:20rem" class="mb-3 img-fluid d-none d-lg-block"></a>
-                <a th:href="@{/restaurants/{id}(id = ${similarRestaurant.id})}" ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}"  style="width:50rem;height:9rem" class="mb-3 img-fluid d-block d-lg-none"></a>
+                <a href="/restaurants/1" ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}" style="width:50rem;height:20rem" class="mb-3 img-fluid d-none d-lg-block"></a>
+                <a href="/restaurants/1" ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}"  style="width:50rem;height:9rem" class="mb-3 img-fluid d-block d-lg-none"></a>
               </div>
 
               <!-- 식당 이름 및 분류-->
@@ -373,6 +392,206 @@
 
 </main>
 
+  <!-- modal -->
+  <!-- Modal -->
+<div class="modal fade" id="quickViewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-body p-8">
+        <div class="position-absolute top-0 end-0 me-3 mt-3">
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <!-- img slide -->
+            <div class="product productModal" id="productModal">
+              <div
+                class="zoom"
+                onmousemove="zoom(event)"
+                style="
+                "
+              >
+                <!-- img -->
+
+              </div>
+              <div>
+                <div
+                  class="zoom"
+                  onmousemove="zoom(event)"
+                  style="
+                  "
+                >
+                  <!-- img -->
+
+                </div>
+              </div>
+              <div>
+                <div
+                  class="zoom"
+                  onmousemove="zoom(event)"
+                  style="
+                  "
+                >
+                  <!-- img -->
+
+                </div>
+              </div>
+              <div>
+                <div
+                  class="zoom"
+                  onmousemove="zoom(event)"
+                  style="
+                  "
+                >
+                  <!-- img -->
+
+                </div>
+              </div>
+            </div>
+            <!-- product tools -->
+            <div class="product-tools">
+              <div class="thumbnails row g-3" id="productModalThumbnails">
+                <div class="col-3 tns-nav-active">
+                  <div class="thumbnails-img">
+                    <!-- img -->
+
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="thumbnails-img" >
+                    <!-- img -->
+
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="thumbnails-img">
+                    <!-- img -->
+
+                  </div>
+                </div>
+                <div class="col-3">
+                  <div class="thumbnails-img">
+                    <!-- img -->
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="ps-lg-8 mt-6 mt-lg-0">
+              <a href="#!" class="mb-4 d-block">Bakery Biscuits</a>
+              <h2 class="mb-1 h1">Napolitanke Ljesnjak</h2>
+              <div class="mb-4">
+                <small class="text-warning">
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-fill"></i>
+                  <i class="bi bi-star-half"></i></small
+                ><a href="#" class="ms-2">(30 reviews)</a>
+              </div>
+              <div class="fs-4">
+                <span class="fw-bold text-dark">$32</span>
+                <span class="text-decoration-line-through text-muted">$35</span
+                ><span
+                  ><small class="fs-6 ms-2 text-danger">26% Off</small></span
+                >
+              </div>
+              <hr class="my-6">
+              <div class="mb-4">
+                <button type="button" class="btn btn-outline-secondary">
+                  250g
+                </button>
+                <button type="button" class="btn btn-outline-secondary">
+                  500g
+                </button>
+                <button type="button" class="btn btn-outline-secondary">
+                  1kg
+                </button>
+              </div>
+              <div>
+                <!-- input -->
+                <!-- input -->
+                <div class="input-group input-spinner  ">
+                  <input type="button" value="-" class="button-minus  btn  btn-sm " data-field="quantity">
+                  <input type="number" step="1" max="10" value="1" name="quantity" class="quantity-field form-control-sm form-input   ">
+                  <input type="button" value="+" class="button-plus btn btn-sm " data-field="quantity">
+                </div>
+              </div>
+              <div
+                class="mt-3 row justify-content-start g-2 align-items-center"
+              >
+
+                <div class="col-lg-4 col-md-5 col-6 d-grid">
+                  <!-- button -->
+                  <!-- btn -->
+                  <button type="button" class="btn btn-primary">
+                    <i class="feather-icon icon-shopping-bag me-2"></i>Add to
+                    cart
+                  </button>
+                </div>
+                <div class="col-md-4 col-5">
+                  <!-- btn -->
+                  <a
+                    class="btn btn-light"
+                    href="#"
+                    data-bs-toggle="tooltip"
+                    data-bs-html="true"
+                    aria-label="Compare"
+                    ><i class="bi bi-arrow-left-right"></i
+                  ></a>
+                  <a
+                    class="btn btn-light"
+                    href="#!"
+                    data-bs-toggle="tooltip"
+                    data-bs-html="true"
+                    aria-label="Wishlist"
+                    ><i class="feather-icon icon-heart"></i
+                  ></a>
+                </div>
+              </div>
+              <hr class="my-6">
+              <div>
+                <table class="table table-borderless">
+                  <tbody>
+                    <tr>
+                      <td>Product Code:</td>
+                      <td>FBB00255</td>
+                    </tr>
+                    <tr>
+                      <td>Availability:</td>
+                      <td>In Stock</td>
+                    </tr>
+                    <tr>
+                      <td>Type:</td>
+                      <td>Fruits</td>
+                    </tr>
+                    <tr>
+                      <td>Shipping:</td>
+                      <td>
+                        <small
+                          >01 day shipping.<span class="text-muted"
+                            >( Free pickup today)</span
+                          ></small
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1820ddf0f285025d0105d85dfd07591c&libraries=services,clusterer,drawing"></script>

@@ -89,8 +89,8 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
         .join(restaurant.foods, food)
         .leftJoin(restaurant.likes , likes)
         .where(whereBuilder, eqCanPark(canPark), eqIsOpen(isOpen),
-                likeRoadAddress(roadAddress), mergeRestaurantRegionNameSearch(search))
-        .groupBy(restaurant) //restaurant.id로 해도 되고 restaurant로 해도 되는듯 ㅇㅇ 그냥 restaurant로 그루핑이 됨 ㅇㅇ
+                likeSimilarRoadAddress(roadAddress), mergeRestaurantRegionNameSearch(search))
+        .groupBy(restaurant)
         .having(havingBuilder, loeGoePrice(startPrice, endPrice));
     addOrderBy(sortConditions, dynamicQuery);
 
@@ -112,6 +112,9 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     return restaurantNameCondition!= null && regionNameCondition!=null ?  restaurantNameCondition.or(regionNameCondition) : null;
   }
 
+  private BooleanExpression likeRoadAddress(String roadAddress){
+    return StringUtils.hasText(roadAddress) ? restaurant.address.roadAddress.like("%"+roadAddress+"%") : null;
+  }
 
   public List<Restaurant> findAllAdmin(RestaurantAdminSearchCond restaurantAdminSearchCond) {
     //where
@@ -191,6 +194,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     }
     String[] split = roadAddress.split(" ");
     String similarAddress = split[0]+" "+split[1]+"%";
+    System.out.println("similarAddress = " + similarAddress);
     return restaurant.address.roadAddress.like(similarAddress);
   }
 
@@ -309,10 +313,7 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
 
 
-  //어느 지역을 검색하든 지역과 유사한 모든 식당들 다 가져옴 심지어 필터링도 걸 수 있음 !! ㄱㅇㄷ
-  private BooleanExpression likeRoadAddress(String roadAddress){
-    return StringUtils.hasText(roadAddress) ? restaurant.address.roadAddress.like("%"+roadAddress+"%") : null;
-  }
+
 
   private BooleanExpression eqIsOpen(Boolean isOpen) {
     return Boolean.TRUE.equals(isOpen) ? restaurant.businessStatus.eq(BusinessStatus.OPEN) : null; //영업 중인지 판별 , 누군가 체크박스에 영업 중 여부를 체크했을 경우 영업 중만 뜨게끔 조건 추가하는 것!

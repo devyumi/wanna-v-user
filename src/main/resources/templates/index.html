@@ -23,7 +23,7 @@
             </div>
           </div>
 
-          <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider2.png)no-repeat; background-size: cover; border-radius: .5rem; background-position: center;">
+          <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider1.png)no-repeat; background-size: cover; border-radius: .5rem; background-position: center;">
             <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-18">
             </div>
           </div>
@@ -45,43 +45,33 @@
     <section class="mt-8 d-block d-lg-none">
       <div class="container">
         <div class="hero-slider">
-          <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider1.png)no-repeat; background-size: cover; border-radius: .5rem; background-position: center;">
-            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center" >
-              <br>
-              <br>
-              <br>
-              <br>
-              <br>
-              <br>
-              <br>
-              <br>
-              <br>
-              <br>
+          <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider1.png)no-repeat; background-size: contain; border-radius: .5rem; background-position: center;">
+            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-10" >
             </div>
           </div>
 
           <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider2.png)no-repeat; background-size: contain; border-radius: .5rem; background-position: center;">
-            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-18">
+            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-10">
             </div>
           </div>
 
           <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/%EB%8B%A8%EB%9D%BD%20%ED%85%8D%EC%8A%A4%ED%8A%B8.png)no-repeat; background-size: contain; border-radius: .5rem; background-position: center;">
-            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-18">
+            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-14">
+            </div>
+          </div>
+
+          <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider1.png)no-repeat; background-size: contain; border-radius: .5rem; background-position: center;">
+            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-10">
             </div>
           </div>
 
           <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider2.png)no-repeat; background-size: contain; border-radius: .5rem; background-position: center;">
-            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-18">
-            </div>
-          </div>
-
-          <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/real-slider2.png)no-repeat; background-size: contain; border-radius: .5rem; background-position: center;">
-            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-18">
+            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-10">
             </div>
           </div>
 
           <div style="background: url(https://kr.object.ncloudstorage.com/wannav/banner_img/%EB%8B%A8%EB%9D%BD%20%ED%85%8D%EC%8A%A4%ED%8A%B8.png)no-repeat; background-size: contain; border-radius: .5rem; background-position: center;">
-            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-18">
+            <div class="ps-lg-12 py-lg-16 col-xxl-5 col-md-7 py-14 px-8 text-xs-center mb-14">
             </div>
           </div>
         </div>
@@ -99,6 +89,8 @@
           </div>
         </div>
 
+        <!-- "현재 위치 갱신" 버튼 -->
+        <button type="button" onclick="updateLocation()">현재 위치 갱신</button>
         <div class="category-slider ">
 
           <div class="item mt-5"  th:each="currentLocationPopularRestaurant : ${currentLocationPopularRestaurants}">
@@ -575,49 +567,60 @@
   </main>
 
 
-  <!--<form th:action method="get" id="locationForm">
-    &lt;!&ndash; 도로명 주소 값을 저장할 hidden input &ndash;&gt;
-    <input type="hidden" name="address" id="addressInput">
-  </form>-->
+
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=1820ddf0f285025d0105d85dfd07591c&libraries=services,clusterer,drawing"></script>
   <script th:inline="javascript">
-    /* Kakao Maps API의 Geocoder 객체 생성 */
+    // Kakao Maps API 초기화
     const geocoder = new kakao.maps.services.Geocoder();
 
-    /* 현재 위치를 가져와 도로명 주소로 변환 후 서버에 전송 */
-    document.addEventListener('DOMContentLoaded', function () {
+    // "현재 위치 갱신" 버튼 클릭 시 호출될 함수
+    function updateLocation() {
+      // 현재 위치 가져오기
       navigator.geolocation.getCurrentPosition(
               function (position) {
                 const latitude = position.coords.latitude;
                 const longitude = position.coords.longitude;
 
-                // Kakao Maps API를 사용하여 좌표를 도로명 주소로 변환
+                // Kakao Maps API를 사용해 좌표를 도로명 주소로 변환
                 geocoder.coord2Address(longitude, latitude, function (result, status) {
                   if (status === kakao.maps.services.Status.OK) {
+                    // 도로명 주소 가져오기
                     const roadAddress = result[0].road_address
                             ? result[0].road_address.address_name
-                            : 'Unknown address';
-                    console.log('Road Address:', roadAddress);
+                            : '주소를 가져올 수 없습니다.';
 
-                    // 서버로 도로명 주소 전송 (Axios 사용)
-                    axios.get(`/?address=${roadAddress}`)
+                    console.log('현재 위치 도로명 주소:', roadAddress);
+
+                    // 서버로 도로명 주소 전송
+                    fetch(`?address=${encodeURIComponent(roadAddress)}`, {
+                      method: 'GET',
+                      headers: {
+                        'Content-Type': 'application/json'
+                      }
+                    })
                             .then(response => {
-                              console.log("주소 전송 성공:", response.data);
+                              if (response.ok) {
+                                console.log('현재 위치의 도로명 주소가 서버로 성공적으로 전달되었습니다.');
+                                // 서버로부터 식당 목록 데이터를 받아 메인 페이지가 다시 랜더링됩니다.
+                                window.location.reload(); // 새로고침하여 식당 목록 업데이트
+                              } else {
+                                console.error('서버와의 통신에 실패했습니다.');
+                              }
                             })
                             .catch(error => {
-                              console.error("주소 전송 중 오류:", error);
+                              console.error('에러 발생:', error);
                             });
                   } else {
-                    alert('도로명 주소를 가져오는데 실패했습니다.');
+                    alert('도로명 주소를 가져오는 데 실패했습니다.');
                   }
                 });
               },
               function (error) {
-                alert('현재 위치를 가져오는데 실패했습니다. ' + error.message);
+                alert('현재 위치를 가져오는 데 실패했습니다: ' + error.message);
               }
       );
-    });
+    }
   </script>
 
 </main>

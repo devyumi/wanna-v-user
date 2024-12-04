@@ -51,11 +51,13 @@ public class HelloController {
    * 현재 위치 기준 인기 식당 , 일단 보류
    */
   private List<Restaurant> getPopularRestaurantsByCurrentLocation(String currentLocationRoadAddress) {
+    System.out.println("currentLocationRoadAddress = " + currentLocationRoadAddress);
     RestaurantSearchCond currentLocationRestaurantCond = new RestaurantSearchCond();
     currentLocationRestaurantCond.setRoadAddress(currentLocationRoadAddress);
     currentLocationRestaurantCond.setSortConditions(Arrays.asList("LIKE" , "RATE" , "REVIEW"));
-    List<Restaurant> popularRestaurants = restaurantService.findRestaurants(currentLocationRestaurantCond , null)
-        .stream().limit(8).toList();
+    List<Restaurant> popularRestaurants = restaurantService.findRestaurants(currentLocationRestaurantCond, null)
+            .stream().limit(8).toList();
+    System.out.println("popularRestaurants = " + popularRestaurants);
     return popularRestaurants;
   }
 
