@@ -1,29 +1,14 @@
 <!DOCTYPE html>
-<html th:replace="~{fragment/layout.html :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
+<html th:replace="~{fragment/layout_v1.html :: layout(~{::main})}" xmlns:th="http://www.thymeleaf.org">
 
 
 <main>
-
   <main>
 
     <!-- 상위 카테고리 표시 영역 Home / 식당 / 음 이터리 -->
   <div class="mt-4">
     <div class="container">
-      <!-- row -->
-      <div class="row ">
-        <!-- col -->
-        <div class="col-12">
-          <!-- breadcrumb -->
-          <nav aria-label="breadcrumb">
-            <ol class="breadcrumb mb-0">
-              <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item"><a href="#">Bakery Biscuits</a></li>
 
-              <li class="breadcrumb-item active" aria-current="page">Napolitanke Ljesnjak</li>
-            </ol>
-          </nav>
-        </div>
-      </div>
     </div>
   </div>
 
@@ -364,8 +349,8 @@
             <div class="card-body " >
               <!-- badge -->
               <div class="text-center position-relative ">
-                <a href="/restaurants/1" ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}" style="width:50rem;height:20rem" class="mb-3 img-fluid d-none d-lg-block"></a>
-                <a href="/restaurants/1" ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}"  style="width:50rem;height:9rem" class="mb-3 img-fluid d-block d-lg-none"></a>
+                <a th:href="@{/restaurants/{id}(id = ${similarRestaurant.id})}"  ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}" style="width:50rem;height:20rem" class="mb-3 img-fluid d-none d-lg-block"></a>
+                <a th:href="@{/restaurants/{id}(id = ${similarRestaurant.id})}" ><img src="/assets/images/restaurant/dliea/place1.jpg" th:src="@{${similarRestaurant.restaurantImages[0]}}"  style="width:50rem;height:9rem" class="mb-3 img-fluid d-block d-lg-none"></a>
               </div>
 
               <!-- 식당 이름 및 분류-->

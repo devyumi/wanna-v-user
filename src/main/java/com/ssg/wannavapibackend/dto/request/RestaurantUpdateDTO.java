@@ -15,7 +15,6 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
 public class RestaurantUpdateDTO {
   private Long id;
   private String restaurantName;
