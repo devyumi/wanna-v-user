@@ -61,7 +61,6 @@ public class SecurityConfig {
                         "/reviews/**",
                         "/carts/**",
                         "/checkout/**",
-                        "/restaurants/**",
                         "/my/**",
                         "/payment/**").authenticated()
                 .anyRequest().permitAll()
