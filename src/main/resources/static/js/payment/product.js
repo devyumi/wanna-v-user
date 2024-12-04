@@ -3,8 +3,6 @@ import {formatPrice, formatPriceElements} from "/js/common/format.js";
 /**
  * 결제 페이지 초기 배송지
  */
-console.log('pageInitData: ' + JSON.stringify(pageInitData))
-console.log('pageInitData.address: ' + JSON.stringify(pageInitData.address))
 const userName = pageInitData.name === null ? '' : pageInitData.name;
 const phone = pageInitData.phone === null ? '' : pageInitData.phone.replace(/-/g, '');
 let zipCode = pageInitData.address.zipCode === null ? '' : pageInitData.address.zipCode;
