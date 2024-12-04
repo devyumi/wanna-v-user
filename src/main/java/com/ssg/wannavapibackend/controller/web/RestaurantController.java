@@ -1,7 +1,8 @@
 package com.ssg.wannavapibackend.controller.web;
 
-
 import com.ssg.wannavapibackend.common.*;
+import com.ssg.wannavapibackend.domain.BusinessDay;
+import com.ssg.wannavapibackend.domain.Food;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.domain.Review;
 import com.ssg.wannavapibackend.dto.request.*;
@@ -16,10 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalTime;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -34,6 +33,7 @@ public class RestaurantController {
 
   private final RestaurantService restaurantService;
   private final FileService fileService;
+
 
   @ModelAttribute("containFoodTypes")
   public ContainFoodType[] containFoodTypes() {
@@ -87,11 +87,30 @@ public class RestaurantController {
   }
 
 
+  @ModelAttribute("adminSortConditions")
+  public Map<String , String> adminSortConditions(){
+    Map<String, String> adminSortConditions = new HashMap<>();
+    adminSortConditions.put("NEW", "최신 순");
+    adminSortConditions.put("REGISTER", "등록 순");
+    return adminSortConditions;
+  }
+
+
+  /*@ModelAttribute("regionsSeoul")
+  public List<String> regions(){
+    List<String> regions = new ArrayList<>();
+    regions.add("경기 수원시");
+
+  }*/
+
+
   //restaurant
   @GetMapping("restaurants")
   public String getRestaurants(@ModelAttribute("restaurantSearchCond") RestaurantSearchCond restaurantSearchCond,
+                               @RequestParam(value = "search" , required = false) String search,
                                Model model) {
-    List<Restaurant> restaurants = restaurantService.findRestaurants(restaurantSearchCond);
+    List<Restaurant> restaurants = restaurantService.findRestaurants(restaurantSearchCond, search);
+    System.out.println("restaurants = " + restaurants);
     model.addAttribute("restaurants", restaurants);
     return "restaurant/restaurants";
   }
@@ -113,74 +132,6 @@ public class RestaurantController {
     return "restaurant/restaurant";
   }
 
-
-  @GetMapping("/admin-restaurants/save")
-  public String saveRestaurant(Model model) {
-    model.addAttribute("restaurantSaveDto", new RestaurantSaveDTO());
-    return "restaurant/admin-saveForm";
-  }
-
-  @PostMapping("/admin-restaurants/save")
-  @ResponseBody
-  public String saveRestaurantPost(@ModelAttribute("restaurantSaveDto") RestaurantSaveDTO restaurantSaveDto, RedirectAttributes redirectAttributes) {
-    log.info("restaurant = {}" , restaurantSaveDto.getRestaurantImages());
-    log.info("food = {}", restaurantSaveDto.getFoodSaveDtoList());
-
-
-    List<MultipartFile> restaurantImages = restaurantSaveDto.getRestaurantImages();
-    List<MultipartFile> foodImages = new ArrayList<>();
-    List<FoodSaveDTO> foodSaveDtoList = restaurantSaveDto.getFoodSaveDtoList();
-    for (FoodSaveDTO foodSaveDto : foodSaveDtoList) {
-      foodImages.add(foodSaveDto.getFoodImage());
-    }
-
-    /**
-     * 식당 스토리지 저장 + DB에 스토리지 Url 저장
-     */
-    List<FileDTO> restaurantImagesFileDto = fileService.uploadFiles(restaurantImages, restaurantDir);
-    List<String> restaurantImagesUrl = restaurantImagesFileDto.stream().map(FileDTO::getUploadFileUrl).toList();
-    restaurantSaveDto.setRestaurantImagesUrl(restaurantImagesUrl);
-
-    /**
-     * 음식 스토리지 저장 + DB에 스토리지 Url 저장
-     */
-    List<FileDTO> foodImagesFileDto = fileService.uploadFiles(foodImages, foodDir);
-    List<String> foodImagesUrl = foodImagesFileDto.stream().map(FileDTO::getUploadFileUrl).toList();
-    for (String foodImageUrl : foodImagesUrl) {
-      foodSaveDtoList.forEach(foodSaveDto -> {
-        foodSaveDto.setFoodImageUrl(foodImageUrl);
-      });
-    };
-
-    log.info("restaurantSaveDto = {}" , restaurantSaveDto);
-    log.info("foodSaveDtoList = {}" , restaurantSaveDto.getFoodSaveDtoList());
-
-    Long saveId = restaurantService.save(restaurantSaveDto);
-    redirectAttributes.addAttribute("saveId", saveId);
-    return "success";
-  }
-
-
-  @GetMapping("/admin-restaurants/{id}/update")
-  public String updateRestaurant(@PathVariable("id") Long id ,  Model model) {
-    Restaurant restaurant = restaurantService.findOne(id);
-    RestaurantUpdateDTO restaurantUpdateDto = new RestaurantUpdateDTO(restaurant.getName() , restaurant.getBusinessNum() , restaurant.getRestaurantTypes() , restaurant.getContainFoodTypes() , restaurant.getProvideServiceTypes() , restaurant.getMoodTypes() , restaurant.getAddress().getRoadAddress() , restaurant.getAddress().getLandLotAddress() , restaurant.getAddress().getZipCode() , restaurant.getAddress().getDetailAddress() , restaurant.getCanPark() , restaurant.getReservationTimeGap() , restaurant.getIsPenalty());
-    model.addAttribute("restaurant", restaurant);
-    return "restaurant/admin-updateForm";
-  }
-
-
-  @GetMapping("admin/restaurants/{id}")
-  public String getAdminRestaurant(@PathVariable("id") Long id, Model model) {
-    model.addAttribute("restaurant", restaurantService.findOne(id));
-    return "restaurant/admin-restaurant";
-  }
-
-  /*@GetMapping("admin/restaurants")
-  public String getAdminRestaurants(){
-    restaurantService.findAdminRestaurants();
-  }*/
-
   private Map<Integer, List<Review>> getReviewsByRating(Long id) {
     List<Review> reviewsByOneRating = restaurantService.findReviewsByRating(id, 1);
     List<Review> reviewsByTwoRating = restaurantService.findReviewsByRating(id, 2);
@@ -196,7 +147,6 @@ public class RestaurantController {
     return reviewsByRating;
   }
 
-
-  //UrlResource 자체가 필요 없음, Url직접 웹에서 링크로 조회해서 띄우는 것. 서버로 들어와서 DB에 접근해서 띄우는 게 아닌 !
+  //UrlResource 자체가 필요 없음 , 어차피 Url직접 웹에서 링크로 조회해서 띄우는 것임 ㅇㅇ 내 서버로 들어와서 DB에 접근해서 띄우는 게 아닌 !
 
 }
