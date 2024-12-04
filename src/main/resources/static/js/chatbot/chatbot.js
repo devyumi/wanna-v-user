@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
     addMessage("me", userMessage);
 
     // 서버에 메시지 전송
-    axios.post("/api/send-message", userMessage, {
+    axios.post("/api/v1/chatbot/send-message", userMessage, {
       headers: {"Content-Type": "application/json"}
     })
     .then(response => {

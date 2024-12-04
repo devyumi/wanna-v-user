@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Log4j2
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/v1/chatbot")
 public class ChatbotRestController {
 
     private final ChatbotService chatbotService;
