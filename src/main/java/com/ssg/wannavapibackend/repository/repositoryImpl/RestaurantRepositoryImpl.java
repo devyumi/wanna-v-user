@@ -15,9 +15,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.ssg.wannavapibackend.domain.QFood.food;
 import static com.ssg.wannavapibackend.domain.QLikes.likes;
@@ -192,10 +190,22 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
     if (roadAddress == null ){
       return null;
     }
-    String[] split = roadAddress.split(" ");
-    String similarAddress = split[0]+" "+split[1]+"%";
+    roadAddress = roadAddress.replace("경기도", "경기")
+            .replace("서울특별시", "서울")
+            .replace("부산광역시", "부산")
+            .replace("대구광역시", "대구")
+            .replace("인천광역시", "인천")
+            .replace("광주광역시", "광주")
+            .replace("대전광역시", "대전")
+            .replace("울산광역시", "울산")
+            .replace("세종특별자치시", "세종")
+            .replace("제주특별자치도", "제주");
+
+    String result =  roadAddress.trim();
+    String[] s = result.split(" ");
+    String similarAddress = s[0]+" " +s[1];
     System.out.println("similarAddress = " + similarAddress);
-    return restaurant.address.roadAddress.like(similarAddress);
+    return restaurant.address.roadAddress.like(similarAddress+"%");
   }
 
 
