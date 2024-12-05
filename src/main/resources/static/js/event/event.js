@@ -1,6 +1,3 @@
-console.log(couponId);
-console.log(eventId);
-
 $(document).ready(function () {
     $('#getCouponButton').click(function () {
         $.ajax({

@@ -3,7 +3,6 @@ $(function() {
 
     rome(inline_cal, { time: false, inputFormat: 'YYYY-MM-DD',dateValidator: rome.val.afterEq(moment().toDate()),}).on('data', function(value) {
         selectedDate = value;
-        console.log('선택한 날짜:', selectedDate);
 
         $("#person-buttons").empty();
         $("#reservation-guest").empty();
@@ -24,18 +23,11 @@ $(function() {
                 $("#reservation-time").html('<h2 style="padding-top: 40px;">예약 시간</h2>');
 
                 let timeButton = '';
-
                 let currentDateTime = new Date();
-                console.log("현재 날짜 및 시간:", currentDateTime);
-
                 let formattedDate = currentDateTime.toLocaleDateString('en-CA'); // 'YYYY-MM-DD' 형식
-                console.log("현재 날짜:", formattedDate);
-
                 let hours = currentDateTime.getHours().toString().padStart(2, '0');
                 let minutes = currentDateTime.getMinutes().toString().padStart(2, '0');
                 let formattedTime = `${hours}:${minutes}`;
-                console.log("현재 시간:", formattedTime);
-
 
                 if (response.reservationTimes.length === 0 || formattedDate > response.reservationDate)
                     timeButton = '<h5 style="font-size: 15px">예약할 수 없습니다.</h5>';
@@ -64,7 +56,6 @@ $(function() {
         selectedGuest = '';
 
         selectedTime = $(this).data('time');
-        console.log('선택된 시간:', selectedTime);
 
         $(".rectangle-button").removeClass('selected');
         $(this).addClass('selected');
