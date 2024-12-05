@@ -67,7 +67,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .type(userCoupon.getCoupon().getType())
                         .discountAmount(userCoupon.getCoupon().getDiscountAmount())
                         .discountRate(userCoupon.getCoupon().getDiscountRate())
-                        .endDate(userCoupon.getCoupon().getEndDate())
+                        .endDate(userCoupon.getCoupon().getEndDate().toString())
                         .build())
                 .collect(Collectors.toList());
 
@@ -101,7 +101,7 @@ public class PaymentServiceImpl implements PaymentService {
                         .type(userCoupon.getCoupon().getType())
                         .discountAmount(userCoupon.getCoupon().getDiscountAmount())
                         .discountRate(userCoupon.getCoupon().getDiscountRate())
-                        .endDate(userCoupon.getCoupon().getEndDate())
+                        .endDate(userCoupon.getCoupon().getEndDate().toString())
                         .build())
                 .collect(Collectors.toList());
 
