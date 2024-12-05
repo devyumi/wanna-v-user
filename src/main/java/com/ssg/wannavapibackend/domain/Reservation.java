@@ -10,7 +10,6 @@ import java.time.LocalTime;
 
 @Entity
 @Getter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

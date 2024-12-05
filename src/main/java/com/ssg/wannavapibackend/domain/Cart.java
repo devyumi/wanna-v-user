@@ -13,7 +13,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 @Entity
 @Getter
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Cart {
