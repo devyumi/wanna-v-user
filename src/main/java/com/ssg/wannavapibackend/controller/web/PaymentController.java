@@ -56,17 +56,17 @@ public class PaymentController {
         try {
             ReservationPaymentResponseDTO reservationPaymentResponseDTO = reservationService.getReservationPayment(reservationRequestDTO);
             model.addAttribute("reservationPaymentResponseDTO", reservationPaymentResponseDTO);
-            return "/payment/reservation";
+            return "payment/reservation";
         } catch (RuntimeException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             model.addAttribute("restaurantId", reservationRequestDTO.getRestaurantId());
-            return "/reservation/error";
+            return "reservation/error";
         }
     }
 
     @GetMapping("/success")
     public String reservationNoPenaltySuccess(){
-        return "/reservation/complete";
+        return "reservation/complete";
     }
 
     /**
