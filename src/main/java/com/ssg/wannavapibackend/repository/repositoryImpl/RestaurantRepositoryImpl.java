@@ -11,6 +11,7 @@ import com.ssg.wannavapibackend.dto.request.RestaurantSearchCond;
 import com.ssg.wannavapibackend.repository.RestaurantRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -64,21 +65,22 @@ public class RestaurantRepositoryImpl implements RestaurantRepository {
 
     BooleanBuilder whereBuilder = new BooleanBuilder();
     for (String restaurantType : restaurantTypes) {
-      whereBuilder.or(restaurant.restaurantTypes.any().eq(restaurantType));
+      whereBuilder.and(restaurant.restaurantTypes.any().eq(restaurantType));
     }
+
     for (String moodType : moodTypes) {
-      whereBuilder.or(restaurant.moodTypes.any().eq(moodType));
+      whereBuilder.and(restaurant.moodTypes.any().eq(moodType));
     }
     for (String containFoodType : containFoodTypes) {
-      whereBuilder.or(restaurant.containFoodTypes.any().eq(containFoodType));
+      whereBuilder.and(restaurant.containFoodTypes.any().eq(containFoodType));
     }
     for (String provideServiceType : provideServiceTypes) {
-      whereBuilder.or(restaurant.provideServiceTypes.any().eq(provideServiceType));
+      whereBuilder.and(restaurant.provideServiceTypes.any().eq(provideServiceType));
     }
 
     BooleanBuilder havingBuilder = new BooleanBuilder();
     for (Integer rate : rates) {
-      havingBuilder.or(review.rating.avg().goe(rate).and(review.rating.avg().lt(rate + 1)));
+      havingBuilder.and(review.rating.avg().goe(rate).and(review.rating.avg().lt(rate + 1)));
     }
 
 
