@@ -19,7 +19,7 @@
         <span th:if="${T(java.time.LocalDate).now().isEqual(event.endDate) || T(java.time.LocalDate).now().isAfter(event.endDate)}"
             class="badge text-bg-secondary" style="width: 15%; margin-bottom: 5px">종료</span>
         <h5 class="card-title" th:text="${event.title}"></h5>
-        <p style="font-size: 10px" th:text="${event.startDate} + ' ~ ' + ${event.endDate}"></p>
+        <p style="font-size: 15px" th:text="${event.startDate} + ' ~ ' + ${event.endDate}"></p>
         <div class="card-body" style="padding: 0">
           <img th:src="${event.thumbnail}" style="width: 320px; height: 300px; object-fit: cover;">
         </div>

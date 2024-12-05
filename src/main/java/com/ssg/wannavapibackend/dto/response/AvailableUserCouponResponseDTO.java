@@ -19,5 +19,6 @@ public class AvailableUserCouponResponseDTO {
     private Type type;              // 쿠폰 타입
     private Integer discountAmount; // 할인액
     private Integer discountRate;   // 할인율
-    private LocalDateTime endDate;  // 쿠폰 종료일
+    private String endDate;         // 쿠폰 종료일
+
 }
