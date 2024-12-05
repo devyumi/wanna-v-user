@@ -4,11 +4,16 @@ import {formatPrice, formatPriceElements} from "/js/common/format.js";
  * 결제 페이지 초기 배송지
  */
 const userName = pageInitData.name === null ? '' : pageInitData.name;
-const phone = pageInitData.phone === null ? '' : pageInitData.phone.replace(/-/g, '');
-let zipCode = pageInitData.address.zipCode === null ? '' : pageInitData.address.zipCode;
-let roadAddress = pageInitData.address.roadAddress === null ? '' : pageInitData.address.roadAddress;
-let landLotAddress = pageInitData.address.landLotAddress === null ? '' : pageInitData.address.landLotAddress;
-let detailAddress = pageInitData.address.detailAddress === null ? '' : pageInitData.address.detailAddress;
+const phone = pageInitData.phone === null ? '' : pageInitData.phone.replace(
+    /-/g, '');
+let zipCode = pageInitData.address.zipCode === null ? ''
+    : pageInitData.address.zipCode;
+let roadAddress = pageInitData.address.roadAddress === null ? ''
+    : pageInitData.address.roadAddress;
+let landLotAddress = pageInitData.address.landLotAddress === null ? ''
+    : pageInitData.address.landLotAddress;
+let detailAddress = pageInitData.address.detailAddress === null ? ''
+    : pageInitData.address.detailAddress;
 let userEmail = pageInitData.email === null ? '' : pageInitData.email;
 
 document.getElementById('name-type').value = userName;
@@ -83,13 +88,14 @@ couponContainer.innerHTML = '';
 couponList.forEach(item => {
   const couponItem = document.createElement('div');
   couponItem.classList.add('coupon-item');
+  let formattedDate = item.endDate.replace("T", " ").substring(0, 16);
 
   couponItem.innerHTML = `
     <div class="coupon-info-container">
       <h5 class="coupon-discount-price">${item.type === 'FIXED' ? formatPrice(
       item.discountAmount) : item.discountRate + '%'}</h5>
       <p class="event-name">${item.name}</p>
-      <p class="event-period">~ ${item.endDate} 까지</p>
+      <p class="event-period">~ ${formattedDate} 까지</p>
     </div>
     <div class="btn-select" data-coupon-id="${item.id}">선택</div>
   `;
