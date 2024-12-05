@@ -466,19 +466,15 @@
                                 // 서버로부터 식당 목록 데이터를 받아 메인 페이지가 다시 랜더링됩니다.
                                 window.location.reload(); // 새로고침하여 식당 목록 업데이트
                               } else {
-                                console.error('서버와의 통신에 실패했습니다.');
                               }
                             })
                             .catch(error => {
-                              console.error('에러 발생:', error);
                             });
                   } else {
-                    alert('도로명 주소를 가져오는 데 실패했습니다.');
                   }
                 });
               },
               function (error) {
-                alert('현재 위치를 가져오는 데 실패했습니다: ' + error.message);
               }
       );
     }
