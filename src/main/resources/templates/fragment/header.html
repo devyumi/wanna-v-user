@@ -5,7 +5,7 @@
     <div class="bg-light py-1">
       <div class="container">
         <div class="row">
-          <div class="col-md-6 col-12 text-center text-md-start align-items-center"><span> 지금 회원가입 하면 5000원 할인 쿠폰 제공! </span>
+          <div class="col-md-6 col-12 text-center text-md-start align-items-center"><span></span>
           </div>
           <div class="col-6 text-end d-none d-md-block">
             <div>
@@ -16,22 +16,16 @@
       </div>
     </div>
 
-    <div class="py-2 pt-lg-3 pb-lg-0">
+    <div class="py-4 pt-lg-3 pb-lg-0">
       <div class="container">
         <div class="row w-100 align-items-center gx-lg-2 gx-0">
           <div class="col-xxl-2 col-lg-3">
             <a class="navbar-brand d-none d-lg-block" href="/">
-              <img src="/media/logo/removebg-logo-horizontal.svg"
-                   th:src="@{/media/logo/removebg-logo-horizontal.svg}"
-                   alt="eCommerce HTML Template"
-                   style="width:160px; height: 80px;">
+              <img th:src="@{/media/logo/removebg-logo-horizontal.svg}" style="width:160px; height: 80px;" alt="eCommerce HTML Template">
             </a>
             <div class="d-flex justify-content-between w-100 d-lg-none">
               <a class="navbar-brand" href="/">
-                <img src="/media/logo/removebg-logo-horizontal.svg"
-                     th:src="@{/media/logo/removebg-logo-horizontal.svg}"
-                     alt="wannav-logo"
-                     style="width:150px; height: 50px;">
+                <img th:src="@{/media/logo/removebg-logo-horizontal.svg}" style="width:150px; height: 50px;" alt="eCommerce HTML Template">
               </a>
 
               <div class="d-flex align-items-center lh-1">
@@ -46,7 +40,7 @@
                            stroke-linejoin="round"
                            class="feather feather-heart">
                         <path
-                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
                         </path>
                       </svg>
                     </a>
@@ -54,7 +48,7 @@
 
                   <!-- 사람 이모티콘 -->
                   <div class="list-inline-item">
-                     <a class="text-muted position-relative" href="/my">
+                    <a class="text-muted position-relative" href="/my">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
                            viewBox="0 0 24 24" fill="none"
                            stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -86,19 +80,18 @@
             </div>
           </div>
 
+
+
           <!--검색 바(데스크탑)-->
           <div class="col-xxl-9 col-lg-5 d-lg-block d-none">
-            <form action="/search">
+            <form action="/restaurants" th:action="@{/restaurants}" method="get"  >
               <div class="input-group ">
 
-                <input class="form-control rounded" type="search" placeholder="Search for products">
+                <input class="form-control rounded"  name="search" type="search" placeholder="식당명 혹은 지역명을 검색하세요">
                 <span class="input-group-append">
-                  <button class="btn bg-white border border-start-0 ms-n10 rounded-0 rounded-end"
-                          type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                         viewBox="0 0 24 24" fill="none"
-                         stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                         stroke-linejoin="round"
+                  <button class="btn bg-white border border-start-0 ms-n10 rounded-0 rounded-end" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
                          class="feather feather-search">
                       <circle cx="11" cy="11" r="8"></circle>
                       <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -108,6 +101,7 @@
               </div>
             </form>
           </div>
+
 
 
           <!-- 찜+ 장바구니 + 마이페이지 이동 버튼 영역 크기 조절 관련 -->
@@ -125,7 +119,7 @@
                        stroke-linejoin="round"
                        class="feather feather-heart">
                     <path
-                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
                     </path>
                   </svg>
                 </a>
@@ -168,24 +162,22 @@
 
 
     <nav>
-      <!--검색바 : 모바일-->
-      <div class="d-block d-lg-none">
-        <form action="/search">
+      <!--검색 바(모바일)-->
+      <div class="d-lg-none d-block">
+        <form action="/restaurants" th:action="@{/restaurants}" method="get"  >
           <div class="input-group ">
-            <input class="form-control rounded" type="search" placeholder="Search for products">
+
+            <input class="form-control rounded"  name="search" type="search" placeholder="식당명 혹은 지역명을 검색하세요">
             <span class="input-group-append">
-                <button class="btn bg-white border border-start-0 ms-n10 rounded-0 rounded-end"
-                        type="button">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                       fill="none"
-                       stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                       stroke-linejoin="round"
-                       class="feather feather-search">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </button>
-              </span>
+                  <button class="btn bg-white border border-start-0 ms-n10 rounded-0 rounded-end" type="submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                         class="feather feather-search">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                  </button>
+                </span>
           </div>
         </form>
       </div>

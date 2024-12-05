@@ -1,5 +1,6 @@
 package com.ssg.wannavapibackend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,6 +28,7 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     private Integer rating;
@@ -50,6 +52,7 @@ public class Review {
     private String note;
 
     @OneToMany(mappedBy = "review")
+    @JsonIgnore
     private List<ReviewTag> reviewTags;
 
     /**
@@ -59,4 +62,9 @@ public class Review {
         this.restaurant = restaurant;
         restaurant.getReviews().add(this);
     }
+
+    public void addUser(User user){
+        this.user = user;
+    }
+
 }

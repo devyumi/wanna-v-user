@@ -3,10 +3,12 @@ package com.ssg.wannavapibackend.controller.web;
 import com.ssg.wannavapibackend.domain.Restaurant;
 import com.ssg.wannavapibackend.dto.request.RestaurantSearchCond;
 import com.ssg.wannavapibackend.service.RestaurantService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
 import java.util.List;
@@ -19,40 +21,38 @@ public class HelloController {
 
 
   @RequestMapping
-  public String hello(Model model) {
-    //현재 위치 기준 , 전국 인기(높은 좋아요 and 높은 리뷰 수 and 높은 별점 ) , 가격대별 ,
+  public String hello(@RequestParam(value = "address", required = false) String address, Model model , HttpServletRequest request) {
+
+
+    List<Restaurant> currentLocationPopularRestaurants = getPopularRestaurantsByCurrentLocation(address);
     List<Restaurant> popularRestaurants = getPopularRestaurants();
     List<Restaurant> manyReviewsRestaurants = getManyReviewsRestaurants();
     List<Restaurant> highRatingRestaurants = getHighRatingRestaurants();
     List<Restaurant> manyLikesRestaurants = getManyLikesRestaurants();
-    List<Restaurant> restaurantsByPriceRange1 = getRestaurantsByPriceRange(5000 , 10000);
-    List<Restaurant> restaurantsByPriceRange2 = getRestaurantsByPriceRange(10000 , 30000);
-    List<Restaurant> restaurantsByPriceRange3 = getRestaurantsByPriceRange(40000 , 60000);
-    List<Restaurant> restaurantsByPriceRange4 = getRestaurantsByPriceRange(70000 , 100000);
+    List<Restaurant> restaurantsByPriceRange1 = getRestaurantsByPriceRange(10000 , 20000);
+    List<Restaurant> restaurantsByPriceRange2 = getRestaurantsByPriceRange(20000 , 30000);
 
+    model.addAttribute("currentLocationPopularRestaurants", currentLocationPopularRestaurants);
     model.addAttribute("popularRestaurants", popularRestaurants);
     model.addAttribute("manyReviewsRestaurants", manyReviewsRestaurants);
     model.addAttribute("highRatingRestaurants", highRatingRestaurants);
     model.addAttribute("manyLikesRestaurants", manyLikesRestaurants);
     model.addAttribute("restaurantsByPriceRange1", restaurantsByPriceRange1);
     model.addAttribute("restaurantsByPriceRange2", restaurantsByPriceRange2);
-    model.addAttribute("restaurantsByPriceRange3", restaurantsByPriceRange3);
-    model.addAttribute("restaurantsByPriceRange4", restaurantsByPriceRange4);
 
     return "index";
   }
 
-  //그냥 정렬도 다중 조건으로 처리하자 다중 정렬 될 수 있게끔 하자 !
   /**
-   * 현재 위치 기준 인기 식당 , 일단 보류 
+   * 현재 위치 기준 인기 식당 , 일단 보류
    */
   private List<Restaurant> getPopularRestaurantsByCurrentLocation(String currentLocationRoadAddress) {
-
     RestaurantSearchCond currentLocationRestaurantCond = new RestaurantSearchCond();
     currentLocationRestaurantCond.setRoadAddress(currentLocationRoadAddress);
     currentLocationRestaurantCond.setSortConditions(Arrays.asList("LIKE" , "RATE" , "REVIEW"));
-    List<Restaurant> popularRestaurants = restaurantService.findRestaurants(currentLocationRestaurantCond)
-        .stream().limit(8).toList();
+    List<Restaurant> popularRestaurants = restaurantService.findRestaurants(currentLocationRestaurantCond, null)
+            .stream().limit(8).toList();
+    System.out.println("popularRestaurants = " + popularRestaurants);
     return popularRestaurants;
   }
 
@@ -64,7 +64,7 @@ public class HelloController {
     RestaurantSearchCond popularRestaurantCond = new RestaurantSearchCond();
     List<String> popularConditions = Arrays.asList("RATE", "LIKE", "REVIEW");
     popularRestaurantCond.setSortConditions(popularConditions);
-    List<Restaurant> popularRestaurants = restaurantService.findRestaurants(popularRestaurantCond)
+    List<Restaurant> popularRestaurants = restaurantService.findRestaurants(popularRestaurantCond, null)
         .stream().limit(8).toList();
     return popularRestaurants;
   }
@@ -76,7 +76,7 @@ public class HelloController {
     RestaurantSearchCond manyLikesRestaurantCond = new RestaurantSearchCond();
     List<String> manyLikesConditions = List.of("LIKE");
     manyLikesRestaurantCond.setSortConditions(manyLikesConditions);
-    return restaurantService.findRestaurants(manyLikesRestaurantCond).stream().limit(8).toList();
+    return restaurantService.findRestaurants(manyLikesRestaurantCond , null).stream().limit(8).toList();
   }
 
   /**
@@ -86,7 +86,7 @@ public class HelloController {
     RestaurantSearchCond manyReviewsRestaurantCond = new RestaurantSearchCond();
     List<String> manyReviewsConditions = List.of("REVIEW");
     manyReviewsRestaurantCond.setSortConditions(manyReviewsConditions);
-    return restaurantService.findRestaurants(manyReviewsRestaurantCond).stream().limit(8).toList();
+    return restaurantService.findRestaurants(manyReviewsRestaurantCond , null).stream().limit(8).toList();
   }
 
   /**
@@ -96,7 +96,7 @@ public class HelloController {
     RestaurantSearchCond highRatingRestaurantCond = new RestaurantSearchCond();
     List<String> highRatingConditions = List.of("RATE");
     highRatingRestaurantCond.setSortConditions(highRatingConditions);
-    return restaurantService.findRestaurants(highRatingRestaurantCond).stream().limit(8).toList();
+    return restaurantService.findRestaurants(highRatingRestaurantCond , null).stream().limit(8).toList();
   }
 
   /**
@@ -107,28 +107,7 @@ public class HelloController {
     priceRangeRestaurantCond.setStartPrice(startPrice);
     priceRangeRestaurantCond.setEndPrice(endPrice);
     priceRangeRestaurantCond.setSortConditions(Arrays.asList("RATE" , "LIKE" , "REVIEW"));
-    return restaurantService.findRestaurants(priceRangeRestaurantCond).stream().limit(8).toList();
+    return restaurantService.findRestaurants(priceRangeRestaurantCond , null).stream().limit(8).toList();
   }
-
-
-  /**
-   * 분위기 좋은 식당들
-   */
- /* private List<Restaurant> getRestaurantsByGreatMood() {
-    RestaurantSearchCond greatMoodRestaurantCond = new RestaurantSearchCond();
-    greatMoodRestaurantCond.setMoodTypes(Set.of(""));
-    greatMoodRestaurantCond.setSortConditions(Arrays.asList("RATE" , "LIKE" , "REVIEW"));
-    return restaurantService.findRestaurants(greatMoodRestaurantCond).stream().limit(8).toList();
-  }*/
-
-
-
-
-
-
-
-
-
-
 
 }

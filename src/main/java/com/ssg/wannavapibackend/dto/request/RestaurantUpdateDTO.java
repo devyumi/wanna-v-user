@@ -1,6 +1,7 @@
 package com.ssg.wannavapibackend.dto.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,8 +16,11 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RestaurantUpdateDTO {
+  private Long id;
   private String restaurantName;
   private String businessNum;
+  private String contact;
+  private String description;
   private Set<String> restaurantTypes = new HashSet<>();
   private Set<String> containFoodTypes = new HashSet<>();
   private Set<String> provideServiceTypes = new HashSet<>();
@@ -33,31 +37,18 @@ public class RestaurantUpdateDTO {
   /**
    * BusinessDay DTO
    */
+  private List<String> dayOfWeeks = new ArrayList<>();
   private List<LocalTime> openTimes = new ArrayList<>();
   private List<LocalTime> closeTimes = new ArrayList<>();
   private List<LocalTime> breakStartTimes = new ArrayList<>();
   private List<LocalTime> breakEndTimes = new ArrayList<>();
-  private List<LocalTime> lastOrderTimes = new ArrayList<>();
+  private List<LocalTime> lastOrders = new ArrayList<>();
   private List<String> isDayOffList = new ArrayList<>();
 
   /**
    * Food DTO
    */
-  private List<FoodUpdateDTO> foodSaveDtoList = new ArrayList<>();
+  private List<FoodUpdateDTO> foodUpdateDtoList = new ArrayList<>();
 
-  public RestaurantUpdateDTO(String name, String businessNum, Set<String> restaurantTypes, Set<String> containFoodTypes, Set<String> provideServiceTypes, Set<String> moodTypes, String roadAddress, String landLotAddress, String zipCode, String detailAddress, Boolean canPark, int reservationTimeGap, Boolean isPenalty) {
-    this.restaurantName = name;
-    this.businessNum = businessNum;
-    this.restaurantTypes = restaurantTypes;
-    this.containFoodTypes = containFoodTypes;
-    this.provideServiceTypes = provideServiceTypes;
-    this.moodTypes = moodTypes;
-    this.roadNameAddress = roadAddress;
-    this.landLotAddress = landLotAddress;
-    this.zipcode = zipCode;
-    this.detailAddress = detailAddress;
-    this.canPark = canPark;
-    //this.reservationTimeGap = reservationTimeGap;
-    this.isPenalty = isPenalty;
-  }
+
 }
