@@ -44,7 +44,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 path.equals("/points") ||
                 path.equals("/coupons") ||
                 path.startsWith("/reviews") ||
-                path.startsWith("/api") ||
+                path.startsWith("/api") && !path.equals("/api/v1/chatbot") ||
                 path.equals("/carts") ||
                 path.startsWith("/checkout") ||
                 path.startsWith("/restaurants/") ||
