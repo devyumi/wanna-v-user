@@ -11,7 +11,7 @@
   <title>Event List Page</title>
 </head>
 <body>
-<main layout:fragment="main-content" th:class="container">
+<main layout:fragment="main-content" th:class="main-container">
     <div th:each="event : ${eventList}">
       <a th:href="@{/promotion/{eventId}(eventId=${event.eventId})}" class="card mb-3">
         <span th:if="${T(java.time.LocalDate).now().isBefore(event.endDate)}"
