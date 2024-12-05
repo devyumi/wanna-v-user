@@ -111,17 +111,7 @@
 
 
 
-              <div class="col-xxl-4 col-lg-4 col-md-5 col-5 d-grid d-flex justify-content-start" style="width:100%">
-                <!-- button -->
-                <!-- btn --> <button type="button" class="btn btn-primary col-11 clear-button"  data-bs-toggle="modal" href="#exampleModalToggle"><i class="feather-icon icon-shopping-bag me-2"></i>예약하기</button>
-
-                    <a class="btn btn-light col-1" href="../pages/shop-wishlist.html" th:href="@{/restaurants/{id}(id = ${restaurant.id})}" data-bs-toggle="tooltip" data-bs-html="true" aria-label="Wishlist">
-                      <i class="feather-icon icon-heart"></i>
-                    </a>
-
-
-
-              </div>
+              <a th:href="@{/restaurants/{restaurantId}/reservation(restaurantId=${restaurant.id})}" class="btn btn-primary col-11 clear-button">예약하기</a>
 
 
 
