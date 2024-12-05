@@ -15,27 +15,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/")
 public class ReservationController {
 
-//    @GetMapping("restaurant/{restaurantId}")
-//    public String test2(@PathVariable("restaurantId") Long restaurantId) {
-//        return "redirect:/reservation/calendar?restaurantId=" + restaurantId;
-//    }
-
     @GetMapping("restaurants/{restaurantId}/reservation")
-    public String test2(@PathVariable("restaurantId") Long restaurantId) {
+    public String reservationStart(@PathVariable("restaurantId") Long restaurantId) {
         return "redirect:/reservation/calendar?restaurantId=" + restaurantId;
     }
 
-    @GetMapping("/reservation/calendar")
-    public String reservation1(@RequestParam(value = "restaurantId") Long restaurantId, Model model) {
-        if (restaurantId == null) {
+    @GetMapping("reservation/calendar")
+    public String reservationCalendar(@RequestParam(value = "restaurantId") Long restaurantId, Model model) {
+        if (restaurantId == null)
             throw new IllegalArgumentException("Restaurant ID is required.");
-        }
+
         model.addAttribute("restaurantId", restaurantId);
         return "reservation/calendar";
     }
 
     @GetMapping("/reservation")
     public String reservation() {
-        return "payment/success";
+        return "reservation/complete";
     }
 }
