@@ -61,8 +61,6 @@ public class Restaurant {
   @OneToMany(mappedBy = "restaurant")
   private List<Seat> seats = new ArrayList<>();
 
-
-
   @Column(name = "created_at")
   @DateTimeFormat(pattern = "yyyy-mm-dd")
   private LocalDate createdAt; //생성일
@@ -71,15 +69,11 @@ public class Restaurant {
   @DateTimeFormat(pattern = "yyyy-mm-dd")
   private LocalDate updatedAt; //수정일
 
-
   @Column(name = "reservation_time_gap")
-  private int reservationTimeGap;
+  private Integer reservationTimeGap;
 
   @Column(name = "is_penalty")
   private Boolean isPenalty;
-
-//  private Point point;
-
 
   @Enumerated(EnumType.STRING)
   @Column(name = "business_status")
@@ -87,7 +81,6 @@ public class Restaurant {
 
   @Column(name = "can_park")
   private Boolean canPark; //주차 가능 여부
-
 
   @OneToMany(mappedBy = "restaurant")
   @JsonIgnore
