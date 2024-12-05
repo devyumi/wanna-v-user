@@ -29,10 +29,8 @@ public class HelloController {
     List<Restaurant> manyReviewsRestaurants = getManyReviewsRestaurants();
     List<Restaurant> highRatingRestaurants = getHighRatingRestaurants();
     List<Restaurant> manyLikesRestaurants = getManyLikesRestaurants();
-    List<Restaurant> restaurantsByPriceRange1 = getRestaurantsByPriceRange(5000 , 10000);
-    List<Restaurant> restaurantsByPriceRange2 = getRestaurantsByPriceRange(10000 , 30000);
-    List<Restaurant> restaurantsByPriceRange3 = getRestaurantsByPriceRange(40000 , 60000);
-    List<Restaurant> restaurantsByPriceRange4 = getRestaurantsByPriceRange(70000 , 100000);
+    List<Restaurant> restaurantsByPriceRange1 = getRestaurantsByPriceRange(10000 , 20000);
+    List<Restaurant> restaurantsByPriceRange2 = getRestaurantsByPriceRange(20000 , 30000);
 
     model.addAttribute("currentLocationPopularRestaurants", currentLocationPopularRestaurants);
     model.addAttribute("popularRestaurants", popularRestaurants);
@@ -41,8 +39,6 @@ public class HelloController {
     model.addAttribute("manyLikesRestaurants", manyLikesRestaurants);
     model.addAttribute("restaurantsByPriceRange1", restaurantsByPriceRange1);
     model.addAttribute("restaurantsByPriceRange2", restaurantsByPriceRange2);
-    model.addAttribute("restaurantsByPriceRange3", restaurantsByPriceRange3);
-    model.addAttribute("restaurantsByPriceRange4", restaurantsByPriceRange4);
 
     return "index";
   }

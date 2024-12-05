@@ -306,7 +306,7 @@
       <div class="container">
         <div class="row">
           <div class="col-12 mb-6">
-            <h3 class="mb-0">5천원 ~ 1만원 사이 추천 식당</h3>
+            <h3 class="mb-0">1만원 ~ 2만원 사이 추천 식당</h3>
           </div>
         </div>
 
@@ -342,7 +342,7 @@
       <div class="container">
         <div class="row">
           <div class="col-12 mb-6">
-            <h3 class="mb-0">1 ~ 3만원 사이 추천 식당</h3>
+            <h3 class="mb-0">2 ~ 3만원 사이 추천 식당</h3>
           </div>
         </div>
 
@@ -372,84 +372,6 @@
         </div>
       </div>
     </section>
-
-
-    <section class="mb-lg-10 mt-lg-14 my-8">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 mb-6">
-            <h3 class="mb-0">4 ~ 6만원 사이 추천 식당</h3>
-          </div>
-        </div>
-
-        <div class="category-slider ">
-
-          <div class="item mt-5"  th:each="restaurantByPriceRange : ${restaurantsByPriceRange3}">
-            <a href="/" th:href="@{/restaurants/{id}(id = ${restaurantByPriceRange.id})}" class="text-decoration-none text-inherit">
-              <div class="card card-product mb-lg-4">
-                <div class="card-body py-8">
-                  <img src="assets/images" th:src="@{${restaurantByPriceRange.restaurantImages[0]}}" style="width:15rem;height:10rem" class="mb-3">
-                  <div class="d-flex justify-content-start">
-                    <div class="text-truncate me-2 fs-5" th:text="${restaurantByPriceRange.name}">Pet Care</div>
-                    <small class="me-1 text-muted mt-1" th:each="restaurantType : ${restaurantByPriceRange.restaurantTypes}" th:text="${restaurantType}"></small>
-                  </div>
-                  <!-- address -->
-                  <div class="text-dark"> <!--가로로 컴포넌트들을 배치-->
-                    <i class="bi bi-geo-alt"></i><small class="ms-1" th:text="|${restaurantByPriceRange.address.roadAddress}|">&nbsp;&nbsp;서울 강남구 역삼로 134 1층</small>
-                  </div>
-                  <small class="text-warning"><i class="bi bi-star-fill"></i></small>
-                  <small class="ms-1" th:text="|${#numbers.formatDecimal(restaurantByPriceRange.averageRating , 0 , 1)}(${restaurantByPriceRange.reviewCount})|">4.5(30)</small>
-                  <small class="text-danger"><i class="bi bi-heart-fill"></i></small> <span class="text-muted small" th:text="|${restaurantByPriceRange.likesCount}|">123</span>
-                </div>
-              </div>
-            </a>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-
-
-    <section class="mb-lg-10 mt-lg-14 my-8">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 mb-6">
-            <h3 class="mb-0">7 ~ 10만원 사이 추천 식당</h3>
-          </div>
-        </div>
-
-        <div class="category-slider ">
-
-          <div class="item mt-5"  th:each="restaurantByPriceRange : ${restaurantsByPriceRange4}">
-            <a href="/" th:href="@{/restaurants/{id}(id = ${restaurantByPriceRange.id})}" class="text-decoration-none text-inherit">
-              <div class="card card-product mb-lg-4">
-                <div class="card-body py-8">
-                  <img src="assets/images" th:src="@{${restaurantByPriceRange.restaurantImages[0]}}" style="width:15rem;height:10rem" class="mb-3">
-                  <div class="d-flex justify-content-start">
-                    <div class="text-truncate me-2 fs-5" th:text="${restaurantByPriceRange.name}">Pet Care</div>
-                    <small class="me-1 text-muted mt-1" th:each="restaurantType : ${restaurantByPriceRange.restaurantTypes}" th:text="${restaurantType}"></small>
-                  </div>
-                  <!-- address -->
-                  <div class="text-dark"> <!--가로로 컴포넌트들을 배치-->
-                    <i class="bi bi-geo-alt"></i><small class="ms-1" th:text="|${restaurantByPriceRange.address.roadAddress}|">&nbsp;&nbsp;서울 강남구 역삼로 134 1층</small>
-                  </div>
-                  <small class="text-warning"><i class="bi bi-star-fill"></i></small>
-                  <small class="ms-1" th:text="|${#numbers.formatDecimal(restaurantByPriceRange.averageRating , 0 , 1)}(${restaurantByPriceRange.reviewCount})|">4.5(30)</small>
-                  <small class="text-danger"><i class="bi bi-heart-fill"></i></small> <span class="text-muted small" th:text="|${restaurantByPriceRange.likesCount}|">123</span>
-                </div>
-              </div>
-            </a>
-          </div>
-
-        </div>
-      </div>
-    </section>
-
-
-
-
-
 
 
     <!-- 네번째 영역(각 식당 카테고리에 바로 입장)-->
@@ -502,68 +424,7 @@
       </div>
     </section>
     <!-- Popular Products Start-->
-    <section class="my-lg-14 my-8">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 mb-6">
 
-            <h3 class="mb-0">추천 상품</h3>
-
-          </div>
-        </div>
-
-        <div class="row g-4 row-cols-lg-5 row-cols-2 row-cols-md-3">
-          <!-- 이 col 반복시키면 됨 ㅇㅇ-->
-          <div class="col">
-            <div class="card card-product">
-              <div class="card-body">
-                <div class="text-center position-relative">
-                  <div class=" position-absolute top-0 start-0">
-                    <span class="badge bg-success">14%</span>
-                  </div>
-                  <a href="restaurant/restaurant.html"><img src="assets/images/products/product-img-2.jpg"
-                                                            alt="Grocery Ecommerce Template" class="mb-3 img-fluid"></a>
-                  <div class="card-product-action">
-                    <a href="#!" class="btn-action" data-bs-toggle="modal" data-bs-target="#quickViewModal"><i
-                        class="bi bi-eye" data-bs-toggle="tooltip" data-bs-html="true" title="Quick View"></i></a>
-                    <a href="../shop-wishlist.html" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true"
-                      title="Wishlist"><i class="bi bi-heart"></i></a>
-                    <a href="#!" class="btn-action" data-bs-toggle="tooltip" data-bs-html="true" title="Compare"><i
-                        class="bi bi-arrow-left-right"></i></a>
-                  </div>
-
-                </div>
-                <div class="text-small mb-1"><a href="#!" class="text-decoration-none text-muted"><small>Bakery &
-                      Biscuits</small></a></div>
-                <h2 class="fs-6"><a href="restaurant/restaurant.html"
-                    class="text-inherit text-decoration-none">NutriChoice Digestive </a></h2>
-                <div class="text-warning">
-
-                  <small> <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-fill"></i>
-                    <i class="bi bi-star-half"></i></small> <span class="text-muted small">4.5 (25)</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                  <div><span class="text-dark">$24</span>
-                  </div>
-                  <div><a href="#!" class="btn btn-primary btn-sm">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="feather feather-plus">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                      </svg> Add</a></div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-
-        </div>
-      </div>
-    </section>
   </main>
 
 
