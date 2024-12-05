@@ -84,14 +84,18 @@
     <section class="mb-lg-10 mt-lg-14 my-8">
       <div class="container">
         <div class="row">
-          <div class="col-12 mb-6">
+          <div class="col-12 mb-6 d-flex justify-content-start">
             <h3 class="mb-0">가까운 곳에 위치한 식당</h3>
+            <form th:action method="get">
+              <!-- "현재 위치 갱신" 버튼 -->
+              <input type="hidden" name="address" value="서울 강남구">
+              <button type="submit" class="bi bi-arrow-clockwise" style="width:2rem;height:2rem;background-color:white;border:none;border-radius:15 " onclick="updateLocation()"></button>
+            </form>
           </div>
         </div>
 
-        <!-- "현재 위치 갱신" 버튼 -->
-        <div class="category-slider ">
 
+        <div class="category-slider ">
           <div class="item mt-5"  th:each="currentLocationPopularRestaurant : ${currentLocationPopularRestaurants}">
             <a href="/" th:href="@{/restaurants/{id}(id = ${currentLocationPopularRestaurant.id})}" class="text-decoration-none text-inherit">
               <div class="card card-product mb-lg-4">
