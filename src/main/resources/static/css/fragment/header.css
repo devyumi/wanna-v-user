@@ -17,6 +17,7 @@
   width: 100%;
   margin-bottom: 10px;
   position: fixed;
+  z-index: 200;
 }
 
 .desktop-header-nav-item {
