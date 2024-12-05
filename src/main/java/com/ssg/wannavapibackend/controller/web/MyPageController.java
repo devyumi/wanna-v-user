@@ -119,10 +119,8 @@ public class MyPageController {
     }
 
     private static void printErrorLog(BindingResult result) {
-        log.info("{}", "*".repeat(20));
         for (FieldError fieldError : result.getFieldErrors()) {
             log.error("{}: {}", fieldError.getField(), fieldError.getDefaultMessage());
         }
-        log.info("{}", "*".repeat(20));
     }
 }

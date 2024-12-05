@@ -69,7 +69,6 @@
                 })
                     .then(response => {
                         const reservations = response.data;
-                        console.log(reservations);
                         document.getElementById('body').innerHTML = reservations;
                     })
                     .catch(error => {
