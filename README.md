@@ -16,7 +16,7 @@
 - **비건 상품을 판매**하여 매출을 발생하도록 합니다.
 
 [<img src="https://img.shields.io/badge/Admin Repository 바로가기-181717?style=for-the-badge&logo=GitHub&logoColor=white"/>](https://github.com/devyumi/wanna-v-admin)
-[<img src="https://img.shields.io/badge/velog 바로가기-20C997?style=for-the-badge&logo=velog&logoColor=white"/>]()
+[<img src="https://img.shields.io/badge/velog 바로가기-20C997?style=for-the-badge&logo=velog&logoColor=white"/>](https://velog.io/@devyumi/팀-OCR을-활용한-영수증-기반-비건-식당-예약-및-리뷰-플랫폼)
 
 <br>
 
@@ -165,4 +165,5 @@
 
 ## 🧩 트러블 슈팅
 - [MySQL 서브쿼리 연산자 내 LIMIT 사용 불가와 ONLY_FULL_GROUP_BY](https://github.com/devyumi/wanna-v-user/wiki/Trouble-Shooting:-MySQL-%EC%84%9C%EB%B8%8C%EC%BF%BC%EB%A6%AC-%EC%97%B0%EC%82%B0%EC%9E%90-%EB%82%B4-LIMIT-%EC%82%AC%EC%9A%A9-%EB%B6%88%EA%B0%80%EC%99%80-ONLY_FULL_GROUP_BY)
-- [NCP 서버 세팅 과정]()
+- [NCP 서버 세팅 과정](https://velog.io/@devyumi/NCP-Ubuntu-서버-세팅-방법)
+- [Spring Boot 배포](https://velog.io/@devyumi/NCP-서버에서-Spring-Boot-배포하기)
