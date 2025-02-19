@@ -159,10 +159,6 @@
 
 <br>
 
-## 🚀 서비스 아키텍처
-<img src="https://github.com/user-attachments/assets/57f03417-1392-486f-96e9-16788565f51f" hegith="200"><br><br>
-
-
 ## 🧩 트러블 슈팅
 - [MySQL 서브쿼리 연산자 내 LIMIT 사용 불가와 ONLY_FULL_GROUP_BY](https://github.com/devyumi/wanna-v-user/wiki/Trouble-Shooting:-MySQL-%EC%84%9C%EB%B8%8C%EC%BF%BC%EB%A6%AC-%EC%97%B0%EC%82%B0%EC%9E%90-%EB%82%B4-LIMIT-%EC%82%AC%EC%9A%A9-%EB%B6%88%EA%B0%80%EC%99%80-ONLY_FULL_GROUP_BY)
 - [NCP 서버 세팅 과정](https://velog.io/@devyumi/NCP-Ubuntu-서버-세팅-방법)
